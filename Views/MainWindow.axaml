@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaTest.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:views="clr-namespace:AvaloniaTest.Views"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
+        x:Class="AvaloniaTest.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Avalonia To Do List"
+        >
+
+
+    <StackPanel>
+        <views:ToDoListView DataContext="{Binding ToDoList}"/>
+        <Button Click="Button_OnClick">Test</Button>
+        <!-- Role AutoCompleteBox -->
+        <AutoCompleteBox
+            ItemsSource="{Binding RoleBinder.Items}"
+            Text="{Binding RoleBinder.SearchText, Mode=TwoWay}"
+            SelectedItem="{Binding RoleBinder.ChosenItem, Mode=TwoWay}"
+            Width="250"
+            MaxDropDownHeight="200"
+            MinimumPrefixLength="0"
+            Name="RoleAutoCompleteBox">
+            <AutoCompleteBox.InnerRightContent>
+                <Button 
+                    Name="AutoCompleteBoxClearButton"
+                    Content="X"
+                    IsVisible="{Binding RoleBinder.CanClear}"
+                        Width="18"
+                        Height="18"
+                        Margin="0,0,4,0"
+                        BorderThickness="0"
+                        Command="{Binding RoleBinder.ClearCommand}" />
+            </AutoCompleteBox.InnerRightContent>
+            </AutoCompleteBox>
+    </StackPanel>
+    <!-- <Grid ShowGridLines="True" Margin="5" -->
+    <!--       ColumnDefinitions="120, 100"  -->
+    <!--       RowDefinitions="Auto, Auto, Auto">   -->
+    <!-- </Grid> -->
+
+    <!-- <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50"/> -->
+    <!-- <StackPanel> -->
+    <!--     <Border Margin="5" -->
+    <!--             CornerRadius="10" -->
+    <!--             Background="LightBlue"> -->
+    <!--         <TextBlock Margin="5" -->
+    <!--                    FontSize="24" -->
+    <!--                    HorizontalAlignment="Center" -->
+    <!--                    Text="Temperature Converter"> -->
+    <!--         </TextBlock> -->
+    <!--     </Border> -->
+    <!--     <Grid ShowGridLines="False"  Margin="5"  -->
+    <!--           ColumnDefinitions="120, 100"  -->
+    <!--           RowDefinitions="Auto, Auto, Auto"> -->
+    <!--         <Label Grid.Row="0" Grid.Column="0" Margin="10">Celsius</Label> -->
+    <!--         <TextBox Grid.Row="0" Grid.Column="1" Margin="0 5" Text="0" Name="celsius" KeyUp="Celsius_OnKeyDown"/> -->
+    <!--         <Label Grid.Row="1" Grid.Column="0" Margin="10">Fahrenheit</Label> -->
+    <!--         <TextBox Grid.Row="1"  Grid.Column="1" Margin="0 5" Text="0"  Name="fahrenheit" IsReadOnly="True" /> -->
+    <!--         <Button Grid.Row="2" Grid.Column="1" Margin="0 5" Click="ButtonClicked">Calculate</Button> -->
+    <!--     </Grid> -->
+    <!-- </StackPanel> -->
+</Window>
