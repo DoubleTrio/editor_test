@@ -1,0 +1,125 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AvaloniaTest.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:TreeSearchViewModel"
+             xmlns:local="clr-namespace:AvaloniaTest.Converters"
+             x:Class="AvaloniaTest.Views.TreeSearchView">
+    
+    <UserControl.Resources>
+        <local:SvgKeyToPathConverter x:Key="SvgKeyToPathConverter"/>
+    </UserControl.Resources>
+    <Design.DataContext>
+        <vm:TreeSearchViewModel/>
+    </Design.DataContext>
+    
+    
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" MinWidth="200" MaxWidth="500"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid>
+        <Border Grid.Row="0" Margin="8,0,4,0" BorderThickness="1" BorderBrush="Gray" CornerRadius="6">
+            <StackPanel>
+                <TextBox>Search for...</TextBox>
+                <TreeView Margin="0"
+                          ItemsSource="{Binding Nodes}" 
+                          SelectedItems="{Binding SelectedNodes}"
+                          SelectionMode="Multiple">
+                
+                    
+                    <TreeView.DataTemplates>
+                        <!-- OpenEditorNode -->
+                        
+                        <TreeDataTemplate DataType="vm:OpenEditorNode" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/>
+                                <!-- <Svg   Width="16" Height="16" Path="/Assets/fill/folder-fill.svg"/> -->
+                                <!-- <Image Width="16" Height="16" -->
+
+                                       <!-- Source="{SvgImage /Assets/fill/folder-fill.svg}"/> -->
+                                
+                                
+                                <!-- <Image Source="{SvgImage {DynamicResource IconGameController, Converter=}}" /> -->
+
+                                <!-- <Image Width="16" Height="16" -->
+                                <!--        Source="{SvgImage Bid"/> -->
+                                    <!-- IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" -->
+                                <!--         -->
+                                <!--        Source="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}" /> -->
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+                                <!-- <Button Content="Open" Command="{Binding OpenEditorCommand}" /> -->
+                            </StackPanel>
+                        </TreeDataTemplate>
+
+                        <!-- ActionDataNode -->
+                        <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/>
+                                
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+                                <Button Content="+" Command="{Binding AddCommand}" />
+                                <!-- <Button Content="−" Command="{Binding DeleteCommand}" /> -->
+                            </StackPanel>
+                        </TreeDataTemplate>
+
+                    
+                        <!-- Default Node -->
+                        <TreeDataTemplate DataType="vm:NodeBase" ItemsSource="{Binding SubNodes}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Resave as File"/>
+                                        <MenuItem Header="Resave as Patch"/>
+                                        <MenuItem Header="Delete"/>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/>
+                                <!-- <Label -->
+                                <!--     VerticalAlignment="Center"  -->
+                                <!--     Classes="icon" -->
+                                <!--     FontFamily="{DynamicResource PhosphorFill}" -->
+                                <!--     Content="{Binding Icon}" -->
+                                <!--     IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" /> -->
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" >
+                                    <TextBlock.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Copy"/>
+                                            <MenuItem Header="Paste"/>
+                                        </ContextMenu>
+                                    </TextBlock.ContextMenu> 
+                                </TextBlock>
+                                <TextBlock>f</TextBlock>
+                            </StackPanel>
+                        </TreeDataTemplate>
+                    </TreeView.DataTemplates>
+                </TreeView>
+                
+            </StackPanel>
+        </Border>
+            </Grid>
+        
+                <GridSplitter Grid.Column="1" 
+                              Foreground="Blue" 
+                              MinWidth="1"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              Background="Blue"
+                              BorderThickness="0,0,1,0"
+                              />
+        
+        <!-- <Grid Grid.Column="2"> -->
+        <StackPanel Grid.Column="2">
+            
+        </StackPanel>
+    </Grid>
+
+   
+    <!-- </Grid> -->
+</UserControl>

@@ -1,0 +1,229 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="using:AvaloniaTest"
+        xmlns:vm="using:AvaloniaTest.ViewModels"
+        xmlns:v="using:AvaloniaTest.Views"
+        xmlns:c="using:AvaloniaTest.Converters"
+        >
+  <Design.PreviewWith>
+    <StackPanel Orientation="Vertical">
+        <Button>Hello</Button>
+    </StackPanel>
+  </Design.PreviewWith>
+
+  
+  <Style Selector="FlyoutPresenter">
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Cursor" Value="Arrow"/>
+
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Border Background="{DynamicResource Brush.Popup}" BorderThickness="0" Margin="4" CornerRadius="{TemplateBinding CornerRadius}">
+            <Border.Effect>
+              <DropShadowEffect OffsetX="0" OffsetY="0" BlurRadius="4" Color="Black" Opacity=".6"/>
+            </Border.Effect>
+          </Border>
+
+          <Border Name="LayoutRoot"
+                  Margin="4"
+                  Padding="8"
+                  Background="{DynamicResource Brush.Popup}"
+                  BorderThickness="0"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+              <ContentPresenter x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Margin="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  
+    <Style Selector="Button.icon_button, RepeatButton.icon_button">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.icon_button /template/ ContentPresenter#PART_ContentPresenter, RepeatButton.icon_button /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+    <Style Selector="Button.icon_button:pointerover /template/ ContentPresenter#PART_ContentPresenter, RepeatButton.icon_button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Opacity" Value="1"/>
+    </Style>
+  
+  <Style Selector="Button.caption_button">
+    <Setter Property="Width" Value="48"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="VerticalAlignment" Value="Stretch"/>
+  </Style>
+  <Style Selector="Button.caption_button > Path">
+    <Setter Property="Fill" Value="{DynamicResource Brush.FG1}"/>
+  </Style>
+  <Style Selector="Button.caption_button /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="CornerRadius" Value="0"/>
+  </Style>
+  <Style Selector="Button.caption_button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#40000000"/>
+  </Style>
+  <Style Selector="Button.caption_button:nth-last-child(1):pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Red"/>
+  </Style>
+
+  
+    <Style Selector="Button.max_or_restore_btn Path">
+      <Setter Property="Data" Value="{StaticResource Icons.Window.Maximize}"/>
+    </Style>
+    <Style Selector="Window[WindowState=Maximized] Button.max_or_restore_btn Path">
+      <Setter Property="Data" Value="{StaticResource Icons.Window.Restore}"/>
+    </Style>
+
+    <!-- <Style Selector="Button.icon_button:disabled"> -->
+    <!--     <Setter Property="Fill" Value="{DynamicResource Brush.FG2}"/> -->
+    <!-- </Style> -->
+    
+      <Style Selector="ListBox.launcher_page_tabbar">
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+  <Style Selector="ListBox.launcher_page_tabbar ListBoxItem">
+    <Setter Property="Padding" Value="0"/>
+  </Style>
+  <Style Selector="ListBox.launcher_page_tabbar ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Opacity" Value=".5"/>
+  </Style>
+  <Style Selector="ListBox.launcher_page_tabbar ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Opacity" Value=".85"/>
+  </Style>
+  <Style Selector="ListBox.launcher_page_tabbar ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Opacity" Value="1"/>
+  </Style>
+
+  <Style Selector="ListBox.repo_left_content_list">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <VirtualizingStackPanel Orientation="Vertical"/>
+      </ItemsPanelTemplate>
+    </Setter>
+
+    <Style Selector="^ ListBoxItem">
+      <Setter Property="Height" Value="24"/>
+      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Padding" Value="0"/>
+
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid>
+            <Border Name="PART_Background"
+                    Background="Transparent"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Opacity="0"/>
+
+            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Content="{TemplateBinding Content}"
+                              Padding="{TemplateBinding Padding}"
+                              VerticalContentAlignment="Center"
+                              HorizontalContentAlignment="Stretch" />
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+
+    <Style Selector="^ ListBoxItem:pointerover /template/ Border#PART_Background">
+      <Setter Property="Background" Value="{DynamicResource Brush.AccentHovered}" />
+      <Setter Property="Opacity" Value=".5"/>
+    </Style>
+    <Style Selector="^ ListBoxItem:selected /template/ Border#PART_Background">
+      <Setter Property="Background" Value="{DynamicResource Brush.AccentHovered}" />
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+    <Style Selector="^:focus-within ListBoxItem:selected /template/ Border#PART_Background">
+      <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+      <Setter Property="Opacity" Value=".65"/>
+    </Style>
+    <Style Selector="^:focus-within ListBoxItem:selected:pointerover /template/ Border#PART_Background">
+      <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+      <Setter Property="Opacity" Value=".8"/>
+    </Style>
+  </Style>
+
+  <Style Selector="ContextMenu">
+    <Setter Property="MaxWidth" Value="1024"/>
+    <Setter Property="HorizontalOffset" Value="-4"/>
+    <Setter Property="VerticalOffset" Value="-4"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Border Background="{DynamicResource Brush.Popup}" BorderThickness="0" Margin="4" CornerRadius="{TemplateBinding CornerRadius}">
+            <Border.Effect>
+              <DropShadowEffect OffsetX="0" OffsetY="0" BlurRadius="4" Color="Black" Opacity=".6"/>
+            </Border.Effect>
+          </Border>
+
+          <Border BorderThickness="0"
+                  Margin="8,4"
+                  MaxWidth="{TemplateBinding MaxWidth}"
+                  MinHeight="{TemplateBinding MinHeight}"
+                  HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+            <ScrollViewer Theme="{StaticResource FluentMenuScrollViewer}">
+              <ItemsPresenter Name="PART_ItemsPresenter"
+                              ItemsPanel="{TemplateBinding ItemsPanel}"
+                              Margin="{DynamicResource MenuFlyoutScrollerMargin}"
+                              KeyboardNavigation.TabNavigation="Continue"
+                              Grid.IsSharedSizeScope="True" />
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+    
+    
+  
+  <Style Selector="MenuFlyoutPresenter">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Border Background="{DynamicResource Brush.Popup}" BorderThickness="0" Margin="4" CornerRadius="{TemplateBinding CornerRadius}">
+            <Border.Effect>
+              <DropShadowEffect OffsetX="0" OffsetY="0" BlurRadius="4" Color="Black" Opacity=".6"/>
+            </Border.Effect>
+          </Border>
+
+          <Border Name="LayoutRoot"
+                  Margin="4"
+                  Background="Transparent"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="0"
+                  Padding="4,2"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                          Theme="{StaticResource FluentMenuScrollViewer}"
+                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+              <ItemsPresenter Name="PART_ItemsPresenter"
+                              ItemsPanel="{TemplateBinding ItemsPanel}"
+                              Margin="{DynamicResource MenuFlyoutScrollerMargin}"
+                              KeyboardNavigation.TabNavigation="Continue"
+                              Grid.IsSharedSizeScope="True" />
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

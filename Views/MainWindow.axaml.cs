@@ -14,104 +14,26 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        InitializeComponent();
+        InitializeComponent(); // TODO: There has to be a better way of hiding the flyout...
+        this.DataContextChanged += MainWindow_DataContextChanged;
 
-        RoleAutoCompleteBox.AddHandler(
-            PointerPressedEvent,
-            (sender, e) =>
-                
-            {
- 
-     
-               var src = (e.Source as Visual);
-       
-        
-               while (src != null)
-               {
-              
-                   if (src is Button && src.Name == "AutoCompleteBoxClearButton") 
-                       return; 
-                   src = src.GetVisualParent();
-               }
-       
-          
-                Dispatcher.UIThread.Post(() => { RoleAutoCompleteBox.IsDropDownOpen = true; });
-            },
-            Avalonia.Interactivity.RoutingStrategies.Tunnel // use tunneling
-        );
-        
- 
-        
-        
-        RoleAutoCompleteBox.AddHandler(
-            AutoCompleteBox.KeyDownEvent,
-            (sender, e) =>
-            {
-   
-                if (DataContext is MainWindowViewModel vm) {
-                    if (e.Key == Avalonia.Input.Key.Enter)
-                    {
-                        if (RoleAutoCompleteBox.SelectedItem != null)
-                        {
-                            vm.RoleBinder.CommitSelection((string)RoleAutoCompleteBox.SelectedItem);
-                        }
-                        else
-                        {
-                            var itemToCommit = RoleAutoCompleteBox.ItemsSource
-                                .OfType<string>() // cast to T safely
-                                .FirstOrDefault(x => x != null && x.ToString().StartsWith(RoleAutoCompleteBox.SearchText, StringComparison.InvariantCultureIgnoreCase));
-
-                            if (itemToCommit != null)
-                            {
-                                vm.RoleBinder.CommitSelection(itemToCommit); 
-                            }
-
-                        
-                        }
-                    }
-                }
-                
-            },
-            Avalonia.Interactivity.RoutingStrategies.Tunnel
-        );
-        
-        
-        RoleAutoCompleteBox.DropDownClosed += (_, __) =>
+    }
+    private void MainWindow_DataContextChanged(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
         {
-
-            if (DataContext is MainWindowViewModel vm)
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    
-                    if (vm.RoleBinder.suppressRevert)
-                    {
-                        vm.RoleBinder.suppressRevert = false;
-                    }
-
-                    if (vm.RoleBinder.HasMatchStart)
-                    {
-                        vm.RoleBinder.RevertIfInvalid();
-                    }
-
-
-
-                    
-                    if (RoleAutoCompleteBox.Text != "") { 
-                        var len = RoleAutoCompleteBox.Text.Length;
-                        RoleAutoCompleteBox.CaretIndex = len;
-                    }
-
-                }, DispatcherPriority.Background);
-            }
-           
-        };
-        
-       
-        
-        
+            vm.TabSwitcherClosed += OnTabSwitcherClosed;
+        }
     }
     
+    private void OnTabSwitcherClosed(object? sender, EventArgs e)
+    {
+   
+                TabSwitcherFlyoutButton.Flyout?.Hide();
+    
+    }
+    
+
     // public void ButtonClicked(object source, RoutedEventArgs args)
     // {
     //     if (Double.TryParse(celsius.Text, out double C))
@@ -161,13 +83,24 @@ public partial class MainWindow : Window
         if (results != null && results.Count > 0)
         {
             var selected = results[0];
-            // NAME: apple_woods_secondary.json
-            // Path: file:///Users/thekacefiles/Coding/PMD/PMDODump/DumpAsset/Data/AutoTile/apple_woods_secondary.json
-            // Path.AbsolutePath: /Users/thekacefiles/Coding/PMD/PMDODump/DumpAsset/Data/AutoTile/apple_woods_secondary.json
-            // Path.AbsolutePath: 
-            // selected.
             Console.WriteLine(selected.Path.AbsolutePath);
 
         }
     }
+    private void FlyoutBase_OnOpened(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.OnTabSwitcherOpened();
+        }
+    }
+
+    private void FlyoutBase_OnClosed(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.OnTabSwitcherClosed();
+        }
+    }
+    
 }
