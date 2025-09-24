@@ -72,15 +72,12 @@ public class OpenEditorNode : NodeBase
 
     // public ReactiveCommand<Unit, Unit> OpenEditorCommand { get; }
 
-    public OpenEditorNode(string title, string? icon = null,  Func<TabEvents, EditorPageViewModel>? factory = null) 
+    public string EditorKey { get; }
+    
+    public OpenEditorNode(string title, string? icon = null, string editorKey = "") 
         : base(title, icon ?? "")
     {
-        // EditorTabTitle = title;
-
-        // OpenEditorCommand = ReactiveCommand.Create(() =>
-        // {
-        //     Console.WriteLine($"Opening editor tab: {EditorTabTitle}");
-        // });
+        EditorKey = editorKey;
     }
 }
 
@@ -98,11 +95,11 @@ public class ActionDataNode : NodeBase
     }
 }
 
-public class DataItemNode : NodeBase
+public class DataItemNode : OpenEditorNode
 {
     // public ReactiveCommand<Unit, Unit> DataDeleteCommand { get; }
 
-    public string Key { get; }
+    public string ItemKey { get; }
     
     private string _value = "";
     public string Value 
@@ -112,7 +109,7 @@ public class DataItemNode : NodeBase
     }
 
 
-    public DataItemNode(string key, string? title, string? icon = null) 
+    public DataItemNode(string itemKey, string editorKey, string? title, string? icon = null) 
         : base(title ?? "", icon ?? "")
     {
         // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{Key}: {v}");
@@ -122,7 +119,7 @@ public class DataItemNode : NodeBase
 }
 
 
-public class DataRootNode : NodeBase
+public class DataRootNode : OpenEditorNode
 {
     // Change to enum later!
     private readonly string _dataType;
@@ -143,8 +140,8 @@ public class DataRootNode : NodeBase
     
     public ReactiveCommand<DataItemNode, Unit> ResaveAsFile { get; }
     public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
-    public DataRootNode(string dataType, string title, string? icon = null) 
-        : base(title, icon ?? "")
+    public DataRootNode(string dataType, string editorKey, string title, string? icon = null) 
+        : base(title, icon ?? "", editorKey)
     {
         _dataType = dataType;
 
@@ -171,8 +168,8 @@ public class DataRootNode : NodeBase
         AddCommand2 = ReactiveCommand.Create(() =>
         {
             Console.WriteLine("yahoo");
-            var item = new DataItemNode("new key", "value");
-            SubNodes.Add(item);
+            // var item = new DataItemNode("new key", "value");
+            // SubNodes.Add(item);
             // var 
             // Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
             
@@ -183,8 +180,8 @@ public class DataRootNode : NodeBase
         AddCommand2 = ReactiveCommand.Create(() =>
         {
             Console.WriteLine("yahoo");
-            var item = new DataItemNode("new key", "value");
-            SubNodes.Add(item);
+            // var item = new DataItemNode("new key", "value");
+            // SubNodes.Add(item);
             // var 
             // Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
             

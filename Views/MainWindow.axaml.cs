@@ -103,10 +103,18 @@ public partial class MainWindow : ChromelessWindow
     {
         if (DataContext is MainWindowViewModel vm && sender is TreeView { SelectedItem: not null } treeView)
         {
-            var selectedItem = (NodeBase) treeView.SelectedItem;
-            var node = new SpritePageViewModel(vm._tabEvents);
-            node.SetTabInfo(selectedItem);
-            vm.AddTopLevelPage(node);
+            var selectedItem = (OpenEditorNode)treeView.SelectedItem;
+            
+            var editor = vm._pageFactory.CreatePage(selectedItem.EditorKey);
+
+
+            if (editor != null)
+            {
+                editor.SetTabInfo(selectedItem);
+                vm.AddTopLevelPage(editor);
+            }
+            // var node = new SpritePageViewModel(vm._tabEvents);
+       
             
             // Handle the double-click on the selected item
 

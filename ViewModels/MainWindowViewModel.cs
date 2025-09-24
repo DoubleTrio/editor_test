@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using AvaloniaTest.Services;
 using AvaloniaTest.Views;
@@ -17,14 +18,6 @@ using Avalonia.Threading;
 
 using Avalonia;
 using Avalonia.Media;
-
-public static class IconHelper
-{
-    public static StreamGeometry Get(string key) {
-        var geo = Application.Current.Resources[key];
-        return (StreamGeometry)geo;
-    }
-}
 
 public class TabEvents
 {
@@ -76,7 +69,6 @@ public class MainWindowViewModel : ViewModelBase
         if (TabSwitcher == null)
         {
             TabSwitcher = new TabSwitcherViewModel(this);
-            Console.WriteLine("TabSwitcher created");
         }
     }
 
@@ -102,16 +94,7 @@ public class MainWindowViewModel : ViewModelBase
         get { return _filter; }
         set { this.RaiseAndSetIfChanged(ref _filter, value); }
     }
-
-
-    private ObservableCollection<EditorPageViewModel> _tabNodes;
-
-    public ObservableCollection<EditorPageViewModel> TabNodes
-    {
-        get => _pages;
-        set => this.RaiseAndSetIfChanged(ref _pages, value);
-    }
-
+    
 
     private ObservableCollection<EditorPageViewModel> _pages;
 
@@ -121,15 +104,37 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _pages, value);
     }
 
-    private EditorPageViewModel _activePage;
+    private EditorPageViewModel? _activePage;
 
-    public EditorPageViewModel ActivePage
+    public EditorPageViewModel? ActivePage
     {
         get => _activePage;
         set => this.RaiseAndSetIfChanged(ref _activePage, value);
     }
 
+    private EditorPageViewModel? _temporaryTab;
+
+
+    public EditorPageViewModel? TemporaryTab
+    {
+        get => _temporaryTab;
+        set => this.RaiseAndSetIfChanged(ref _temporaryTab, value);
+    }
     
+    private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
+    
+    public EditorPageViewModel? SelectedItem
+    {
+        get => _selectedItem.Value;
+        set
+        {
+            if (TemporaryTab == null)
+            {
+                ActivePage = value;
+            }
+        }
+    }
+
     private ObservableCollection<PageNode> _topLevelPages;
     public ObservableCollection<PageNode> TopLevelPages
     {
@@ -138,22 +143,6 @@ public class MainWindowViewModel : ViewModelBase
     }
     
     private Dictionary<EditorPageViewModel, PageNode> _pageToNodeMap;
-
-    
-    private void OnItemSelected()
-    {
-        // Request flyout closure through an event or action
-        TabSwitcherItemSelected?.Invoke();
-    }
-
-    public event Action TabSwitcherItemSelected;
-
-    // public IDisposable Switcher
-    // {
-    //     get => _switcher;
-    //     private set => SetProperty(ref _switcher, value);
-    // }
-    //
     
     public void AddTopLevelPage(EditorPageViewModel page)
     {
@@ -172,7 +161,7 @@ public class MainWindowViewModel : ViewModelBase
         // The tab doesn't add a new page
         if (!page.AddNewTab)
         {
-            ActivePage = page;
+            TemporaryTab = page;
             return;
         }
         Pages.Add(page);
@@ -184,16 +173,14 @@ public class MainWindowViewModel : ViewModelBase
     
     public void AddChildPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
     {
-        Pages.Add(childPage);
-        
         if (_pageToNodeMap.TryGetValue(parentPage, out var parentNode))
         {
             var childNode = parentNode.AddChild(childPage);
             _pageToNodeMap[childPage] = childNode;
+            Pages.Add(childPage);
         }
         else
         {
-            // Parent not found, add as top-level
             AddTopLevelPage(childPage);
         }
     }
@@ -261,12 +248,14 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
+    public readonly PageFactory _pageFactory;
     public readonly TabEvents _tabEvents;
-    
-    public MainWindowViewModel()
+    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new TabEvents()) {}
+    public MainWindowViewModel(PageFactory pageFactory, TabEvents tabEvents)
     {
 
-        _tabEvents = new TabEvents();
+        _tabEvents = tabEvents;
+        
         
         _tabEvents.AddChildTabEvent += (parent, child) =>
         {
@@ -289,22 +278,33 @@ public class MainWindowViewModel : ViewModelBase
         {
             RemovePage(tab);
         };
-        
-        // TODO: Add dev page here!
-        Pages = new ObservableCollection<EditorPageViewModel>();
 
-        // Pages.Add(new DevControlViewModel(_tabEvents));
+        _pageFactory = pageFactory;
         
+        _selectedItem = this.WhenAnyValue(
+                x => x.ActivePage,
+                x => x.TemporaryTab,
+                (activePage, temporaryTab) => temporaryTab != null ? null : activePage)
+            .ToProperty(this, x => x.SelectedItem);
+        
+        this.WhenAnyValue(x => x.ActivePage)
+            .Skip(1) // Skip the initial value
+            .Where(activePage => activePage != null) // Only when ActivePage is actually set to something
+            .Subscribe(_ => TemporaryTab = null);
+        
+        Pages = new ObservableCollection<EditorPageViewModel>();
         TopLevelPages = new ObservableCollection<PageNode>();
         _pageToNodeMap = new Dictionary<EditorPageViewModel, PageNode>();
         
         TreeSearch = new TreeSearchViewModel();
+        
+        // TODO: move this own view
         ClearFilterCommand = ReactiveCommand.Create(() => { Filter = string.Empty; });
 
         AddDevControlTab = ReactiveCommand.Create(() =>
         {
             var page = new SpritePageViewModel(_tabEvents);
-            Pages.Add(page);
+            AddTopLevelPage(page);
             ActivePage = page;
         });
 
@@ -312,7 +312,6 @@ public class MainWindowViewModel : ViewModelBase
         {
             var vm = new TabSwitcherViewModel(this);
             TabSwitcher = vm;
-            Console.WriteLine("Test?");
             return vm;
         });
 

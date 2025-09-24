@@ -38,7 +38,7 @@
                  Classes="launcher_page_tabbar"
                  ItemsSource="{Binding Pages}"
                  SelectionMode="AlwaysSelected"
-                 SelectedItem="{Binding ActivePage, Mode=TwoWay}"
+                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                  SelectionChanged="OnTabsSelectionChanged"
                  LayoutUpdated="OnTabsLayoutUpdated">
           <ListBox.ItemsPanel>

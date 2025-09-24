@@ -15,34 +15,35 @@ public class TreeSearchViewModel : ViewModelBase
         SelectedNodes = new ObservableCollection<NodeBase>();
         Nodes = new ObservableCollection<NodeBase>
         {
-            new OpenEditorNode("Dev Control", "Icons.GameControllerFill"),
-            new OpenEditorNode("Zone Editor", "Icons.GameControllerFill"),
-            new OpenEditorNode("Ground Editor","Icons.GameControllerFill"),
-            new NodeBase("Constants")
+            new OpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"),
+            new OpenEditorNode("Zone Editor", "Icons.GameControllerFill", "ZoneEditor"),
+            new OpenEditorNode("Ground Editor","Icons.GameControllerFill", "GroundEditor"),
+            new OpenEditorNode("Testing","Icons.BedFill", "RandomInfo"),
+            new OpenEditorNode("Constants")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
-                    new NodeBase("Start Parameters"),
-                    new NodeBase("Universal Events"),
-                    new NodeBase("Strings", "Icons.FloppyDiskFill")
+                    new OpenEditorNode("Start Parameters"),
+                    new OpenEditorNode("Universal Events"),
+                    new OpenEditorNode("Strings", "Icons.FloppyDiskFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("English"),
-                            new NodeBase("Chinese")
+                            new OpenEditorNode("English"),
+                            new OpenEditorNode("Chinese")
                         }
                     },
-                    new NodeBase("Effects")
+                    new OpenEditorNode("Effects")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("Heal FX"),
-                            new NodeBase("+Charge FX"),
+                            new OpenEditorNode("Heal FX"),
+                            new OpenEditorNode("+Charge FX"),
                         }
                     },
                 }
             },
-            new NodeBase("Data", "Icons.FloppyDiskFill")
+            new OpenEditorNode("Data", "Icons.FloppyDiskFill")
             {
                 SubNodes =
                 {
@@ -50,8 +51,10 @@ public class TreeSearchViewModel : ViewModelBase
                     {
                         SubNodes = 
                         {
-                            new DataItemNode("eevee", "eevee: Eevee"),
-                            new DataItemNode("seviper", "seviper: Seviper")
+                            
+                            // TODO: Change later
+                            new DataItemNode("eevee", "DevControl", "eevee: Eevee"),
+                            new DataItemNode("seviper", "DevControl", "seviper: Seviper")
                         }
                     },
                     new ActionDataNode("Items")
