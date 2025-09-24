@@ -41,5 +41,13 @@
         <DependentUpon>TabBar.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Editors\SpritePageView.axaml.cs">
+        <DependentUpon>SpritePageView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Editors\DevControlView.axaml.cs">
+        <DependentUpon>DevControlView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

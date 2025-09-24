@@ -12,7 +12,7 @@ public class NodeBase : ViewModelBase
 {
     public ObservableCollection<NodeBase> SubNodes { get; set; }
 
-    public NodeBase? Parent { get; internal set; } 
+    // public NodeBase? Parent { get; internal set; } 
     
     private string _title = "";
 
@@ -29,7 +29,7 @@ public class NodeBase : ViewModelBase
         Icon = icon ?? "";
         SubNodes = new ObservableCollection<NodeBase>();
         IsExpanded = false;
-        SubNodes.CollectionChanged += OnSubNodesChanged;
+        // SubNodes.CollectionChanged += OnSubNodesChanged;
     }
     
     // public NodeBase(string title, string icon, ObservableCollection<NodeBase> subNodes)
@@ -56,31 +56,31 @@ public class NodeBase : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isVisible, value);
     }
     
-    private void OnSubNodesChanged(object? s, NotifyCollectionChangedEventArgs e) {
-        if (e.NewItems != null)
-            foreach(NodeBase child in e.NewItems) child.Parent = this;
-        if (e.OldItems != null)
-            foreach(NodeBase child in e.OldItems) child.Parent = null;
-    }
+    // private void OnSubNodesChanged(object? s, NotifyCollectionChangedEventArgs e) {
+    //     if (e.NewItems != null)
+    //         foreach(NodeBase child in e.NewItems) child.Parent = this;
+    //     if (e.OldItems != null)
+    //         foreach(NodeBase child in e.OldItems) child.Parent = null;
+    // }
 
 
 }
 
 public class OpenEditorNode : NodeBase
 {
-    public string EditorTabTitle { get; }
+    // public string EditorTabTitle { get; }
 
-    public ReactiveCommand<Unit, Unit> OpenEditorCommand { get; }
+    // public ReactiveCommand<Unit, Unit> OpenEditorCommand { get; }
 
-    public OpenEditorNode(string title, string? icon = null) 
+    public OpenEditorNode(string title, string? icon = null,  Func<TabEvents, EditorPageViewModel>? factory = null) 
         : base(title, icon ?? "")
     {
-        EditorTabTitle = title;
+        // EditorTabTitle = title;
 
-        OpenEditorCommand = ReactiveCommand.Create(() =>
-        {
-            Console.WriteLine($"Opening editor tab: {EditorTabTitle}");
-        });
+        // OpenEditorCommand = ReactiveCommand.Create(() =>
+        // {
+        //     Console.WriteLine($"Opening editor tab: {EditorTabTitle}");
+        // });
     }
 }
 
@@ -220,7 +220,7 @@ public class PageNode : NodeBase
     public bool IsTopLevel => Parent == null;
 
     public PageNode(EditorPageViewModel page, PageNode parent = null)
-        : base(page.Title)
+        : base(page.Title, page.Icon)
     {
         Page = page;
         Parent = parent;

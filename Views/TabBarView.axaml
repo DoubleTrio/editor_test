@@ -6,10 +6,16 @@
              xmlns:vm="using:AvaloniaTest.ViewModels"
              xmlns:c="using:AvaloniaTest.Converters"
              xmlns:v="using:AvaloniaTest.Views"
+             xmlns:conv="using:AvaloniaTest.Converters"
+             xmlns:local="clr-namespace:AvaloniaTest.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaTest.Views.TabBarView"
              x:DataType="vm:MainWindowViewModel"
              x:Name="MainTabBar">
+  
+  <UserControl.Resources>
+    <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
+  </UserControl.Resources>
   <Grid ColumnDefinitions="Auto,*,Auto">
     <RepeatButton Grid.Column="0"
                   Classes="icon_button"
@@ -65,12 +71,11 @@
 
                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
                   <Grid Width="200" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
-                  <!-- <Path Grid.Column="0" -->
-                  <!--       Width="12" Height="12" Margin="12,0" -->
-                  <!--       Fill="{Binding Node.Bookmark, Converter={x:Static c:IntConverters.ToBookmarkBrush}}" -->
-                  <!--       Data="{StaticResource Icons.Bookmark}" -->
-                  <!--       IsVisible="{Binding Node.IsRepository}" -->
-                  <!--       IsHitTestVisible="False"/> -->
+                  <Path Grid.Column="0"
+                        Width="12" Height="12" Margin="12,0"
+                        Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
+                        IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        IsHitTestVisible="False"/>
                   <!-- <Path Grid.Column="0" -->
                   <!--       Width="12" Height="12" Margin="12,0" -->
                   <!--       Fill="{DynamicResource Brush.FG1}" -->

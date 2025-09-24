@@ -15,33 +15,59 @@ using Avalonia.Threading;
 
 
 
-public static class TabEvents
+using Avalonia;
+using Avalonia.Media;
+
+public static class IconHelper
 {
-    // Event for adding child tabs
-    public static event Action<EditorPageViewModel, EditorPageViewModel> AddChildTabRequested;
-    
-    // Generic method to create and request adding a child tab
-    public static void RequestAddChildTab<T>(EditorPageViewModel parent) where T : EditorPageViewModel, new()
-    {
-        var child = new T();
-        AddChildTabRequested?.Invoke(parent, child);
-    }
-    
-    // Optional: Method with custom title
-    public static void RequestAddChildTab<T>(EditorPageViewModel parent, string title) where T : EditorPageViewModel, new()
-    {
-        var child = new T();
-        child.Title = title; // Assuming EditorPageViewModel has a Title property
-        AddChildTabRequested?.Invoke(parent, child);
-    }
-    
-    // Optional: Method to add pre-created child
-    public static void RequestAddChildTab(EditorPageViewModel parent, EditorPageViewModel child)
-    {
-        AddChildTabRequested?.Invoke(parent, child);
+    public static StreamGeometry Get(string key) {
+        var geo = Application.Current.Resources[key];
+        return (StreamGeometry)geo;
     }
 }
 
+public class TabEvents
+{
+    public event Action<EditorPageViewModel, EditorPageViewModel> AddChildTabEvent;
+    public event Action<EditorPageViewModel> AddTopLevelTabEvent;
+    
+    public event Action<EditorPageViewModel> AddTemporaryTabEvent;
+    public event Action<EditorPageViewModel> RemoveTabEvent;
+
+    public void AddChildPage<T>(EditorPageViewModel parent) where T : EditorPageViewModel, new()
+    {
+        var child = new T();
+        AddChildTabEvent.Invoke(parent, child);
+    }
+    
+    public void AddChildPage(EditorPageViewModel parent, EditorPageViewModel child)
+    {
+        AddChildTabEvent.Invoke(parent, child);
+    }
+
+    public void AddTopLevelTab<T>() where T : EditorPageViewModel, new()
+    {
+        var tab = new T();
+        AddTopLevelTabEvent.Invoke(tab);
+    }
+    
+    public void AddTopLevelTab(EditorPageViewModel tab)
+    {
+        AddTopLevelTabEvent.Invoke(tab);
+    }
+
+
+    public void AddTemporaryTab<T>() where T : EditorPageViewModel, new()
+    {
+        var tab = new T();
+        AddTemporaryTabEvent.Invoke(tab);
+    }
+
+    public void RemoveTab(EditorPageViewModel page)
+    {
+        RemoveTabEvent.Invoke(page);
+    }
+}
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -131,6 +157,24 @@ public class MainWindowViewModel : ViewModelBase
     
     public void AddTopLevelPage(EditorPageViewModel page)
     {
+        
+        // Navigate to the tab if it already exists
+        if (page.UniqueId != null)
+        {
+            var existing = Pages.FirstOrDefault(p => p.UniqueId == page.UniqueId);
+            if (existing != null)
+            {
+                ActivePage = existing;
+                return;
+            }
+        }
+
+        // The tab doesn't add a new page
+        if (!page.AddNewTab)
+        {
+            ActivePage = page;
+            return;
+        }
         Pages.Add(page);
         
         var node = new PageNode(page);
@@ -157,11 +201,31 @@ public class MainWindowViewModel : ViewModelBase
     // Remove a page and handle hierarchy
     public void RemovePage(EditorPageViewModel page)
     {
+        
         if (!_pageToNodeMap.TryGetValue(page, out var node))
             return;
-            
-        // Recursively close all children first
+
+        bool wasActive = (page == _activePage);
+        int removeIdx = Pages.IndexOf(page);
+
+        // Recursively close all children (may also remove this page)
         ClosePageAndChildren(node);
+
+        if (wasActive)
+        {
+            if (Pages.Count == 0)
+            {
+                ActivePage = null; // no pages left
+            }
+            else if (removeIdx < Pages.Count)
+            {
+                ActivePage = Pages[removeIdx]; // select "next" page if possible
+            }
+            else
+            {
+                ActivePage = Pages[Pages.Count - 1]; // fallback to last
+            }
+        }
     }
 
     private void ClosePageAndChildren(PageNode node)
@@ -195,29 +259,41 @@ public class MainWindowViewModel : ViewModelBase
             disposable.Dispose();
         }
     }
-    
-    
-    
+
+
+    public readonly TabEvents _tabEvents;
     
     public MainWindowViewModel()
     {
+
+        _tabEvents = new TabEvents();
         
-        TabEvents.AddChildTabRequested += (parent, child) =>
+        _tabEvents.AddChildTabEvent += (parent, child) =>
         {
             AddChildPage(parent, child);
             ActivePage = child;
         };
         
-        // TreeModel = new TreeSearchViewModel();
-        // var service = new ToDoService();
-        // ToDoList = new ToDoListViewModel(service.GetItems());
-        // _contentViewModel = ToDoList;
-
-        // RoleBinder = new AutoCompleteBinder<string>(Roles, (_) => { });
-
+        _tabEvents.AddTopLevelTabEvent += (tab) =>
+        {
+            AddTopLevelPage(tab);
+            ActivePage = tab;
+        };
+        
+        _tabEvents.AddTemporaryTabEvent += (tab) =>
+        {
+            ActivePage = tab;
+        };
+        
+        _tabEvents.RemoveTabEvent += (tab) =>
+        {
+            RemovePage(tab);
+        };
+        
         // TODO: Add dev page here!
         Pages = new ObservableCollection<EditorPageViewModel>();
-        Pages.Add(new DevControlViewModel());
+
+        // Pages.Add(new DevControlViewModel(_tabEvents));
         
         TopLevelPages = new ObservableCollection<PageNode>();
         _pageToNodeMap = new Dictionary<EditorPageViewModel, PageNode>();
@@ -227,7 +303,7 @@ public class MainWindowViewModel : ViewModelBase
 
         AddDevControlTab = ReactiveCommand.Create(() =>
         {
-            var page = new SpritePageViewModel();
+            var page = new SpritePageViewModel(_tabEvents);
             Pages.Add(page);
             ActivePage = page;
         });
@@ -247,6 +323,7 @@ public class MainWindowViewModel : ViewModelBase
             return Unit.Default;
         });
 
+        AddTopLevelPage(new DevControlViewModel(_tabEvents));
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
 
@@ -287,9 +364,10 @@ public class MainWindowViewModel : ViewModelBase
 
     public void AddNewTab()
     {
-        var page = new DevControlViewModel();
-        Pages.Add(page);
-        ActivePage = page;
+        var page = new DevControlViewModel(_tabEvents);
+        AddTopLevelPage(page);
+        var page2 = new SpritePageViewModel(_tabEvents);
+        AddChildPage(page, page2);
     }
 
     private bool _ignoreIndexChange = false;

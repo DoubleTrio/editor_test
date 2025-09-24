@@ -1,28 +1,33 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:AvaloniaTest.ViewModels"
-        xmlns:v="using:AvaloniaTest.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:views="clr-namespace:AvaloniaTest.Views"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="450"
-        x:Class="AvaloniaTest.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        xmlns:local="clr-namespace:AvaloniaTest.Converters"
-        Title="Avalonia PMD Editor">
+<v:ChromelessWindow xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="using:AvaloniaTest.ViewModels"
+                    xmlns:v="using:AvaloniaTest.Views"
+                    xmlns:conv="using:AvaloniaTest.Converters"
+                    xmlns:views="clr-namespace:AvaloniaTest.Views"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="450"
+                    x:Class="AvaloniaTest.Views.MainWindow"
+                    x:DataType="vm:MainWindowViewModel"
+                    x:Name="WindowMain"
+                    
+                    Icon="/Assets/avalonia-logo.ico"
+                    xmlns:local="clr-namespace:AvaloniaTest.Converters"
+                    Title="Avalonia PMD Editor">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Window.Resources>
-        <local:SvgKeyToPathConverter x:Key="SvgKeyToPathConverter" />
+        <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
         <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
-                <Svg IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                     Width="16" Height="16"
-                     Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}" />
+            <Grid ColumnDefinitions="Auto,*">
+                <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     Width="14" Height="14"
+                     Margin="0, 0, 6, 0"
+                     Fill="{DynamicResource Brush.FG2}"
+                     Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/>
                 <TextBlock Grid.Column="1"
                            VerticalAlignment="Center"
                            Text="{Binding Title}"
@@ -33,37 +38,95 @@
         </DataTemplate>
     </Window.Resources>
     <Window.Styles>
+        
+        <Style Selector="TreeViewItem Button">
+            <Setter Property="Opacity" Value="1"> </Setter>
+        </Style>
+        
+        <Style Selector="TreeViewItem:pointerover /template/ Path">
+            <!-- <Setter Property="Foreground" Value="Red" /> -->
+            <!-- <Setter Property="Background" Value="Red" /> -->
+            <!-- <Setter Property="BorderThickness" Value="1" /> -->
+            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="Width" Value="16" />
+            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
+            
+            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
+            
+            
+        </Style>
+        
+        <Style Selector="Grid#PART_Header Path">
+            
+            <!-- <Setter Property="Data" Value="{StaticResource Icons.EyeClose}"></Setter> -->
+            <!-- <Setter Property="Foreground" Value="Red" /> -->
+            <!-- <Setter Property="Background" Value="Red" /> -->
+            <!-- <Setter Property="BorderThickness" Value="1" /> -->
+            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
+            <!-- <Setter Property="Opacity" Value="0.2" /> -->
+            <!-- <Setter Property="Width" Value="16" /> -->
+            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
+            
+            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
+            
+        </Style>
+
+        
+        
+                
+        <Style Selector="TreeViewItem Path">
+            <Setter Property="Width" Value="11"></Setter>
+            <Setter Property="Height" Value="11"></Setter>
+            </Style>
+        <Style Selector="TreeViewItem:pointerover Path">
+            <Setter Property="Data" Value="{StaticResource Icons.Branch}"></Setter>
+            <!-- <Setter Property="Foreground" Value="Red" /> -->
+            <!-- <Setter Property="Background" Value="Red" /> -->
+            <!-- <Setter Property="BorderThickness" Value="1" /> -->
+            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
+            <!-- <Setter Property="Opacity" Value="0" /> -->
+            <!-- <Setter Property="Width" Value="16" /> -->
+            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
+            
+            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
+            
+        </Style>
+        
 
 
     </Window.Styles>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="{Binding #WindowMain.CaptionHeight}"/>
             <RowDefinition Height="16" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Tabs or something -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,32,*,Auto">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,32,*,32,Auto">
             <Border Grid.Column="0" Grid.ColumnSpan="5"
+                    DoubleTapped="MaximizeOrRestoreWindow"
+                    PointerPressed="BeginMoveWindow"
                     Background="{DynamicResource Brush.TitleBar}"
                     BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}" />
-            <Button Grid.Column="0">Open/Close/Resize Btns</Button>
+            <!-- <Button Grid.Column="0">Open/Close/Resize Btns</Button> -->
 
-
+            <Border Grid.Column="0" Width="72" IsVisible="{Binding #WindowMain.HasLeftCaptionButton}"/>
+            
             <!-- Switch Mod Button  -->
             <Button Grid.Column="1" Classes="icon_button" Command="{Binding AddDevControlTab}">
-                <Svg Width="16" Height="16" Path="{DynamicResource IconGear}" />
+                <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Settings}"/>
             </Button>
 
             <!-- Pages Tabs -->
             <views:TabBarView Grid.Column="2" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom" />
 
+            
             <!-- Switch Tab  -->
-            <Button Grid.Column="3" Classes="icon_button" Name="TabSwitcherFlyoutButton">
-                <Svg Width="16" Height="16" Path="{DynamicResource IconTabs}" />
+            <Button Grid.Column="3" Classes="icon_button" VerticalAlignment="Bottom" Name="TabSwitcherFlyoutButton">
+                <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}"/>
                 <Button.Flyout>
-
                     <Flyout Placement="BottomEdgeAlignedRight"
                             Opened="FlyoutBase_OnOpened"
                             Closed="FlyoutBase_OnClosed">
@@ -110,12 +173,11 @@
                             Text="{Binding Filter, Mode=TwoWay}"
                             VerticalContentAlignment="Center">
                             <TextBox.InnerLeftContent>
-                                <!-- FG2 -->
-                                <Svg
-                                    Css=".Red { fill: #FFFF00; }"
-                                    Width="14" Height="14"
+                                <Path
+                                    Fill="{DynamicResource Brush.FG2}"
+                                    Width="12" Height="12"
                                     Margin="6,0,0,0"
-                                    Path="{DynamicResource IconMagnifyingGlass}" />
+                                    Data="{StaticResource Icons.MagnifyingGlassFill}" />
 
 
                             </TextBox.InnerLeftContent>
@@ -127,30 +189,141 @@
                                         Command="{Binding ClearFilterCommand}"
                                         IsVisible="{Binding Filter, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                         HorizontalAlignment="Right">
-                                    <Svg
-                                        Css=".Red { fill: #FFFF00; }"
+                                    <Path
                                         Width="14" Height="14"
                                         Margin="0,1,0,0"
-                                        Path="{DynamicResource IconXCircle}" />
+                                        Data="{StaticResource Icons.XCircleFill}" />
                                 </Button>
                             </TextBox.InnerRightContent>
                         </TextBox>
 
 
                         <TreeView Grid.Row="1" Margin="0"
+                                  x:Name="MasterTreeView"
                                   ItemsSource="{Binding TreeSearch.Nodes}"
                                   SelectedItems="{Binding TreeSearch.SelectedNodes}"
-                                  SelectionMode="Multiple"
+                                  DoubleTapped="MasterTreeView_OnDoubleTapped"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                             <TreeView.Styles>
+                                
                                 <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                                    <Setter Property="Padding" Value="4"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="MinHeight" Value="20"/>
+                                    <!-- <Style Selector="^ Path"  > -->
+                                    <!--     <Setter Property="Fill" Value="Blue"/> -->
+                                    <!-- </Style> -->
+                                    <!-- <Style Selector="^:pointerover" > -->
+                                    <!--     ~1~ <Setter Property="Fill" Value="Blue"></Setter> @1@ -->
+                                    <!--     ~1~ <Setter Property="Background" Value="Red"></Setter> @1@ -->
+                                    <!--     ~1~ <Setter Property="Foreground" Value="Red"></Setter> @1@ -->
+                                    <!--     <Style Selector="^ Path#PART_IndicatorPlus" > -->
+                                    <!--         ~1~ <Setter Property="Opacity" Value="0.2"/> @1@ -->
+                                    <!--         <Setter Property="Fill" Value="Blue"/> -->
+                                    <!--     </Style> -->
+                                    <!-- </Style> -->
+                                    <!-- -->
+                                 
                                 </Style>
+                                
+                                <Style Selector="Border#PART_LayoutRoot:pointerover" >
+                                    <!-- <Setter Property="Fill" Value="Blue"></Setter> -->
+                                    <!-- <Setter Property="Background" Value=""></Setter> -->
+                                    <!-- <Setter Property="Foreground" Value="Red"></Setter> -->
+                                    <!-- <Style Selector="^ Path" > -->
+                                    <!--     <Setter Property="Opacity" Value="0.2"/> -->
+                                    <!--     <Setter Property="Fill" Value="Blue"/> -->
+                                    <!-- </Style> -->
+                                    <Style Selector="^ Path"  >
+                                        <Setter Property="Fill" Value="Blue"/>
+                                    </Style>
+                                    <Style Selector="^ Button"  >
+                                        <Setter Property="Opacity" Value="1"/>
+                                    </Style>
+                                    <Style Selector="^ /template/ ContentPresenter Button"  >
+                                        <Setter Property="Opacity" Value="1"/>
+                                    </Style>
+                                    
+                                    <Style Selector="^ /template/ ContentPresenter"  >
+                                        <!-- <Setter Property="Fill" Value="Yellow"/> -->
+                                        <Setter Property="Foreground" Value="Red"></Setter>
+                                        <Setter Property="Background" Value="Red"></Setter>
+                                    </Style>
+                                    
+                                    
+
+                                    
+                             
+                                    
+                                    </Style>
+                                <!-- <Style Selector="Button:pointerover"  > -->
+                                <!--     <Setter Property="Opacity" Value="1"/> -->
+                                <!-- </Style> -->
+                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover Path"> -->
+                                <!--     <Setter Property="Fill" Value="Yellow"/> -->
+                                <!-- </Style> -->
+                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover /template/  ContentPresenter#PART_ContentPresenter"> -->
+                                <!--     <Setter Property="Foreground" Value="Red"></Setter> -->
+                                <!--     <Setter Property="Background" Value="Red"></Setter> -->
+                                <!--      -->
+                                <!-- </Style> -->
+                                <!-- -->
+                                
+                                
+                                <!-- /template/  -->
+                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover"> -->
+                                <!--     ~1~ <Setter Property="Foreground" Value="Blue"></Setter> @1@ -->
+                                <!--     <Setter Property="Background" Value="Blue"></Setter> -->
+                                <!--     <Style Selector="^ Path"> -->
+                                <!--         <Setter Property="Opacity" Value="0.2"></Setter> -->
+                                <!--     </Style> -->
+                                <!-- </Style> -->
+                                <!-- -->
+                                <!-- Avalonia.Controls.Presenters|ContentPresenter#PART_HeaderPresenter -->
+                                <!-- <Style Selector="ContentPresenter#PART_ContentPresenter"> -->
+                                <!--     ~1~ <Setter Property="Foreground" Value="Blue"></Setter> @1@ -->
+                                <!--     <Setter Property="Background" Value="Blue"></Setter> -->
+                                <!--     <Style Selector="^ Path"> -->
+                                <!--         <Setter Property="Opacity" Value="0.2"></Setter> -->
+                                <!--         <Setter Property="Fill" Value="Blue"></Setter> -->
+                                <!--     </Style> -->
+                                <!-- </Style> -->
+
+                                
+                                
+                                
+                                <!-- <Style Selector="ContentPresenter#PART_ContentPresenter:pointerover"> -->
+                                <!--     <Setter Property="Foreground" Value="Red"></Setter> -->
+                                <!--     <Setter Property="Background" Value="Red"></Setter> -->
+                                <!-- -->
+                                <!-- </Style> -->
+
+                                
+                                <Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover Button" >
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                    
+                                <Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover ContentPresenter Button" >
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                <!-- -->
+                                <!-- <Style Selector="Button:pointerover" > -->
+                                <!--     <Setter Property="Opacity" Value="1"/> -->
+                                <!-- </Style> -->
                             </TreeView.Styles>
 
+                            
+                            <!-- Animation = -1, // Highest priority -->
+                            <!-- LocalValue = 0, -->
+                            <!-- StyleTrigger, -->
+                            <!-- Template, -->
+                            <!-- Style, -->
+                            <!-- Inherited, -->
+                            <!-- Unset = int.MaxValue, // Lowest priority -->
                             <TreeView.DataTemplates>
                                 <!-- OpenEditorNode -->
 
@@ -160,28 +333,6 @@
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
 
                                         <ContentControl/>
-
-                                        <!-- <Svg  -->
-                                        <!--     IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" -->
-                                        <!--     Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/> -->
-                                        <!-- ~1~ <Svg   Width="16" Height="16" Path="/Assets/fill/folder-fill.svg"/> @1@ -->
-                                        <!-- ~1~ <Image Width="16" Height="16" @1@ -->
-                                        <!-- -->
-                                        <!--        ~1~ Source="{SvgImage /Assets/fill/folder-fill.svg}"/> @1@ -->
-                                        <!-- -->
-                                        <!-- -->
-                                        <!-- ~1~ <Image Source="{SvgImage {DynamicResource IconGameController, Converter=}}" /> @1@ -->
-                                        <!-- -->
-                                        <!-- ~1~ <Image Width="16" Height="16" @1@ -->
-                                        <!-- ~1~        Source="{SvgImage Bid"/> @1@ -->
-                                        <!--     ~1~ IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" @1@ -->
-                                        <!-- ~1~         @1@ -->
-                                        <!-- ~1~        Source="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}" /> @1@ -->
-                                        <!-- <TextBlock VerticalAlignment="Center" Text="{Binding Title}" TextTrimming="CharacterEllipsis" -->
-                                        <!--            TextWrapping="NoWrap" -->
-                                        <!--            ClipToBounds="True" -->
-                                        <!--            /> -->
-                                        <!-- ~1~ <Button Content="Open" Command="{Binding OpenEditorCommand}" /> @1@ -->
                                     </Grid>
                                 </TreeDataTemplate>
 
@@ -193,6 +344,7 @@
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
 
                                         <ContentControl/>
+                                        <ContentControl/>
                                         
                                         <Button Command="{Binding  $parent[TreeViewItem;1].((vm:DataRootNode)DataContext).AddCommand2}" Content="cc" />
                                         <!-- <Button Content="-" Command="{Binding $parent[TreeViewItem].TemplatedParent.((vm:DataRootNode)DataContext).AddCommand2}}" /> -->
@@ -203,15 +355,28 @@
                                 </TreeDataTemplate>
                                 <!-- ActionDataNode -->
                                 <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
+                                        
                                         <ContentPresenter Content="{Binding}"
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
+                                        
 
-                                        <ContentControl/>
-
-                                        <Button Content="+" Command="{Binding AddCommand}" />
-                                        <!-- <Button Content="−" Command="{Binding DeleteCommand}" /> -->
-                                    </StackPanel>
+                                        <Button Grid.Column="2" Classes="icon_button" Command="{Binding AddCommand}" >
+                                            <!-- <Button.Classes> -->
+                                            <!--     <Classes> -->
+                                            <!--         icon_button -->
+                                            <!--         <Classes.item >special_class</Classes.item> -->
+                                            <!--     </Classes> -->
+                                            <!-- </Button.Classes> -->
+                                            <Path x:Name="PART_IndicatorPlus"
+                                                  Stretch="Fill"
+                                                  Fill="{DynamicResource Brush.FG1}"
+                                                  Width="8" Height="8" Margin="0,2,0,0"
+                                                  Data="{StaticResource Icons.Plus}"/>
+                                        </Button>
+                                    </Grid>
+                                    
+                                    
                                 </TreeDataTemplate>
 
 
@@ -281,4 +446,4 @@
 
     </Grid>
 
-</Window>
+</v:ChromelessWindow>

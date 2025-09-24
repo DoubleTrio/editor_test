@@ -8,8 +8,10 @@ namespace AvaloniaTest.ViewModels;
 
 public class EditorPageViewModel : ViewModelBase
 {
-    private ObservableCollection<EditorPageViewModel> Children;
-        
+    public virtual string? UniqueId => null;
+    public virtual bool AddNewTab => true;
+    
+    
     private string _data = "";
 
 
@@ -32,13 +34,39 @@ public class EditorPageViewModel : ViewModelBase
         }
     }
 
-    public bool isParent;
-
-    public string Id = Guid.NewGuid().ToString() ;
-    public EditorPageViewModel(bool parent = false)
+    
+    private string? _icon = "";
+    public string Icon
     {
-        isParent = parent;
-        Children = new ObservableCollection<EditorPageViewModel>();
+        get { return _icon; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _icon, value);
+        }
+    }
+    
+    private readonly TabEvents _tabEvents;
+    
+    public EditorPageViewModel(TabEvents tabEvents)
+    {
+        // Children = new ObservableCollection<EditorPageViewModel>();
+        _tabEvents = tabEvents;
+    }
+
+    public void SetTabInfo(NodeBase node)
+    {
+        _icon = node.Icon;
+        _title = node.Title;
+    }
+    
+    public void SetTitle(string title)
+    {
+        _title = title;
+    }
+    
+    public void SetIcon(string icon)
+    {
+        _icon = icon;
     }
     
     // public RepositoryNode Node

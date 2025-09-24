@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AvaloniaTest.ViewModels"
+             xmlns:v="using:AvaloniaTest.Views"
+             xmlns:views="clr-namespace:AvaloniaTest.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:SpritePageViewModel"
+             x:Class="AvaloniaTest.Views.SpritePageView">
+    <Button Command="{Binding CreateATab}" Content="Add a child tab to this one!"/> 
+</UserControl>

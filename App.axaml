@@ -20,21 +20,21 @@
         </ResourceDictionary>
     
         <!-- Avalonia.Controls.Primitives|PopupRoot -->
-        <x:String x:Key="IconGameController">/Assets/fill/game-controller-fill.svg</x:String>
-        <x:String x:Key="IconSword">/Assets/fill/sword-fill.svg</x:String>
-        <x:String x:Key="IconFloppyDisk">/Assets/fill/floppy-disk-fill.svg</x:String>
-        <x:String x:Key="IconPaintBrush">/Assets/fill/paint-brush-fill.svg</x:String>
-        <x:String x:Key="IconTrash">/Assets/fill/trash-fill.svg</x:String>
-        <x:String x:Key="IconMinus">/Assets/fill/minus-fill.svg</x:String>
-        <x:String x:Key="IconGhost">/Assets/fill/ghost-fill.svg</x:String>
-        <x:String x:Key="IconHeart">/Assets/fill/heart-fill.svg</x:String>
-        <x:String x:Key="IconTabs">/Assets/fill/tabs-fill.svg</x:String>
-        <x:String x:Key="IconGear">/Assets/fill/gear-fill.svg</x:String>
-        <x:String x:Key="IconMagnifyingGlass">/Assets/fill/magnifying-glass-fill.svg</x:String>
-        <x:String x:Key="IconXCircle">/Assets/fill/x-circle-fill.svg</x:String>
-        <x:String x:Key="IconPencil">/Assets/fill/pencil-fill.svg</x:String>
-        <x:String x:Key="IconPlus">/Assets/regular/plus.svg</x:String>
-        <x:String x:Key="IconPencilRegular">/Assets/regular/pencil.svg</x:String>
+        <!-- <x:String x:Key="IconGameController">/Assets/fill/game-controller-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconSword">/Assets/fill/sword-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconFloppyDisk">/Assets/fill/floppy-disk-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconPaintBrush">/Assets/fill/paint-brush-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconTrash">/Assets/fill/trash-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconMinus">/Assets/fill/minus-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconGhost">/Assets/fill/ghost-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconHeart">/Assets/fill/heart-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconTabs">/Assets/fill/tabs-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconGear">/Assets/fill/gear-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconMagnifyingGlass">/Assets/fill/magnifying-glass-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconXCircle">/Assets/fill/x-circle-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconPencil">/Assets/fill/pencil-fill.svg</x:String> -->
+        <!-- <x:String x:Key="IconPlus">/Assets/regular/plus.svg</x:String> -->
+        <!-- <x:String x:Key="IconPencilRegular">/Assets/regular/pencil.svg</x:String> -->
         <!-- <x:String x:Key="IconHeart">/Assets/fill/heart-fill.svg</x:String> -->
     </Application.Resources>
      

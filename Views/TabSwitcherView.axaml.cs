@@ -35,30 +35,31 @@ public partial class TabSwitcherView : UserControl
 
     private void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
     {
-        if (PagesListBox.ItemCount == 0)
-            return;
-
-        if (e.Key == Key.Down)
-        {
-            PagesListBox.Focus(NavigationMethod.Directional);
-
-            if (PagesListBox.SelectedIndex < PagesListBox.ItemCount - 1)
-                PagesListBox.SelectedIndex++;
-            else
-                PagesListBox.SelectedIndex = 0;
-
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Up)
-        {
-            PagesListBox.Focus(NavigationMethod.Directional);
-
-            if (PagesListBox.SelectedIndex > 0)
-                PagesListBox.SelectedIndex--;
-            else
-                PagesListBox.SelectedIndex = PagesListBox.ItemCount - 1;
-
-            e.Handled = true;
-        }
     }
+    //     if (PagesListBox.ItemCount == 0)
+    //         return;
+    //
+    //     if (e.Key == Key.Down)
+    //     {
+    //         PagesListBox.Focus(NavigationMethod.Directional);
+    //
+    //         if (PagesListBox.SelectedIndex < PagesListBox.ItemCount - 1)
+    //             PagesListBox.SelectedIndex++;
+    //         else
+    //             PagesListBox.SelectedIndex = 0;
+    //
+    //         e.Handled = true;
+    //     }
+    //     else if (e.Key == Key.Up)
+    //     {
+    //         PagesListBox.Focus(NavigationMethod.Directional);
+    //
+    //         if (PagesListBox.SelectedIndex > 0)
+    //             PagesListBox.SelectedIndex--;
+    //         else
+    //             PagesListBox.SelectedIndex = PagesListBox.ItemCount - 1;
+    //
+    //         e.Handled = true;
+    //     }
+    // }
 }

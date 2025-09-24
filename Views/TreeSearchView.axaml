@@ -40,7 +40,7 @@
                         
                         <TreeDataTemplate DataType="vm:OpenEditorNode" ItemsSource="{Binding SubNodes}">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/>
+                                <!-- <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/> -->
                                 <!-- <Svg   Width="16" Height="16" Path="/Assets/fill/folder-fill.svg"/> -->
                                 <!-- <Image Width="16" Height="16" -->
 

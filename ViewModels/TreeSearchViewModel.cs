@@ -15,16 +15,16 @@ public class TreeSearchViewModel : ViewModelBase
         SelectedNodes = new ObservableCollection<NodeBase>();
         Nodes = new ObservableCollection<NodeBase>
         {
-            new OpenEditorNode("Dev Control", "IconGameController"),
-            new OpenEditorNode("Zone Editor", "IconGameController"),
-            new OpenEditorNode("Ground Editor", "IconGameController"),
+            new OpenEditorNode("Dev Control", "Icons.GameControllerFill"),
+            new OpenEditorNode("Zone Editor", "Icons.GameControllerFill"),
+            new OpenEditorNode("Ground Editor","Icons.GameControllerFill"),
             new NodeBase("Constants")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
                     new NodeBase("Start Parameters"),
                     new NodeBase("Universal Events"),
-                    new NodeBase("Strings", "IconFloppyDisk")
+                    new NodeBase("Strings", "Icons.FloppyDiskFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
@@ -42,11 +42,11 @@ public class TreeSearchViewModel : ViewModelBase
                     },
                 }
             },
-            new NodeBase("Data", "IconFloppyDisk")
+            new NodeBase("Data", "Icons.FloppyDiskFill")
             {
                 SubNodes =
                 {
-                    new DataRootNode("Monsters", "Monsters", "IconGhost")
+                    new DataRootNode("Monsters", "Monsters", "Icons.GhostFill")
                     {
                         SubNodes = 
                         {
@@ -61,14 +61,14 @@ public class TreeSearchViewModel : ViewModelBase
                             new NodeBase("ammo_cacnea_spike: Eevee"),
                         }
                     },
-                    new ActionDataNode("Zones", "IconSword")
+                    new ActionDataNode("Zones", "Icons.SwordFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
                             new NodeBase("ambush_forest: Ambush Forest"),
                         }
                     },
-                    new ActionDataNode("Statuses", "IconHeart")
+                    new ActionDataNode("Statuses", "Icons.HeartFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
@@ -77,7 +77,7 @@ public class TreeSearchViewModel : ViewModelBase
                     },
                 }
             },
-            new NodeBase("Sprites", "IconPaintBrush")
+            new NodeBase("Sprites", "Icons.PaintBrushFill")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
@@ -101,7 +101,7 @@ public class TreeSearchViewModel : ViewModelBase
                     },
                 }
             },
-            new NodeBase("Mods", "IconPaintBrush")
+            new NodeBase("Mods", "Icons.PaintBrushFill")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {

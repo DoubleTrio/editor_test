@@ -179,7 +179,7 @@ namespace AvaloniaTest.Views
                 var point = e.GetCurrentPoint(border);
                 if (point.Properties.IsMiddleButtonPressed && border.DataContext is ViewModels.EditorPageViewModel page)
                 {
-                    (DataContext as MainWindowViewModel)?.CloseTab(page);
+                    (DataContext as MainWindowViewModel)?.RemovePage(page);
                     e.Handled = true;
                 }
                 else
@@ -242,7 +242,7 @@ namespace AvaloniaTest.Views
                 close.Tag = OperatingSystem.IsMacOS() ? "⌘+W" : "Ctrl+W";
                 close.Click += (_, ev) =>
                 {
-                    vm.CloseTab(page);
+                    vm.RemovePage(page);
                     ev.Handled = true;
                 };
                 menu.Items.Add(close);
@@ -315,7 +315,7 @@ namespace AvaloniaTest.Views
         private void OnCloseTab(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && DataContext is ViewModels.MainWindowViewModel vm)
-                vm.CloseTab(btn.DataContext as ViewModels.EditorPageViewModel);
+                vm.RemovePage(btn.DataContext as ViewModels.EditorPageViewModel);
 
             e.Handled = true;
         }
