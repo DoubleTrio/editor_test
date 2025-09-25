@@ -19,49 +19,6 @@ using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Media;
 
-public class TabEvents
-{
-    public event Action<EditorPageViewModel, EditorPageViewModel> AddChildTabEvent;
-    public event Action<EditorPageViewModel> AddTopLevelTabEvent;
-    
-    public event Action<EditorPageViewModel> AddTemporaryTabEvent;
-    public event Action<EditorPageViewModel> RemoveTabEvent;
-
-    public void AddChildPage<T>(EditorPageViewModel parent) where T : EditorPageViewModel, new()
-    {
-        var child = new T();
-        AddChildTabEvent.Invoke(parent, child);
-    }
-    
-    public void AddChildPage(EditorPageViewModel parent, EditorPageViewModel child)
-    {
-        AddChildTabEvent.Invoke(parent, child);
-    }
-
-    public void AddTopLevelTab<T>() where T : EditorPageViewModel, new()
-    {
-        var tab = new T();
-        AddTopLevelTabEvent.Invoke(tab);
-    }
-    
-    public void AddTopLevelTab(EditorPageViewModel tab)
-    {
-        AddTopLevelTabEvent.Invoke(tab);
-    }
-
-
-    public void AddTemporaryTab<T>() where T : EditorPageViewModel, new()
-    {
-        var tab = new T();
-        AddTemporaryTabEvent.Invoke(tab);
-    }
-
-    public void RemoveTab(EditorPageViewModel page)
-    {
-        RemoveTabEvent.Invoke(page);
-    }
-}
-
 public class MainWindowViewModel : ViewModelBase
 {
     public void OnTabSwitcherOpened()
@@ -78,7 +35,6 @@ public class MainWindowViewModel : ViewModelBase
         {
             TabSwitcher.Dispose();
             TabSwitcher = null;
-            Console.WriteLine("TabSwitcher disposed");
         }
     }
 
@@ -169,6 +125,7 @@ public class MainWindowViewModel : ViewModelBase
         var node = new PageNode(page);
         TopLevelPages.Add(node);
         _pageToNodeMap[page] = node;
+        ActivePage = page;
     }
     
     public void AddChildPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
@@ -185,7 +142,6 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
     
-    // Remove a page and handle hierarchy
     public void RemovePage(EditorPageViewModel page)
     {
         
@@ -206,28 +162,25 @@ public class MainWindowViewModel : ViewModelBase
             }
             else if (removeIdx < Pages.Count)
             {
-                ActivePage = Pages[removeIdx]; // select "next" page if possible
+                ActivePage = Pages[removeIdx];
             }
             else
             {
-                ActivePage = Pages[Pages.Count - 1]; // fallback to last
+                ActivePage = Pages[Pages.Count - 1];
             }
         }
     }
 
     private void ClosePageAndChildren(PageNode node)
     {
-        // Close all children recursively
         var children = node.SubNodes.Cast<PageNode>().ToList();
         foreach (var child in children)
         {
             ClosePageAndChildren(child);
         }
         
-        // Remove from flat Pages collection
         Pages.Remove(node.Page);
         
-        // Remove from hierarchy
         if (node.IsTopLevel)
         {
             TopLevelPages.Remove(node);
@@ -531,17 +484,9 @@ public class MainWindowViewModel : ViewModelBase
     public void NavigateToPage(PageNode node)
     {
         ActivePage = node.Page;
-        // Close tab switcher
-        // TabSwitcher.IsSwitcherOpen = false;
+        
     }
     
-    // Find node by page
-    // public PageNode FindNode(EditorPageViewModel page)
-    // {
-    //     return _pageToNodeMap.TryGetValue(page, out var node) ? node : null;
-    // }
-
     public TreeSearchViewModel TreeSearch { get; } = new TreeSearchViewModel();
-    // public TabSwitcherViewModel TabSwitcher { get; }
 }
 

@@ -8,7 +8,7 @@
              xmlns:v="using:AvaloniaTest.Views"
              xmlns:conv="using:AvaloniaTest.Converters"
              xmlns:local="clr-namespace:AvaloniaTest.Converters"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
              x:Class="AvaloniaTest.Views.TabBarView"
              x:DataType="vm:MainWindowViewModel"
              x:Name="MainTabBar">
@@ -16,6 +16,22 @@
   <UserControl.Resources>
     <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
   </UserControl.Resources>
+  <UserControl.DataContext>
+    <vm:MainWindowViewModel/>
+  </UserControl.DataContext>
+    
+  <UserControl.Styles>
+    <Style Selector="Path#CloseTabPath">
+      <Setter Property="Opacity" Value="0"></Setter>
+    </Style>
+    <Style Selector="ListBoxItem:selected Path#CloseTabPath">
+      <Setter Property="Opacity" Value="1"></Setter>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover Path#CloseTabPath">
+      <Setter Property="Opacity" Value="1"></Setter>
+    </Style>
+    
+  </UserControl.Styles>
   <Grid ColumnDefinitions="Auto,*,Auto">
     <RepeatButton Grid.Column="0"
                   Classes="icon_button"
@@ -127,6 +143,13 @@
                   <!--            IsVisible="{Binding !Node.IsRepository}" -->
                   <!--            IsHitTestVisible="False"/> -->
 
+                  
+                  <Ellipse Grid.Column="2"
+                           Width="8" Height="8"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding Modified}"
+                           Fill="Gray"/>
                   <Button Grid.Column="2"
                           Classes="icon_button"
                           Width="16" Height="16" Margin="12,0"
@@ -141,7 +164,7 @@
                                    Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
                       </StackPanel>
                     </ToolTip.Tip>
-                    <Path Width="9" Height="9" Data="{StaticResource Icons.Close}"/>
+                    <Path x:Name="CloseTabPath" Width="9" Height="9" Data="{StaticResource Icons.Close}"/>
                   </Button>
                 </Grid>
               </Border>

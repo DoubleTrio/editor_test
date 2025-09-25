@@ -45,6 +45,16 @@ public class EditorPageViewModel : ViewModelBase
         }
     }
     
+    
+       private bool _modified = false;
+        public bool Modified
+        {
+            get { return _modified; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _modified, value);
+            }
+        }
     private readonly TabEvents _tabEvents;
     
     public EditorPageViewModel(TabEvents tabEvents)

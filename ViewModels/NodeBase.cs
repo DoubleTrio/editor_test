@@ -110,9 +110,10 @@ public class DataItemNode : OpenEditorNode
 
 
     public DataItemNode(string itemKey, string editorKey, string? title, string? icon = null) 
-        : base(title ?? "", icon ?? "")
+        : base(title ?? "", icon ?? "", editorKey)
     {
-        // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{Key}: {v}");
+        ItemKey = itemKey;
+        this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
         
         // DataDeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
     }
@@ -149,7 +150,6 @@ public class DataRootNode : OpenEditorNode
         {
             SubNodes.Remove(node);
             Console.WriteLine($"Deleting {node.Title} of type {_dataType}");
-            // DataManager.Remove(assetName, _dataType);
         });
         
         AddCommand = ReactiveCommand.Create<DataItemNode>(node =>
@@ -157,8 +157,6 @@ public class DataRootNode : OpenEditorNode
             SubNodes.Add(node);
             Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
             
-            
-            // DataManager.Remove(assetName, _dataType);
         });
 
         ReIndexCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -176,40 +174,11 @@ public class DataRootNode : OpenEditorNode
             
             // DataManager.Remove(assetName, _dataType);
         });
-        
-        AddCommand2 = ReactiveCommand.Create(() =>
-        {
-            Console.WriteLine("yahoo");
-            // var item = new DataItemNode("new key", "value");
-            // SubNodes.Add(item);
-            // var 
-            // Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
-            
-            
-            // DataManager.Remove(assetName, _dataType);
-        });
     }
 }
 
 
-public class IdNode : NodeBase
-{
-    public string Id { get; }
-    
-    public IdNode(string title = "", string? icon = null, string? id = null)
-        : base(title, icon)
-    {
-        Id = id ?? Guid.NewGuid().ToString();
-    }
-    
-    // public IdNode(string title, string icon, ObservableCollection<NodeBase> subNodes, string? id = null)
-    //     : base(title, icon, subNodes)
-    // {
-    //     Id = id ?? Guid.NewGuid().ToString();
-    // }
-}
-
-// Used only for the Tab Switcher
+// Used by TabSwitcher
 public class PageNode : NodeBase
 {
     public EditorPageViewModel Page { get; }
