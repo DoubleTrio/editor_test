@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:AvaloniaTest.ViewModels">
+    <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
+        <Grid ColumnDefinitions="Auto,*">
+            <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                  Width="12" Height="12" Margin="0,0,6,0"
+                  Fill="{DynamicResource Brush.FG2}"
+                  Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/>
+            <TextBlock Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Text="{Binding Title}"
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="NoWrap"
+                       ClipToBounds="True" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

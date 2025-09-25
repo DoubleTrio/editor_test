@@ -3,7 +3,9 @@
                     xmlns:vm="using:AvaloniaTest.ViewModels"
                     xmlns:v="using:AvaloniaTest.Views"
                     xmlns:conv="using:AvaloniaTest.Converters"
+                    xmlns:converters="using:Avalonia.Controls.Converters"
                     xmlns:views="clr-namespace:AvaloniaTest.Views"
+                    xmlns:avconv="using:Avalonia.Controls.Converters"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="450"
@@ -17,9 +19,15 @@
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
+        
     </Design.DataContext>
 
     <Window.Resources>
+
+        <converters:MarginMultiplierConverter
+            x:Key="CustomTreeViewItemLeftMarginConverter"
+            Indent="3"
+            Left="True" />
         <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
         <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
             <Grid ColumnDefinitions="Auto,*">
@@ -38,62 +46,6 @@
         </DataTemplate>
     </Window.Resources>
     <Window.Styles>
-        
-        <Style Selector="TreeViewItem Button">
-            <Setter Property="Opacity" Value="1"> </Setter>
-        </Style>
-        
-        <Style Selector="TreeViewItem:pointerover /template/ Path">
-            <!-- <Setter Property="Foreground" Value="Red" /> -->
-            <!-- <Setter Property="Background" Value="Red" /> -->
-            <!-- <Setter Property="BorderThickness" Value="1" /> -->
-            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
-            <Setter Property="Opacity" Value="0" />
-            <Setter Property="Width" Value="16" />
-            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
-            
-            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
-            
-            
-        </Style>
-        
-        <Style Selector="Grid#PART_Header Path">
-            
-            <!-- <Setter Property="Data" Value="{StaticResource Icons.EyeClose}"></Setter> -->
-            <!-- <Setter Property="Foreground" Value="Red" /> -->
-            <!-- <Setter Property="Background" Value="Red" /> -->
-            <!-- <Setter Property="BorderThickness" Value="1" /> -->
-            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
-            <!-- <Setter Property="Opacity" Value="0.2" /> -->
-            <!-- <Setter Property="Width" Value="16" /> -->
-            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
-            
-            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
-            
-        </Style>
-
-        
-        
-                
-        <Style Selector="TreeViewItem Path">
-            <Setter Property="Width" Value="11"></Setter>
-            <Setter Property="Height" Value="11"></Setter>
-            </Style>
-        <Style Selector="TreeViewItem:pointerover Path">
-            <Setter Property="Data" Value="{StaticResource Icons.Branch}"></Setter>
-            <!-- <Setter Property="Foreground" Value="Red" /> -->
-            <!-- <Setter Property="Background" Value="Red" /> -->
-            <!-- <Setter Property="BorderThickness" Value="1" /> -->
-            <!-- <Setter Property="BorderBrush" Value="Black" /> -->
-            <!-- <Setter Property="Opacity" Value="0" /> -->
-            <!-- <Setter Property="Width" Value="16" /> -->
-            <!-- <Setter Property="IsVisible" Value="True"></Setter> -->
-            
-            <!-- <Setter Property="IsNoneVisible" Value="True"/> -->
-            
-        </Style>
-        
-
 
     </Window.Styles>
 
@@ -164,7 +116,7 @@
                 <Border Margin="8 8">
                     <Grid RowDefinitions="Auto,*">
                         <TextBox
-                            Height="26"
+                            FontSize="12"
                             Margin="0,6,0,0"
                             BorderThickness="1"
                             CornerRadius="4"
@@ -198,7 +150,7 @@
                         </TextBox>
 
 
-                        <TreeView Grid.Row="1" Margin="0"
+                        <TreeView Classes="custom" Grid.Row="1" Margin="0"
                                   x:Name="MasterTreeView"
                                   ItemsSource="{Binding TreeSearch.Nodes}"
                                   SelectedItems="{Binding TreeSearch.SelectedNodes}"
@@ -207,126 +159,13 @@
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                             <TreeView.Styles>
-                                
                                 <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                                    <Setter Property="Padding" Value="4"/>
-                                    <Setter Property="FontSize" Value="13"/>
-                                    <Setter Property="MinHeight" Value="20"/>
-                                    <!-- <Style Selector="^ Path"  > -->
-                                    <!--     <Setter Property="Fill" Value="Blue"/> -->
-                                    <!-- </Style> -->
-                                    <!-- <Style Selector="^:pointerover" > -->
-                                    <!--     ~1~ <Setter Property="Fill" Value="Blue"></Setter> @1@ -->
-                                    <!--     ~1~ <Setter Property="Background" Value="Red"></Setter> @1@ -->
-                                    <!--     ~1~ <Setter Property="Foreground" Value="Red"></Setter> @1@ -->
-                                    <!--     <Style Selector="^ Path#PART_IndicatorPlus" > -->
-                                    <!--         ~1~ <Setter Property="Opacity" Value="0.2"/> @1@ -->
-                                    <!--         <Setter Property="Fill" Value="Blue"/> -->
-                                    <!--     </Style> -->
-                                    <!-- </Style> -->
-                                    <!-- -->
-                                 
                                 </Style>
-                                
-                                <Style Selector="Border#PART_LayoutRoot:pointerover" >
-                                    <!-- <Setter Property="Fill" Value="Blue"></Setter> -->
-                                    <!-- <Setter Property="Background" Value=""></Setter> -->
-                                    <!-- <Setter Property="Foreground" Value="Red"></Setter> -->
-                                    <!-- <Style Selector="^ Path" > -->
-                                    <!--     <Setter Property="Opacity" Value="0.2"/> -->
-                                    <!--     <Setter Property="Fill" Value="Blue"/> -->
-                                    <!-- </Style> -->
-                                    <Style Selector="^ Path"  >
-                                        <Setter Property="Fill" Value="Blue"/>
-                                    </Style>
-                                    <Style Selector="^ Button"  >
-                                        <Setter Property="Opacity" Value="1"/>
-                                    </Style>
-                                    <Style Selector="^ /template/ ContentPresenter Button"  >
-                                        <Setter Property="Opacity" Value="1"/>
-                                    </Style>
-                                    
-                                    <Style Selector="^ /template/ ContentPresenter"  >
-                                        <!-- <Setter Property="Fill" Value="Yellow"/> -->
-                                        <Setter Property="Foreground" Value="Red"></Setter>
-                                        <Setter Property="Background" Value="Red"></Setter>
-                                    </Style>
-                                    
-                                    
-
-                                    
-                             
-                                    
-                                    </Style>
-                                <!-- <Style Selector="Button:pointerover"  > -->
-                                <!--     <Setter Property="Opacity" Value="1"/> -->
-                                <!-- </Style> -->
-                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover Path"> -->
-                                <!--     <Setter Property="Fill" Value="Yellow"/> -->
-                                <!-- </Style> -->
-                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover /template/  ContentPresenter#PART_ContentPresenter"> -->
-                                <!--     <Setter Property="Foreground" Value="Red"></Setter> -->
-                                <!--     <Setter Property="Background" Value="Red"></Setter> -->
-                                <!--      -->
-                                <!-- </Style> -->
-                                <!-- -->
-                                
-                                
-                                <!-- /template/  -->
-                                <!-- <Style Selector="Border#PART_LayoutRoot:pointerover"> -->
-                                <!--     ~1~ <Setter Property="Foreground" Value="Blue"></Setter> @1@ -->
-                                <!--     <Setter Property="Background" Value="Blue"></Setter> -->
-                                <!--     <Style Selector="^ Path"> -->
-                                <!--         <Setter Property="Opacity" Value="0.2"></Setter> -->
-                                <!--     </Style> -->
-                                <!-- </Style> -->
-                                <!-- -->
-                                <!-- Avalonia.Controls.Presenters|ContentPresenter#PART_HeaderPresenter -->
-                                <!-- <Style Selector="ContentPresenter#PART_ContentPresenter"> -->
-                                <!--     ~1~ <Setter Property="Foreground" Value="Blue"></Setter> @1@ -->
-                                <!--     <Setter Property="Background" Value="Blue"></Setter> -->
-                                <!--     <Style Selector="^ Path"> -->
-                                <!--         <Setter Property="Opacity" Value="0.2"></Setter> -->
-                                <!--         <Setter Property="Fill" Value="Blue"></Setter> -->
-                                <!--     </Style> -->
-                                <!-- </Style> -->
-
-                                
-                                
-                                
-                                <!-- <Style Selector="ContentPresenter#PART_ContentPresenter:pointerover"> -->
-                                <!--     <Setter Property="Foreground" Value="Red"></Setter> -->
-                                <!--     <Setter Property="Background" Value="Red"></Setter> -->
-                                <!-- -->
-                                <!-- </Style> -->
-
-                                
-                                <Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover Button" >
-                                    <Setter Property="Opacity" Value="1"/>
-                                </Style>
-                                    
-                                <Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover ContentPresenter Button" >
-                                    <Setter Property="Opacity" Value="1"/>
-                                </Style>
-                                <!-- -->
-                                <!-- <Style Selector="Button:pointerover" > -->
-                                <!--     <Setter Property="Opacity" Value="1"/> -->
-                                <!-- </Style> -->
                             </TreeView.Styles>
-
                             
-                            <!-- Animation = -1, // Highest priority -->
-                            <!-- LocalValue = 0, -->
-                            <!-- StyleTrigger, -->
-                            <!-- Template, -->
-                            <!-- Style, -->
-                            <!-- Inherited, -->
-                            <!-- Unset = int.MaxValue, // Lowest priority -->
                             <TreeView.DataTemplates>
-                                <!-- OpenEditorNode -->
-
                                 <TreeDataTemplate DataType="vm:OpenEditorNode" ItemsSource="{Binding SubNodes}">
                                     <Grid ColumnDefinitions="*, Auto">
                                         <ContentPresenter Content="{Binding}"
@@ -344,34 +183,22 @@
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
 
                                         <ContentControl/>
-                                        <ContentControl/>
                                         
                                         <Button Command="{Binding  $parent[TreeViewItem;1].((vm:DataRootNode)DataContext).AddCommand2}" Content="cc" />
-                                        <!-- <Button Content="-" Command="{Binding $parent[TreeViewItem].TemplatedParent.((vm:DataRootNode)DataContext).AddCommand2}}" /> -->
-     
-                                        <!-- <Button Content="−" Command="{Binding DeleteCommand}" /> -->
-                                        
                                     </StackPanel>
                                 </TreeDataTemplate>
+                                
                                 <!-- ActionDataNode -->
                                 <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
                                     <Grid ColumnDefinitions="Auto, *, Auto">
                                         
                                         <ContentPresenter Content="{Binding}"
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
-                                        
-
                                         <Button Grid.Column="2" Classes="icon_button" Command="{Binding AddCommand}" >
-                                            <!-- <Button.Classes> -->
-                                            <!--     <Classes> -->
-                                            <!--         icon_button -->
-                                            <!--         <Classes.item >special_class</Classes.item> -->
-                                            <!--     </Classes> -->
-                                            <!-- </Button.Classes> -->
                                             <Path x:Name="PART_IndicatorPlus"
                                                   Stretch="Fill"
                                                   Fill="{DynamicResource Brush.FG1}"
-                                                  Width="8" Height="8" Margin="0,2,0,0"
+                                                  Width="6" Height="6" Margin="0,0,0,0"
                                                   Data="{StaticResource Icons.Plus}"/>
                                         </Button>
                                     </Grid>

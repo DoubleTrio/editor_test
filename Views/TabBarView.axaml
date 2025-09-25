@@ -16,9 +16,9 @@
   <UserControl.Resources>
     <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
   </UserControl.Resources>
-  <UserControl.DataContext>
+  <Design.DataContext>
     <vm:MainWindowViewModel/>
-  </UserControl.DataContext>
+  </Design.DataContext>
     
   <UserControl.Styles>
     <Style Selector="Path#CloseTabPath">

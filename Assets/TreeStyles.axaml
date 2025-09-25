@@ -1,0 +1,88 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="using:AvaloniaTest"
+        xmlns:vm="using:AvaloniaTest.ViewModels"
+        xmlns:v="using:AvaloniaTest.Views"
+        xmlns:local="clr-namespace:AvaloniaTest.Converters"
+        xmlns:c="using:AvaloniaTest.Converters">
+    
+    <Styles.Resources>
+    <local:TreeViewItemIndentConverter x:Key="TreeViewIndentConverter"/>
+    <ControlTheme x:Key="FluentTreeViewExpandCollapseChevron" TargetType="ToggleButton">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <Path x:Name="ChevronPath"
+                          Data="{StaticResource TreeViewItemCollapsedChevronPathData}"
+                          Fill="{DynamicResource TreeViewItemForeground}"
+                          Stretch="Uniform"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+    <!-- All of this just to change the chevron icon margin to 3 instead of 12.  -->
+    </Styles.Resources>
+                  
+    
+   
+    <!-- https://docs.avaloniaui.net/docs/guides/styles-and-resources/troubleshooting -->
+    <!-- https://github.com/AvaloniaUI/Avalonia/discussions/18014 -->
+    <Style Selector="TreeViewItem">
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="20"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel>
+                    <Border Name="PART_LayoutRoot"
+                            Classes="TreeViewItemLayoutRoot"
+                            Focusable="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            TemplatedControl.IsTemplateFocusTarget="True">
+                        <Grid Name="PART_Header"
+                              ColumnDefinitions="Auto, *">
+                            <Grid.Margin>
+                                <MultiBinding Converter="{StaticResource TreeViewIndentConverter}">
+                                    <Binding Path="Level" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <DynamicResource ResourceKey="TreeViewItemIndent" />
+                                </MultiBinding>
+                            </Grid.Margin>
+                            <Panel Name="PART_ExpandCollapseChevronContainer"
+                                   Margin="5 0">
+                                <ToggleButton Name="PART_ExpandCollapseChevron"
+                                              Theme="{StaticResource FluentTreeViewExpandCollapseChevron}"
+                                              Focusable="False"
+                                              IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" />
+                            </Panel>
+                            <ContentPresenter Name="PART_HeaderPresenter"
+                                              Grid.Column="1"
+                                              Focusable="False"
+                                              Background="Transparent"
+                                              Content="{TemplateBinding Header}"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Grid>
+                    </Border>
+                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                    IsVisible="{TemplateBinding IsExpanded}"
+                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

@@ -16,29 +16,29 @@ public class TreeSearchViewModel : ViewModelBase
         Nodes = new ObservableCollection<NodeBase>
         {
             new OpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"),
-            new OpenEditorNode("Zone Editor", "Icons.GameControllerFill", "ZoneEditor"),
-            new OpenEditorNode("Ground Editor","Icons.GameControllerFill", "GroundEditor"),
+            new OpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"),
+            new OpenEditorNode("Ground Editor","Icons.MapTrifoldFill", "GroundEditor"),
             new OpenEditorNode("Testing","Icons.BedFill", "RandomInfo"),
-            new OpenEditorNode("Constants")
+            new OpenEditorNode("Constants", "Icons.ListFill")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
-                    new OpenEditorNode("Start Parameters"),
-                    new OpenEditorNode("Universal Events"),
-                    new OpenEditorNode("Strings", "Icons.FloppyDiskFill")
+                    new OpenEditorNode("Start Parameters", "Icons.ListFill"),
+                    new OpenEditorNode("Universal Events", "Icons.ListFill"),
+                    new OpenEditorNode("Strings", "Icons.TableFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new OpenEditorNode("English"),
-                            new OpenEditorNode("Chinese")
+                            new OpenEditorNode("English", "Icons.TableFill"),
+                            new OpenEditorNode("Chinese", "Icons.TableFill")
                         }
                     },
-                    new OpenEditorNode("Effects")
+                    new OpenEditorNode("Effects", "Icons.SparkleFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new OpenEditorNode("Heal FX"),
-                            new OpenEditorNode("+Charge FX"),
+                            new OpenEditorNode("Heal FX", "Icons.SparkleFill"),
+                            new OpenEditorNode("+Charge FX", "Icons.SparkleFill"),
                         }
                     },
                 }
@@ -47,35 +47,35 @@ public class TreeSearchViewModel : ViewModelBase
             {
                 SubNodes =
                 {
-                    new DataRootNode("Monsters", "Monsters", "Icons.GhostFill")
+                    new DataRootNode("Monsters", "Monsters", "Monsters", "Icons.GhostFill")
                     {
                         SubNodes = 
                         {
                             
                             // TODO: Change later
-                            new DataItemNode("eevee", "DevControl", "eevee: Eevee"),
-                            new DataItemNode("seviper", "DevControl", "seviper: Seviper")
+                            new DataItemNode("eevee", "DevControl", "eevee: Eevee", "Icons.GhostFill"),
+                            new DataItemNode("seviper", "DevControl", "seviper: Seviper", "Icons.GhostFill")
                         }
                     },
-                    new ActionDataNode("Items")
+                    new ActionDataNode("Items", "Icons.JarLabelFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("ammo_cacnea_spike: Eevee"),
+                            new NodeBase("ammo_cacnea_spike: Ammo Cacnea Spike", "Icons.JarLabelFill"),
                         }
                     },
-                    new ActionDataNode("Zones", "Icons.SwordFill")
+                    new ActionDataNode("Zones", "Icons.StairsFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("ambush_forest: Ambush Forest"),
+                            new NodeBase("ambush_forest: Ambush Forest", "Icons.StairsFill"),
                         }
                     },
                     new ActionDataNode("Statuses", "Icons.HeartFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("para: Paralyzed"),
+                            new NodeBase("para: Paralyzed", "Icons.HeartFill"),
                         }
                     },
                 }
@@ -84,32 +84,32 @@ public class TreeSearchViewModel : ViewModelBase
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
-                    new NodeBase("Char Sprites"),
-                    new NodeBase("Portraits"),
-                    new ActionDataNode("Particles")
+                    new NodeBase("Char Sprites", "Icons.GhostFill"),
+                    new NodeBase("Portraits", "Icons.ImagesSquareFill"),
+                    new ActionDataNode("Particles", "Icons.ShootingStarFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("Absorb"),
-                            new NodeBase("Acid_Blue"),
+                            new NodeBase("Absorb", "Icons.ShootingStarFill"),
+                            new NodeBase("Acid_Blue", "Icons.ShootingStarFill"),
                         }
                     },
-                    new ActionDataNode("Beam")
+                    new ActionDataNode("Beam", "Icons.HeadlightsFill")
                     {
                         SubNodes = new ObservableCollection<NodeBase>
                         {
-                            new NodeBase("Beam_2"),
-                            new NodeBase("Beam_Pink"),
+                            new NodeBase("Beam_2", "Icons.HeadlightsFill"),
+                            new NodeBase("Beam_Pink", "Icons.HeadlightsFill"),
                         }
                     },
                 }
             },
-            new NodeBase("Mods", "Icons.PaintBrushFill")
+            new NodeBase("Mods", "Icons.SwordFill")
             {
                 SubNodes = new ObservableCollection<NodeBase>
                 {
-                    new NodeBase("halcyon: Halcyon"),
-                    new NodeBase("zorea_mystery_dungeon: Zorea Mystery Dungeon"),
+                    new NodeBase("halcyon: Halcyon", "Icons.SwordFill"),
+                    new NodeBase("zorea_mystery_dungeon: Zorea Mystery Dungeon", "Icons.SwordFill"),
                 }
             }
         };
