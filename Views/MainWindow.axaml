@@ -19,7 +19,6 @@
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
-        
     </Design.DataContext>
 
     <Window.Resources>
@@ -171,7 +170,7 @@
                                         <ContentPresenter Content="{Binding}"
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
 
-                                        <ContentControl/>
+                                   
                                     </Grid>
                                 </TreeDataTemplate>
 

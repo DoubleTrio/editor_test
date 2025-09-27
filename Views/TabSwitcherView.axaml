@@ -15,20 +15,6 @@
     </Design.DataContext>
 
     <UserControl.Resources>
-        <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
-        <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
-                <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                      Width="16" Height="16"
-                      Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/>
-                <TextBlock Grid.Column="1"
-                           VerticalAlignment="Center"
-                           Text="{Binding Title}"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           ClipToBounds="True" />
-            </Grid>
-        </DataTemplate>
     </UserControl.Resources>
     <Grid RowDefinitions="Auto, Auto">
         <TextBox Grid.Row="0"
@@ -37,7 +23,7 @@
                  MaxWidth="400"
                  Margin="4,8,4,0"
                  BorderThickness="1"
-                 CornerRadius="12"
+                 CornerRadius="4"
                  Watermark="Search for tabs..."
                  Text="{Binding SearchFilter, Mode=TwoWay}"
                  KeyDown="OnSearchBoxKeyDown"
@@ -88,12 +74,10 @@
 
             <TreeView.DataTemplates>
                 <!-- OpenEditorNode -->
-
                 <TreeDataTemplate DataType="vm:PageNode" ItemsSource="{Binding SubNodes}">
                     <Grid ColumnDefinitions="*, Auto">
                         <ContentPresenter Content="{Binding}"
                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
-                        <ContentControl />
                     </Grid>
                 </TreeDataTemplate>
             </TreeView.DataTemplates>
