@@ -1,8 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:AvaloniaTest.Converters"
                     xmlns:vm="clr-namespace:AvaloniaTest.ViewModels">
-    <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
     <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
         <Grid ColumnDefinitions="Auto,*">
             <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"

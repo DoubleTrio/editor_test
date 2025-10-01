@@ -7,6 +7,7 @@
              xmlns:c="using:AvaloniaTest.Converters"
              xmlns:v="using:AvaloniaTest.Views"
              xmlns:conv="using:AvaloniaTest.Converters"
+             xmlns:controls="clr-namespace:Tabalonia.Controls;assembly=Tabalonia"
              xmlns:local="clr-namespace:AvaloniaTest.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
              x:Class="AvaloniaTest.Views.TabBarView"
@@ -31,6 +32,31 @@
       <Setter Property="Opacity" Value="1"></Setter>
     </Style>
     
+    <Style Selector="TabControl /template/ Border">
+      <Setter Property="Background" Value="Red"></Setter>
+      <!-- <Setter Property="Fore" Value="Red"></Setter> -->
+    </Style>
+
+        
+    <Style Selector="controls|DragTabItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Green"></Setter>
+      <!-- <Setter Property="Fore" Value="Red"></Setter> -->
+    </Style>
+    <!-- -->
+    <!-- <Style Selector="Border:pointerover"> -->
+    <!--   <Setter Property="Background" Value="Yellow"></Setter> -->
+    <!--   ~1~ <Setter Property="Fore" Value="Red"></Setter> @1@ -->
+    <!-- </Style> -->
+    <!-- -->
+    <!--     -->
+    <Style Selector="Border:pointerover Path#CloseTabPath">
+      <Setter Property="Opacity" Value="1"></Setter>
+    </Style>
+
+    
+    <!-- <Sty -->
+    
+    
   </UserControl.Styles>
   <Grid ColumnDefinitions="Auto,*,Auto">
     <RepeatButton Grid.Column="0"
@@ -50,28 +76,14 @@
                   VerticalScrollBarVisibility="Disabled"
                   PointerWheelChanged="ScrollTabs">
       <StackPanel Orientation="Horizontal">
-        <ListBox x:Name="LauncherTabsList"
-                 Classes="launcher_page_tabbar"
-                 ItemsSource="{Binding Pages}"
-                 SelectionMode="AlwaysSelected"
-                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                 SelectionChanged="OnTabsSelectionChanged"
-                 LayoutUpdated="OnTabsLayoutUpdated">
-          <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" Height="30"/>
-            </ItemsPanelTemplate>
-          </ListBox.ItemsPanel>
-
-          <ListBox.ItemTemplate>
-            <DataTemplate DataType="vm:EditorPageViewModel">
-              <Border Height="30"
-                      Background="Transparent"
-                      PointerPressed="OnPointerPressedTab"
-                      PointerMoved="OnPointerMovedOverTab"
-                      PointerReleased="OnPointerReleasedTab"
-                      Loaded="SetupDragAndDrop"
-                      ContextRequested="OnTabContextRequested">
+        
+        <controls:TabsControl SelectedItem="{Binding SelectedItem}" TabItemWidth="200" ShowDefaultCloseButton="False" ShowDefaultAddButton="False"
+                              ItemsSource="{Binding Pages}">
+          
+          <controls:TabsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:EditorPageViewModel}">
+              <Grid Background="Transparent">
+                <Border Height="30">
                 <ToolTip.Tip>
                   <Grid>
                     <!-- <TextBlock Text="{DynamicResource Text.Welcome}" IsVisible="{Binding !Node.IsRepository}"/> -->
@@ -86,12 +98,8 @@
                 </ToolTip.Tip>
 
                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
-                  <Grid Width="200" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
-                  <Path Grid.Column="0"
-                        Width="12" Height="12" Margin="12,0"
-                        Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
-                        IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        IsHitTestVisible="False"/>
+                  <Grid Width="200" Height="30" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+
                   <!-- <Path Grid.Column="0" -->
                   <!--       Width="12" Height="12" Margin="12,0" -->
                   <!--       Fill="{DynamicResource Brush.FG1}" -->
@@ -104,11 +112,16 @@
                   <!--       ColumnDefinitions="Auto,*" -->
                   <!--       IsHitTestVisible="False" -->
                   <!--       IsVisible="{Binding Node.IsRepository}"> -->
-                    <Grid Grid.Column="1"
+                    <Grid Grid.Column="0"
                           HorizontalAlignment="Center" VerticalAlignment="Center"
                           ColumnDefinitions="Auto,*"
                           IsHitTestVisible="False">
-                    <!-- <Ellipse Grid.Column="0" -->
+                      
+                      <Path Grid.Column="0"
+                            Width="12" Height="12" Margin="0 0"
+                            Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
+                            IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      <!-- <Ellipse Grid.Column="0" -->
                     <!--          Width="8" Height="8" -->
                     <!--          Margin="0,0,6,0" -->
                     <!--          VerticalAlignment="Center" -->
@@ -133,16 +146,6 @@
                                Text="{Binding Title}"
                                IsHitTestVisible="False"/>
                   </Grid>
-
-                  <!-- <TextBlock Grid.Column="1" -->
-                  <!--            Classes="primary" -->
-                  <!--            HorizontalAlignment="Stretch" VerticalAlignment="Center" -->
-                  <!--            FontSize="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.Decrease}}" -->
-                  <!--            TextAlignment="Center" -->
-                  <!--            Text="{DynamicResource Text.PageTabBar.Welcome.Title}" -->
-                  <!--            IsVisible="{Binding !Node.IsRepository}" -->
-                  <!--            IsHitTestVisible="False"/> -->
-
                   
                   <Ellipse Grid.Column="2"
                            Width="8" Height="8"
@@ -168,10 +171,15 @@
                   </Button>
                 </Grid>
               </Border>
+              </Grid>
             </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
-
+            
+          </controls:TabsControl.ItemTemplate>
+        </controls:TabsControl>
+        <!-- ItemsSource="{Binding Pages}" -->
+        <!-- ItemsSource="{Binding Pages}" -->
+        <!-- SelectedItem="{Binding SelectedItem, Mode=TwoWay}" -->
+       
         <Button Classes="icon_button"
                 Width="16" Height="16"
                 Margin="8,0"
@@ -187,7 +195,7 @@
                          Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
             </StackPanel>
           </ToolTip.Tip>
-
+      
           <Path Width="12" Height="12" Data="{StaticResource Icons.Plus}"/>
         </Button>
       </StackPanel>
