@@ -275,7 +275,9 @@ public class MainWindowViewModel : ViewModelBase
             return Unit.Default;
         });
 
-        AddTopLevelPage(new DevControlViewModel(_tabEvents));
+        var tab = new DevControlViewModel(_tabEvents);
+        tab.Icon = "Icons.GameControllerFill";
+        AddTopLevelPage(tab);
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
 

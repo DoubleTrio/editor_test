@@ -77,7 +77,7 @@
                   PointerWheelChanged="ScrollTabs">
       <StackPanel Orientation="Horizontal">
         
-        <controls:TabsControl SelectedItem="{Binding SelectedItem}" TabItemWidth="200" ShowDefaultCloseButton="False" ShowDefaultAddButton="False"
+        <controls:TabsControl SelectedItem="{Binding SelectedItem}" TabItemWidth="150" ShowDefaultCloseButton="False" ShowDefaultAddButton="False"
                               ItemsSource="{Binding Pages}">
           
           <controls:TabsControl.ItemTemplate>
@@ -98,7 +98,7 @@
                 </ToolTip.Tip>
 
                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
-                  <Grid Width="200" Height="30" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                  <Grid Width="150" Height="30" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
 
                   <!-- <Path Grid.Column="0" -->
                   <!--       Width="12" Height="12" Margin="12,0" -->
@@ -118,7 +118,7 @@
                           IsHitTestVisible="False">
                       
                       <Path Grid.Column="0"
-                            Width="12" Height="12" Margin="0 0"
+                            Width="12" Height="12" Margin="0, 0, 6, 0"
                             Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
                             IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                       <!-- <Ellipse Grid.Column="0" -->
@@ -138,7 +138,7 @@
                     
                     <TextBlock Grid.Column="1"
                                Classes="primary"
-                               Padding="6 0 0 0"
+                               Padding="0 0 0 0"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                FontSize="12"

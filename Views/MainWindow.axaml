@@ -52,11 +52,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding #WindowMain.CaptionHeight}"/>
-            <RowDefinition Height="16" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Tabs or something -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,32,*,32,Auto">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, Auto,*, 50">
             <Border Grid.Column="0" Grid.ColumnSpan="5"
                     DoubleTapped="MaximizeOrRestoreWindow"
                     PointerPressed="BeginMoveWindow"
@@ -68,42 +67,22 @@
             
             <!-- Switch Mod Button  -->
             <Button Grid.Column="1" Classes="icon_button" Command="{Binding AddDevControlTab}">
-                <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Settings}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Padding="0, 0, 6, 0">Halcyon</TextBlock>
+                    <Path HorizontalAlignment="Center" Width="10" Height="10" Margin="0,2,0,0" Data="{StaticResource Icons.CaretDownFill}"/>
+                </StackPanel>
             </Button>
-
-            <!-- Pages Tabs -->
-            <views:TabBarView Grid.Column="2" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom" />
 
             
-            <!-- Switch Tab  -->
-            <Button Grid.Column="3" Classes="icon_button" VerticalAlignment="Bottom" Name="TabSwitcherFlyoutButton">
-                <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}"/>
-                <Button.Flyout>
-                    <Flyout Placement="BottomEdgeAlignedRight"
-                            Opened="FlyoutBase_OnOpened"
-                            Closed="FlyoutBase_OnClosed">
-
-
-                        <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
-                            <!-- Margin="8,16,8,8" Background="{DynamicResource Brush.Popup}" -->
-                            <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
-                        </StackPanel>
-
-
-                    </Flyout>
-
-                </Button.Flyout>
-
-            </Button>
 
         </Grid>
-        <Grid Grid.Row="1">
-            <Border Grid.Column="0" Grid.ColumnSpan="5"
-                    Background="{DynamicResource Brush.ToolBar}"
-                    BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}" />
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Bold"
-                       Text="Editing Mod: Halcyon" />
-        </Grid>
+        <!-- <Grid Grid.Row="1"> -->
+        <!--     <Border Grid.Column="0" Grid.ColumnSpan="5" -->
+        <!--             Background="{DynamicResource Brush.ToolBar}" -->
+        <!--             BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}" /> -->
+        <!--     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Bold" -->
+        <!--                Text="Editing Mod: Halcyon" /> -->
+        <!-- </Grid> -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" MinWidth="200" MaxWidth="500" />
@@ -234,8 +213,35 @@
 
             <!-- Editor Panel -->
             <StackPanel Grid.Column="2">
-                <ContentControl Grid.Row="1" Content="{Binding TemporaryTab}"/>
-                <ContentControl Grid.Row="1" Content="{Binding ActivePage}" IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNull}}"/>
+                <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, 32">
+                    <!-- Pages Tabs -->
+                    <views:TabBarView Grid.Column="0" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom" />
+
+            
+                    <!-- Switch Tab  -->
+                    <Button Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom" Name="TabSwitcherFlyoutButton">
+                        <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}"/>
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight"
+                                    Opened="FlyoutBase_OnOpened"
+                                    Closed="FlyoutBase_OnClosed">
+
+
+                                <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
+                                    <!-- Margin="8,16,8,8" Background="{DynamicResource Brush.Popup}" -->
+                                    <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
+                                </StackPanel>
+
+
+                            </Flyout>
+
+                        </Button.Flyout>
+
+                    </Button>
+                    <ContentControl Grid.Row="1" Content="{Binding TemporaryTab}"/>
+                    <ContentControl Grid.Row="1" Content="{Binding ActivePage}" IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNull}}"/>
+
+                </Grid>
 
                 <!-- ~1~ Page @1@ -->
                 <!-- <ContentControl Grid.Row="1" Content="{Binding ActivePage}"> -->
