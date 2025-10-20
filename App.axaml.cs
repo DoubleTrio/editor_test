@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AvaloniaTest.ViewModels;
@@ -65,6 +66,17 @@ public partial class App : Application
             };
         }
 
+        // TopLevel provider
+        collection.AddSingleton<Func<TopLevel?>>(x => () =>
+        {
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime topWindow)
+                return TopLevel.GetTopLevel(topWindow.MainWindow);
+            
+            if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+                return TopLevel.GetTopLevel(singleViewPlatform.MainView);
+
+            return null;
+        });
         base.OnFrameworkInitializationCompleted();
     }
 }

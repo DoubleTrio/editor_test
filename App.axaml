@@ -2,9 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="AvaloniaTest.App"
              xmlns:local="using:AvaloniaTest"
-             xmlns:themes="clr-namespace:Tabalonia.Themes.Custom;assembly=Tabalonia"
-             xmlns:fluent="clr-namespace:Tabalonia.Themes.Fluent;assembly=Tabalonia"
-             RequestedThemeVariant="Light">
+             xmlns:fluent="clr-namespace:Tabalonia.Themes.Custom;assembly=Tabalonia"
+             RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -26,7 +25,7 @@
      
      <Application.Styles>
          <FluentTheme />
-         <fluent:FluentTheme/>
+         <fluent:CustomTheme/>
          <StyleInclude Source="/Assets/Styles.axaml"/>
 
          <StyleInclude Source="/Assets/TreeStyles.axaml"/>

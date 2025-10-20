@@ -16,6 +16,21 @@
   
   <UserControl.Resources>
     <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
+    <ControlTheme x:Key="DragTabItemThumb" TargetType="controls:LeftPressedThumb">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />
+      <Setter Property="IsHitTestVisible" Value="True" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" />
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </ControlTheme>
   </UserControl.Resources>
   <Design.DataContext>
     <vm:MainWindowViewModel/>
@@ -42,6 +57,33 @@
       <Setter Property="Background" Value="Green"></Setter>
       <!-- <Setter Property="Fore" Value="Red"></Setter> -->
     </Style>
+            
+    <Style Selector="controls|DragTabItem">
+      <Setter Property="Padding" Value="0"></Setter>
+      <!-- <Setter Property="For
+      e" Value="Red"></Setter> -->
+    </Style>
+    
+ 
+    <!-- <Style Selector="TreeViewItem[DataContext^=PageNode]"> -->
+    <!--   <Setter Property="ContextMenu"> -->
+    <!--     <Template> -->
+    <!--       <ContextMenu> -->
+    <!--         <MenuItem Header="Close Tab" Command="{Binding CloseCommand}"/> -->
+    <!--       </ContextMenu> -->
+    <!--     </Template> -->
+    <!--   </Setter> -->
+    <!-- </Style> -->
+    <!-- -->
+    <!-- <Style Selector="TreeViewItem[DataContext^=DataRootNode]"> -->
+    <!--   <Setter Property="ContextMenu"> -->
+    <!--     <Template> -->
+    <!--       <ContextMenu> -->
+    <!--         <MenuItem Header="Add Item" Command="{Binding AddCommand}"/> -->
+    <!--       </ContextMenu> -->
+    <!--     </Template> -->
+    <!--   </Setter> -->
+    <!-- </Style> -->
     <!-- -->
     <!-- <Style Selector="Border:pointerover"> -->
     <!--   <Setter Property="Background" Value="Yellow"></Setter> -->
@@ -49,64 +91,137 @@
     <!-- </Style> -->
     <!-- -->
     <!--     -->
+         
+        
     <Style Selector="Border:pointerover Path#CloseTabPath">
       <Setter Property="Opacity" Value="1"></Setter>
     </Style>
+    <Style Selector="controls|DragTabItem">
+      <Setter Property="Template">
+         <ControlTemplate>
+                <Border
+                    Name="PART_LayoutRoot"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="0"
+                    Padding="{TemplateBinding Padding}">
+                    <Panel>
+                        <Grid ColumnDefinitions="* Auto">
+                            <ContentPresenter Grid.Column="0"
+                                              Name="PART_ContentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Header}"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              FontFamily="{TemplateBinding FontFamily}"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontWeight="{TemplateBinding FontWeight}" />
+
+                            <controls:LeftPressedThumb Grid.Column="0" Name="PART_Thumb"
+                                                       Theme="{StaticResource DragTabItemThumb}" />
+
+                            <!-- <Button Grid.Column="1" -->
+                            <!--         Theme="{StaticResource CloseItemCommandButton}" -->
+                            <!--         Command="{Binding $parent[controls:TabsControl].CloseItemCommand}" -->
+                            <!--         CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"> -->
+                            <!-- -->
+                            <!--     <Button.IsVisible> -->
+                            <!--         <MultiBinding Converter="{StaticResource ShowDefaultCloseButtonConverter}"> -->
+                            <!--             <Binding -->
+                            <!--                 RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:TabsControl}}" -->
+                            <!--                 Path="ShowDefaultCloseButton" /> -->
+                            <!--             <Binding -->
+                            <!--                 RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:TabsControl}}" -->
+                            <!--                 Path="FixedHeaderCount" /> -->
+                            <!--             <Binding RelativeSource="{RelativeSource TemplatedParent}" -->
+                            <!--                      Path="LogicalIndex" /> -->
+                            <!--         </MultiBinding> -->
+                            <!--     </Button.IsVisible> -->
+                            <!-- -->
+                            <!-- </Button> -->
+
+                        </Grid>
+
+                        <Border Name="PART_SelectedPipe"
+                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                IsVisible="False" />
+
+                    </Panel>
+                </Border>
+            </ControlTemplate>
+        
+      </Setter>
+
+    </Style>
+    <!-- <Style.Resources> -->
+    <!--   <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness> -->
+    <!--   <GridLength x:Key="SliderPreContentMargin">0</GridLength> -->
+    <!--   <GridLength x:Key="SliderPostContentMargin">0</GridLength> -->
+    <!--   <CornerRadius x:Key="SliderThumbCornerRadius">8</CornerRadius> -->
+    <!--   <x:Double x:Key="SliderHorizontalThumbWidth">16</x:Double> -->
+    <!--   <x:Double x:Key="SliderHorizontalThumbHeight">16</x:Double> -->
+    <!-- </Style.Resources> -->
+
 
     
     <!-- <Sty -->
     
     
   </UserControl.Styles>
-  <Grid ColumnDefinitions="Auto,*,Auto">
-    <RepeatButton Grid.Column="0"
-                  Classes="icon_button"
-                  Width="18" Height="30"
-                  Click="ScrollTabsLeft"
-                  IsVisible="{Binding #MainTabBar.IsScrollerVisible}">
-      <!-- <Path Width="8" Height="14" Stretch="Fill" Data="{StaticResource Icons.TriangleLeft}"/> -->
-      <Button Width="8" Height="14">L</Button>
-    </RepeatButton>
+  <Grid ColumnDefinitions="*,Auto,Auto">
+    <!-- <RepeatButton Grid.Column="0" -->
+    <!--               Classes="icon_button" -->
+    <!--               Width="18" Height="30" -->
+    <!--               Click="ScrollTabsLeft" -->
+    <!--               IsVisible="{Binding #MainTabBar.IsScrollerVisible}"> -->
+    <!--   <Path Width="8" Height="14" Stretch="Fill" Data="{StaticResource Icons.TriangleLeft}"/> -->
+    <!-- -->
+    <!-- </RepeatButton> -->
 
-    <ScrollViewer Grid.Column="1"
-                  Margin="6,0"
-                  x:Name="LauncherTabsScroller"
-                  HorizontalAlignment="Left"
-                  HorizontalScrollBarVisibility="Hidden"
-                  VerticalScrollBarVisibility="Disabled"
-                  PointerWheelChanged="ScrollTabs">
-      <StackPanel Orientation="Horizontal">
+    <!-- <ScrollViewer Grid.Column="0" -->
+    <!--               Margin="0, 0, 6, 0" -->
+    <!--               x:Name="LauncherTabsScroller" -->
+    <!--               HorizontalAlignment="Left" -->
+    <!--               HorizontalScrollBarVisibility="Auto" -->
+    <!--               VerticalScrollBarVisibility="Disabled" -->
+    <!--               PointerWheelChanged="ScrollTabs"> -->
+      <Grid ColumnDefinitions="*, 16">
         
-        <controls:TabsControl SelectedItem="{Binding SelectedItem}" TabItemWidth="150" ShowDefaultCloseButton="False" ShowDefaultAddButton="False"
+        <controls:TabsControl SelectedItem="{Binding SelectedItem}" 
+                              ShowDefaultCloseButton="False"
+                              ShowDefaultAddButton="False" 
+                              LeftThumbWidth="0"
+                              ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                              
+                              RightThumbWidth="0"
+                              Padding="0"
                               ItemsSource="{Binding Pages}">
-          
           <controls:TabsControl.ItemTemplate>
             <DataTemplate DataType="{x:Type vm:EditorPageViewModel}">
+              
+              
               <Grid Background="Transparent">
                 <Border Height="30">
                 <ToolTip.Tip>
                   <Grid>
-                    <!-- <TextBlock Text="{DynamicResource Text.Welcome}" IsVisible="{Binding !Node.IsRepository}"/> -->
-                    <!-- <StackPanel Orientation="Horizontal" IsVisible="{Binding Node.IsRepository}"> -->
                     <StackPanel Orientation="Horizontal">
                       <TextBlock>Test</TextBlock>
-                      <!-- <TextBlock Text="{Binding Node.Id}"/> -->
-                      <!-- <TextBlock Text="{Binding DirtyState, Converter={x:Static c:DirtyStateConverters.ToDesc}}" -->
-                      <!--            Foreground="{DynamicResource Brush.FG2}"/> -->
                     </StackPanel>
                   </Grid>
                 </ToolTip.Tip>
-
+              
                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
-                  <Grid Width="150" Height="30" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-
+                  <Grid Width="300" Height="30" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+              
                   <!-- <Path Grid.Column="0" -->
                   <!--       Width="12" Height="12" Margin="12,0" -->
                   <!--       Fill="{DynamicResource Brush.FG1}" -->
                   <!--       Data="{StaticResource Icons.Repositories}" -->
                   <!--       IsVisible="{Binding !Node.IsRepository}" -->
                   <!--       IsHitTestVisible="False"/> -->
-
+              
                   <!-- <Grid Grid.Column="1" -->
                   <!--       HorizontalAlignment="Center" VerticalAlignment="Center" -->
                   <!--       ColumnDefinitions="Auto,*" -->
@@ -116,7 +231,7 @@
                           HorizontalAlignment="Center" VerticalAlignment="Center"
                           ColumnDefinitions="Auto,*"
                           IsHitTestVisible="False">
-                      
+              
                       <Path Grid.Column="0"
                             Width="12" Height="12" Margin="0, 0, 6, 0"
                             Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
@@ -127,7 +242,7 @@
                     <!--          VerticalAlignment="Center" -->
                     <!--          IsVisible="{Binding DirtyState, Converter={x:Static ObjectConverters.IsNotNull}, ConverterParameter={x:Static m:DirtyState.None}}" -->
                     <!--          Fill="{Binding DirtyState, Converter={x:Static c:DirtyStateConverters.ToBrush}}"/> -->
-
+              
                     <!-- <TextBlock Grid.Column="1" -->
                     <!--            Classes="primary" -->
                     <!--            VerticalAlignment="Center" -->
@@ -135,7 +250,7 @@
                     <!--            TextAlignment="Center" -->
                     <!--            Text="{Binding Node.Name}" -->
                     <!--            IsHitTestVisible="False"/> -->
-                    
+              
                     <TextBlock Grid.Column="1"
                                Classes="primary"
                                Padding="0 0 0 0"
@@ -146,7 +261,7 @@
                                Text="{Binding Title}"
                                IsHitTestVisible="False"/>
                   </Grid>
-                  
+              
                   <Ellipse Grid.Column="2"
                            Width="8" Height="8"
                            Margin="16,0,0,0"
@@ -180,7 +295,7 @@
         <!-- ItemsSource="{Binding Pages}" -->
         <!-- SelectedItem="{Binding SelectedItem, Mode=TwoWay}" -->
        
-        <Button Classes="icon_button"
+        <Button Grid.Column="1" Classes="icon_button"
                 Width="16" Height="16"
                 Margin="8,0"
                 Command="{Binding AddNewTab}"
@@ -198,8 +313,8 @@
       
           <Path Width="12" Height="12" Data="{StaticResource Icons.Plus}"/>
         </Button>
-      </StackPanel>
-    </ScrollViewer>
+      </Grid>
+    <!-- </ScrollViewer> -->
 
     <StackPanel Grid.Column="2" Orientation="Horizontal" IsVisible="{Binding #MainTabBar.IsScrollerVisible}">
       <RepeatButton Classes="icon_button" Width="18" Height="30" Click="ScrollTabsRight">

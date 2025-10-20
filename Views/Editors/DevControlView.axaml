@@ -5,12 +5,12 @@
              xmlns:vm="using:AvaloniaTest.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              FontSize="12"
-             x:DataType="vm:TestComboBoxViewModel"
+             x:DataType="vm:DevControlViewModel"
              x:Class="AvaloniaTest.Views.DevControlView">
     
     
     <UserControl.DataContext>
-        <vm:TestComboBoxViewModel/>
+        <vm:DevControlViewModel/>
     </UserControl.DataContext>
     <!-- The Game/Player/Travel/Script Tabs will be moved inside here... -->
 
@@ -58,7 +58,7 @@
         
         <TabControl>
             <TabItem Header="Game">
-                <Grid ColumnSpacing="8" RowSpacing="8" RowDefinitions="*, *, *, *, *, *, *, *, *, *"
+                <Grid ColumnSpacing="8" RowSpacing="8" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
                       ColumnDefinitions="* *">
                     <CheckBox Grid.Row="0" Grid.Column="0" Content="Hide Objects"></CheckBox>
                     <CheckBox Grid.Row="0" Grid.Column="1" Content="Hide Sprites"></CheckBox>
@@ -94,7 +94,7 @@
                         
                     </Button>
                     
-                    <ComboBox ItemsSource="{Binding Fruits}" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <ComboBox ItemsSource="{Binding Fruits.Fruits}" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
                        
                     
                     <Button Classes="flat" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
@@ -142,7 +142,7 @@
 
             </TabItem>
             <TabItem Header="Player">
-                <Grid RowDefinitions="30, *, 30, *, 30, *, 30, *, 30, *, *, *" ColumnDefinitions="*, *" ColumnSpacing="8">
+                <Grid RowDefinitions="30, Auto, 30, Auto, 30, Auto, 30, Auto, 30, Auto, Auto, Auto" ColumnDefinitions="*, *" ColumnSpacing="8">
                     <!-- <NumericUpDown -->
                     <!--     MinWidth="100" -->
                     <!--     MaxWidth="150" -->
@@ -206,7 +206,7 @@
             </TabItem>
             <TabItem Header="Script">
               
-                    <Grid RowDefinitions="34, 26, *, 40" ColumnDefinitions="*, *" ColumnSpacing="8" RowSpacing="8">
+                    <Grid RowDefinitions="34, 26, Auto, 40" ColumnDefinitions="*, *" ColumnSpacing="8" RowSpacing="8">
                   
                         <Button Classes="flat" Name="btnReloadScripts"  Grid.Row="0" Grid.Column="0" >Reload Scripts</Button>
                         <Button  Classes="flat" Name="btnTextTest"  Grid.Row="0" Grid.Column="1" >Text Test</Button>

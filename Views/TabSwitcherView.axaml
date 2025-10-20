@@ -70,6 +70,7 @@
         </TextBox>
         <TreeView Grid.Row="1" Margin="0"
                   Width="400"
+                  MaxHeight="300"
                   ItemsSource="{Binding _mainWindow.TopLevelPages}"
                   SelectionMode="Single"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"

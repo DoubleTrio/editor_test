@@ -2,6 +2,11 @@ using System;
 using System.Collections.Specialized;
 using System.Reactive;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using AvaloniaTest.Services;
+using AvaloniaTest.Views;
 using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels;
@@ -10,6 +15,7 @@ using System.Collections.ObjectModel;
 
 public class NodeBase : ViewModelBase
 {
+    private readonly IDialogProvider _dialogProvider;
     public ObservableCollection<NodeBase> SubNodes { get; set; }
 
     // public NodeBase? Parent { get; internal set; } 
@@ -113,7 +119,7 @@ public class DataItemNode : OpenEditorNode
         : base(title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
-        this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
+        // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
         
         // DataDeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
     }
@@ -161,11 +167,31 @@ public class DataRootNode : OpenEditorNode
 
         ReIndexCommand = ReactiveCommand.CreateFromTask(async () =>
         {
+            Console.WriteLine("Reindexing");
             // await
         });
-        AddCommand2 = ReactiveCommand.Create(() =>
+        AddCommand2 = ReactiveCommand.CreateFromTask(async () =>
         {
-            Console.WriteLine("yahoo");
+            // Show a name entry window
+            RenameWindow window = new RenameWindow();
+            RenameViewModel vm = new RenameViewModel();
+            window.DataContext = vm;
+            Window? mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            bool result = await window.ShowDialog<bool>(mainWindow);
+            if (!result)
+                return;
+
+            // lock (GameBase.lockObj)
+            // {
+            //     string assetName = Text.GetNonConflictingName(Text.Sanitize(vm.Name).ToLower(), DataManager.Instance.DataIndices[dataType].ContainsKey);
+            //     DataManager.Instance.ContentChanged(dataType, assetName, createOp());
+            //     string newName = DataManager.Instance.DataIndices[dataType].Get(assetName).GetLocalString(true);
+            //     choices.AddEntry(assetName, newName);
+            //
+            //     if (dataType == DataManager.DataType.Zone)
+            //         LuaEngine.Instance.CreateZoneScriptDir(assetName);
+            // }
             // var item = new DataItemNode("new key", "value");
             // SubNodes.Add(item);
             // var 

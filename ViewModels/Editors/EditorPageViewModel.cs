@@ -9,11 +9,21 @@ namespace AvaloniaTest.ViewModels;
 public class EditorPageViewModel : ViewModelBase
 {
     public virtual string? UniqueId => null;
+    
     public virtual bool AddNewTab => true;
     
     
     private string _data = "";
 
+    private string _title = "";
+    public virtual string Title
+    {
+        get { return _title; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _title, value);
+        }
+    }
 
     public string Data
     {
@@ -24,15 +34,7 @@ public class EditorPageViewModel : ViewModelBase
         }
     }
     
-    private string _title = "";
-    public string Title
-    {
-        get { return _title; }
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _title, value);
-        }
-    }
+ 
 
     
     private string? _icon = "";

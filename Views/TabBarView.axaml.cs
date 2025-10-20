@@ -33,31 +33,31 @@ namespace AvaloniaTest.Views
 
         private void ScrollTabs(object _, PointerWheelEventArgs e)
         {
-            if (!e.KeyModifiers.HasFlag(KeyModifiers.Shift))
-            {
-                if (e.Delta.Y < 0)
-                    LauncherTabsScroller.LineRight();
-                else if (e.Delta.Y > 0)
-                    LauncherTabsScroller.LineLeft();
-                e.Handled = true;
-            }
+            // if (!e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            // {
+            //     if (e.Delta.Y < 0)
+            //         LauncherTabsScroller.LineRight();
+            //     else if (e.Delta.Y > 0)
+            //         LauncherTabsScroller.LineLeft();
+            //     e.Handled = true;
+            // }
         }
 
         private void ScrollTabsLeft(object _, RoutedEventArgs e)
         {
-            LauncherTabsScroller.LineLeft();
+            // LauncherTabsScroller.LineLeft();
             e.Handled = true;
         }
 
         private void ScrollTabsRight(object _, RoutedEventArgs e)
         {
-            LauncherTabsScroller.LineRight();
-            e.Handled = true;
+            // LauncherTabsScroller.LineRight();
+            // e.Handled = true;
         }
 
         private void OnTabsLayoutUpdated(object _1, EventArgs _2)
         {
-            SetCurrentValue(IsScrollerVisibleProperty, LauncherTabsScroller.Extent.Width > LauncherTabsScroller.Viewport.Width);
+            // SetCurrentValue(IsScrollerVisibleProperty, LauncherTabsScroller.Extent.Width > LauncherTabsScroller.Viewport.Width);
             InvalidateVisual();
         }
 

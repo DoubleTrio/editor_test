@@ -19,8 +19,17 @@ using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Media;
 
-public class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase, IDialogProvider
 {
+    private DialogViewModel? _dialog;
+    
+    
+    public DialogViewModel? Dialog
+    {
+        get => _dialog;
+        set => this.RaiseAndSetIfChanged(ref _dialog, value);
+    }
+        
     public void OnTabSwitcherOpened()
     {
         if (TabSwitcher == null)
@@ -310,7 +319,16 @@ public class MainWindowViewModel : ViewModelBase
         nodeBase.IsVisible = match || childMatch;
 
         if (!string.IsNullOrWhiteSpace(filter))
-            nodeBase.IsExpanded = childMatch;
+        {
+            nodeBase.IsExpanded = match || childMatch;
+            
+            if (match && nodeBase.SubNodes.Any())
+            {
+                foreach (var child in nodeBase.SubNodes)
+                    child.IsVisible = true;
+            }
+        }
+
 
         return nodeBase.IsVisible;
     }
