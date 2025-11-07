@@ -5,9 +5,9 @@ using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels
 {
-    public class RenameViewModel : ViewModelBase
+    public class RenameWindowViewModel : ViewModelBase
     {
-        public RenameViewModel()
+        public RenameWindowViewModel()
         {
             Name = "";
         }

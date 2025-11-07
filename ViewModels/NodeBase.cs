@@ -96,7 +96,7 @@ public class ActionDataNode : NodeBase
     public ActionDataNode(string title, string? icon = null) 
         : base(title, icon ?? "")
     {
-        AddCommand = ReactiveCommand.Create(() => Console.WriteLine("Add command"));
+        AddCommand = ReactiveCommand.Create(() => Console.WriteLine("Add command yayk"));
         DeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
     }
 }
@@ -114,11 +114,17 @@ public class DataItemNode : OpenEditorNode
         set => this.RaiseAndSetIfChanged(ref _value, value);
     }
 
+    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
     public DataItemNode(string itemKey, string editorKey, string? title, string? icon = null) 
         : base(title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
+        DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            Console.WriteLine("deletimg");
+            // await
+        });
         // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
         
         // DataDeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
@@ -172,15 +178,16 @@ public class DataRootNode : OpenEditorNode
         });
         AddCommand2 = ReactiveCommand.CreateFromTask(async () =>
         {
-            // Show a name entry window
-            RenameWindow window = new RenameWindow();
-            RenameViewModel vm = new RenameViewModel();
+            RenameWindowView window = new RenameWindowView();
+            RenameWindowViewModel vm = new RenameWindowViewModel();
             window.DataContext = vm;
             Window? mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
             bool result = await window.ShowDialog<bool>(mainWindow);
             if (!result)
                 return;
+            
+            Console.WriteLine(window.DataContext);
 
             // lock (GameBase.lockObj)
             // {

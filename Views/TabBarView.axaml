@@ -61,10 +61,18 @@
             <Setter Property="Opacity" Value="1"></Setter>
         </Style>
 
-        <!-- <Style Selector="controls|DragTabItem:pointerover Ellipse#NeedToSaveEllipse"> -->
-        <!--     <Setter Property="Opacity" Value="0"/> -->
-        <!-- </Style> -->
+        <Style Selector="Button#CloseTabButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Opacity" Value="1"></Setter>
+        </Style>
 
+        <Style Selector="Grid#CloseButtonContainer:pointerover > Ellipse#NeedToSaveEllipse">
+            <Setter Property="Opacity" Value="0"></Setter>
+        </Style>
+
+        <Style Selector="Grid#CloseButtonContainer:pointerover > Button#CloseTabButton">
+            <Setter Property="Opacity" Value="1"></Setter>
+        </Style>
+        
         <Style Selector="controls|DragTabItem">
             <Setter Property="Template">
                 <ControlTemplate>
@@ -174,14 +182,13 @@
                                                    Text="{Binding Title}"
                                                    IsHitTestVisible="False" />
                                     </Grid>
-                                    <!-- TODO: Figure out modified stuff later on... -->
-                                    <Grid Grid.Column="1" IsHitTestVisible="True" ZIndex="100">
+                                    <Grid Grid.Column="1" x:Name="CloseButtonContainer" IsHitTestVisible="True" ZIndex="100">
                                         <Ellipse x:Name="NeedToSaveEllipse"
+                                                 IsVisible="{Binding Modified}"
                                                  Width="8" Height="8"
                                                  Margin="0,0,0,0"
                                                  VerticalAlignment="Center"
                                                  Fill="Gray" />
-                                        <!-- IsVisible="{Binding Modified}" -->
                                         <Button Classes="icon_button"
                                                 x:Name="CloseTabButton"
                                                 Width="16" Height="16" Margin="12,0"

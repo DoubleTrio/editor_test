@@ -47,5 +47,8 @@
         <DependentUpon>SpritePageView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\DialogBoxes\RenameWindowView.axaml.cs">
+        <DependentUpon>RenameWindow.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

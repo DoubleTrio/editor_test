@@ -56,8 +56,8 @@ public class TreeSearchViewModel : ViewModelBase
                                 SubNodes =
                                 {
                                     // TODO: Change later
-                                    new DataItemNode("eevee", "DevControl", "eevee: Eevee", "Icons.GhostFill"),
-                                    new DataItemNode("seviper", "DevControl", "seviper: Seviper", "Icons.GhostFill")
+                                    new DataItemNode("eevee", "MonsterEditor", "eevee: Eevee", "Icons.GhostFill"),
+                                    new DataItemNode("seviper", "MonsterEditor", "seviper: Seviper", "Icons.GhostFill")
                                 }
                             },
                             new ActionDataNode("Items", "Icons.JarLabelFill")

@@ -5,10 +5,11 @@ using Avalonia.Markup.Xaml;
 
 namespace AvaloniaTest.Views
 {
-    public partial class RenameWindow : Window
+    public partial class RenameWindowView : Window
     {
-        public RenameWindow()
+        public RenameWindowView()
         {
+            this.InitializeComponent();
         }
 
         public void btnOK_Click(object sender, RoutedEventArgs e)
