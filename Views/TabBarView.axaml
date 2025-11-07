@@ -35,9 +35,10 @@
     </Design.DataContext>
 
     <UserControl.Styles>
-        <Style Selector="Path#CloseTabPath">
+        <Style Selector="Button#CloseTabButton">
             <Setter Property="Opacity" Value="0"></Setter>
         </Style>
+
         
         <Style Selector="controls|DragTabItem">
             <Setter Property="Padding" Value="0"></Setter>
@@ -56,13 +57,13 @@
         <!--     <Setter Property="Opacity" Value="1"></Setter> -->
         <!-- </Style> -->
 
-        <Style Selector="controls|DragTabItem:pointerover Path#CloseTabPath">
+        <Style Selector="Button#CloseTabButton:pointerover">
             <Setter Property="Opacity" Value="1"></Setter>
         </Style>
 
-        <Style Selector="controls|DragTabItem:pointerover Ellipse#NeedToSaveEllipse">
-            <Setter Property="Opacity" Value="0"></Setter>
-        </Style>
+        <!-- <Style Selector="controls|DragTabItem:pointerover Ellipse#NeedToSaveEllipse"> -->
+        <!--     <Setter Property="Opacity" Value="0"/> -->
+        <!-- </Style> -->
 
         <Style Selector="controls|DragTabItem">
             <Setter Property="Template">
@@ -74,49 +75,25 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="0"
                         Padding="{TemplateBinding Padding}">
-                        <Panel>
-                            <Grid ColumnDefinitions="* Auto">
-                                <ContentPresenter Grid.Column="0"
-                                                  Name="PART_ContentPresenter"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  Content="{TemplateBinding Header}"
-                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                                  FontFamily="{TemplateBinding FontFamily}"
-                                                  FontSize="{TemplateBinding FontSize}"
-                                                  FontWeight="{TemplateBinding FontWeight}" />
+                        <Grid>
+                            <ContentPresenter Name="PART_ContentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Header}"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              FontFamily="{TemplateBinding FontFamily}"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontWeight="{TemplateBinding FontWeight}" />
 
-                                <controls:LeftPressedThumb Grid.Column="0" Name="PART_Thumb"
-                                                           Theme="{StaticResource DragTabItemThumb}" />
-
-                                <!-- <Button Grid.Column="1" -->
-                                <!--         Theme="{StaticResource CloseItemCommandButton}" -->
-                                <!--         Command="{Binding $parent[controls:TabsControl].CloseItemCommand}" -->
-                                <!--         CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"> -->
-                                <!-- -->
-                                <!--     <Button.IsVisible> -->
-                                <!--         <MultiBinding Converter="{StaticResource ShowDefaultCloseButtonConverter}"> -->
-                                <!--             <Binding -->
-                                <!--                 RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:TabsControl}}" -->
-                                <!--                 Path="ShowDefaultCloseButton" /> -->
-                                <!--             <Binding -->
-                                <!--                 RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:TabsControl}}" -->
-                                <!--                 Path="FixedHeaderCount" /> -->
-                                <!--             <Binding RelativeSource="{RelativeSource TemplatedParent}" -->
-                                <!--                      Path="LogicalIndex" /> -->
-                                <!--         </MultiBinding> -->
-                                <!--     </Button.IsVisible> -->
-                                <!-- -->
-                                <!-- </Button> -->
-
-                            </Grid>
+                            <controls:LeftPressedThumb Name="PART_Thumb"
+                                                       Theme="{StaticResource DragTabItemThumb}"
+                                                       Margin="0,0,40,0" />
 
                             <Border Name="PART_SelectedPipe"
                                     Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
                                     CornerRadius="{DynamicResource ControlCornerRadius}"
                                     IsVisible="False" />
-
-                        </Panel>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
 
@@ -148,9 +125,9 @@
                 </ControlTemplate>
             </Setter>
         </Style>
-        <Style Selector="Path#CloseTabPath">
-            <Setter Property="Opacity" Value="0"></Setter>
-        </Style>
+        <!-- <Style Selector="Path#CloseTabPath"> -->
+        <!--     <Setter Property="Opacity" Value="0"></Setter> -->
+        <!-- </Style> -->
     </UserControl.Styles>
     <Grid ColumnDefinitions="*,Auto,Auto">
         <Grid ColumnDefinitions="*">
@@ -198,7 +175,7 @@
                                                    IsHitTestVisible="False" />
                                     </Grid>
                                     <!-- TODO: Figure out modified stuff later on... -->
-                                    <Grid Grid.Column="1" IsHitTestVisible="True">
+                                    <Grid Grid.Column="1" IsHitTestVisible="True" ZIndex="100">
                                         <Ellipse x:Name="NeedToSaveEllipse"
                                                  Width="8" Height="8"
                                                  Margin="0,0,0,0"
@@ -206,8 +183,10 @@
                                                  Fill="Gray" />
                                         <!-- IsVisible="{Binding Modified}" -->
                                         <Button Classes="icon_button"
+                                                x:Name="CloseTabButton"
                                                 Width="16" Height="16" Margin="12,0"
-                                                Click="OnCloseTab">
+                                                Click="OnCloseTab"
+                                                ZIndex="100">
                                             <Path x:Name="CloseTabPath" Width="9" Height="9"
                                                   Data="{StaticResource Icons.Close}" />
                                         </Button>
