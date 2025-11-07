@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using AvaloniaTest.Services;
 using AvaloniaTest.ViewModels;
 using AvaloniaTest.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,22 @@ public partial class App : Application
         factory.Register<GroundEditorPageViewModel>("GroundEditor");
         factory.Register<RandomInfoPageViewModel>("RandomInfo");
 
+        
+        // TopLevel provider
+        collection.AddSingleton<Func<TopLevel?>>(x => () =>
+        {
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime topWindow)
+                return TopLevel.GetTopLevel(topWindow.MainWindow);
+            
+            if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+                return TopLevel.GetTopLevel(singleViewPlatform.MainView);
+
+            return null;
+        });
+        
+        collection.AddSingleton<DialogService>();
+        
+  
         var vm = services.GetRequiredService<MainWindowViewModel>();
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -65,18 +82,7 @@ public partial class App : Application
                 DataContext = vm
             };
         }
-
-        // TopLevel provider
-        collection.AddSingleton<Func<TopLevel?>>(x => () =>
-        {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime topWindow)
-                return TopLevel.GetTopLevel(topWindow.MainWindow);
-            
-            if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-                return TopLevel.GetTopLevel(singleViewPlatform.MainView);
-
-            return null;
-        });
+        
         base.OnFrameworkInitializationCompleted();
     }
 }

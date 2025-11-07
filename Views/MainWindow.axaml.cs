@@ -59,7 +59,7 @@ public partial class MainWindow : ChromelessWindow
     private void OnTabSwitcherClosed(object? sender, EventArgs e)
     {
 
-        TabSwitcherFlyoutButton.Flyout?.Hide();
+        // TabSwitcherFlyoutButton.Flyout?.Hide();
 
     }
 

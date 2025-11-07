@@ -119,8 +119,5 @@ public class TreeSearchViewModel : ViewModelBase
             },
         };
         Nodes.First().IsExpanded = true;
-        var moth = Nodes.Last().SubNodes?.Last();
-        if (moth != null) SelectedNodes.Add(moth);
-        
     }
 }

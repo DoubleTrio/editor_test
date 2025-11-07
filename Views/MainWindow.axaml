@@ -153,39 +153,7 @@
                                   ContextRequested="MasterTreeView_OnContextRequested"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                          <!--   <TreeView.ItemContainerTheme> -->
-                          <!--       <ControlTheme TargetType="TreeViewItem" -->
-                          <!--                     BasedOn="{StaticResource {x:Type TreeViewItem}}"> -->
-                          <!--           <Setter Property="ContextMenu"> -->
-                          <!--               <Setter.Value> -->
-                          <!--                   <ContextMenu> -->
-                          <!--                       <MenuItem Header="{Binding Title, -->
-                          <!-- RelativeSource={RelativeSource FindAncestor, AncestorType=vm:NodeBase}, -->
-                          <!-- Converter={StaticResource NodeTitleConverter}}" /> -->
-                          <!--                       <MenuItem Header="Delete" /> -->
-                          <!--                       <Separator /> -->
-                          <!-- -->
-                          <!--                       <MenuItem Header="Add Child" -->
-                          <!--                                 IsVisible="{Binding PlacementTarget.DataContext, -->
-                          <!--     RelativeSource={RelativeSource AncestorType=ContextMenu}, -->
-                          <!--     Converter={StaticResource IsTypeConverter}, -->
-                          <!--     ConverterParameter={x:Type vm:DataItemNode}}" /> -->
-                          <!-- -->
-                          <!--                       <MenuItem Header="Open" -->
-                          <!--                                 IsVisible="{Binding PlacementTarget.DataContext, -->
-                          <!--     RelativeSource={RelativeSource AncestorType=ContextMenu}, -->
-                          <!--     Converter={StaticResource IsTypeConverter}, -->
-                          <!--     ConverterParameter={x:Type vm:DataRootNode}}" /> -->
-                          <!-- -->
-                          <!-- -->
-                          <!--                       <Separator /> -->
-                          <!--                       <MenuItem Header="Properties" /> -->
-                          <!--                   </ContextMenu> -->
-                          <!--               </Setter.Value> -->
-                          <!--           </Setter> -->
-                          <!--       </ControlTheme> -->
-                          <!--   </TreeView.ItemContainerTheme> -->
+                            
                             <TreeView.Styles>
                                 <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -217,20 +185,6 @@
                                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
 
                                     </Grid>
-                                    <!-- <StackPanel Orientation="Horizontal" Spacing="4"> -->
-                                    <!--     <ContentPresenter Content="{Binding}" -->
-                                    <!--                       ContentTemplate="{StaticResource NodeContentTemplate}" /> -->
-                                    <!-- -->
-                                    <!--     <ContentControl /> -->
-                                    <!-- -->
-                                    <!--     <Button -->
-                                    <!--         Command="{Binding  $parent[TreeViewItem;1].((vm:DataRootNode)DataContext).AddCommand2}" -->
-                                    <!--         Content="cc" /> -->
-                                    <!--      -->
-                                    <!--     <Button -->
-                                    <!--         Command="{Binding  $parent[TreeViewItem;1].((vm:DataRootNode)DataContext).AddCommand2}" -->
-                                    <!--         Content="cc" /> -->
-                                    <!-- </StackPanel> -->
                                 </TreeDataTemplate>
 
                                 <!-- ActionDataNode -->
@@ -299,55 +253,36 @@
                           BorderThickness="0,0,1,0" />
 
             <!-- Editor Panel -->
-            <Grid Grid.Column="2" RowDefinitions="Auto, *" ColumnDefinitions="*, 32">
-                <!-- Tabs Row -->
-                <views:TabBarView Grid.Column="0"  Height="30" Margin="2,0,16,0" VerticalAlignment="Bottom" />
+            <Grid Margin="2, 0, 0, 0" Grid.Column="2" RowDefinitions="Auto, *">
+                <Border BorderThickness="0, 0, 0, 1" BorderBrush="{DynamicResource Brush.Border0}">
+                    <Grid ColumnDefinitions="*, 32" Background="{DynamicResource Brush.TitleBar}">
+                        <!-- Tabs Row -->
+                        <views:TabBarView Grid.Column="0" Height="30" VerticalAlignment="Bottom"/>
 
-                <!-- Tab Switcher Button -->
-                <Button Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom"
-                        Name="TabSwitcherFlyoutButton">
-                    <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}" />
-                    <Button.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedRight"
-                                Opened="FlyoutBase_OnOpened"
-                                Closed="FlyoutBase_OnClosed">
-                            <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
-                                <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-
-                
+                        <!-- Tab Switcher Button -->
+                        <Button Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom"
+                                Name="TabSwitcherFlyoutButton">
+                            <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}" />
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight"
+                                        Opened="FlyoutBase_OnOpened"
+                                        Closed="FlyoutBase_OnClosed">
+                                    <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
+                                        <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </Grid>
+                </Border>
                 <!-- Editor Content -->
-                <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto">
-                    <Panel>
-                        <ContentControl Content="{Binding TemporaryTab}" 
-                                        IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                        <ContentControl Content="{Binding ActivePage}" 
-                                        IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNull}}" />
-                    </Panel>
-                </ScrollViewer>
-                <!-- Temporary Tab -->
-                <!-- <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" -->
-                <!--               VerticalScrollBarVisibility="Auto" -->
-                <!--               HorizontalScrollBarVisibility="Auto" -->
-                <!--               IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNotNull}}"> -->
-                <!--     <ContentControl Content="{Binding TemporaryTab}" /> -->
-                <!-- </ScrollViewer> -->
-
-                
-                <!-- Active Page -->
-                <!-- <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" -->
-                <!--               VerticalScrollBarVisibility="Auto" -->
-                <!--               HorizontalScrollBarVisibility="Auto" -->
-                <!--               IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNull}}"> -->
-                <!--     <ContentControl Content="{Binding ActivePage}" /> -->
-                <!-- </ScrollViewer> -->
+                <Panel Grid.Row="1">
+                    <ContentControl Content="{Binding TemporaryTab}" 
+                                    IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <ContentControl Content="{Binding ActivePage}" 
+                                    IsVisible="{Binding TemporaryTab, Converter={x:Static ObjectConverters.IsNull}}" />
+                </Panel>
             </Grid>
-
         </Grid>
 
     </Grid>

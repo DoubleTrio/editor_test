@@ -9,7 +9,6 @@ namespace AvaloniaTest.Views
     {
         public RenameWindow()
         {
-            this.InitializeComponent();
         }
 
         public void btnOK_Click(object sender, RoutedEventArgs e)
