@@ -74,6 +74,9 @@
         </Style>
         
         <Style Selector="controls|DragTabItem">
+            <!-- <Setter Property="HorizontalContentAlignment" Value="Left"/> -->
+            <!-- <Setter Property="VerticalContentAlignment" Value="Center"/> -->
+            <!-- <Setter Property="Width" Value="Auto"/> -->
             <Setter Property="Template">
                 <ControlTemplate>
                     <Border
@@ -94,6 +97,9 @@
                                               FontWeight="{TemplateBinding FontWeight}" />
 
                             <controls:LeftPressedThumb Name="PART_Thumb"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"
+                                                       IsHitTestVisible="True"
                                                        Theme="{StaticResource DragTabItemThumb}"
                                                        Margin="0,0,40,0" />
 
@@ -144,14 +150,23 @@
                                   ShowDefaultAddButton="False"
                                   LeftThumbWidth="0"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
-
                                   RightThumbWidth="0"
                                   Padding="0"
                                   ItemsSource="{Binding Pages}">
+                
+                
+              
+                <!-- <controls:TabsControl.ItemsPanel> -->
+                <!--     <ItemsPanelTemplate> -->
+                <!--         ~1~ Horizontal stack so each tab measures to its own content @1@ -->
+                <!--         <StackPanel Orientation="Horizontal" /> -->
+                <!--     </ItemsPanelTemplate> -->
+                <!-- </controls:TabsControl.ItemsPanel> -->
+                <!-- ~1~ @1@ -->
                 <controls:TabsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:EditorPageViewModel}">
                         <Grid Background="Transparent" Height="30">
-                            <Border>
+                            <Border Padding="8, 0">
                                 <ToolTip.Tip>
                                     <Grid>
                                         <StackPanel Orientation="Horizontal">
@@ -191,7 +206,7 @@
                                                  Fill="Gray" />
                                         <Button Classes="icon_button"
                                                 x:Name="CloseTabButton"
-                                                Width="16" Height="16" Margin="12,0"
+                                                Width="16" Height="16" Margin="8, 0, 0. 0"
                                                 Click="OnCloseTab"
                                                 ZIndex="100">
                                             <Path x:Name="CloseTabPath" Width="9" Height="9"

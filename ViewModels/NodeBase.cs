@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 public class NodeBase : ViewModelBase
 {
     protected readonly IDialogService _dialogService;
+    protected readonly NodeFactory _nodeFactory;
     public ObservableCollection<NodeBase> SubNodes { get; set; }
 
     // public NodeBase? Parent { get; internal set; } 
@@ -123,7 +124,7 @@ public class DataItemNode : OpenEditorNode
         ItemKey = itemKey;
         DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            Console.WriteLine("deletimg");
+            Console.WriteLine("deleting");
             // await
         });
         // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
@@ -138,10 +139,11 @@ public class DataRootNode : OpenEditorNode
     // Change to enum later!
     private readonly string _dataType;
     private readonly string key;
+    private NodeFactory _nodeFactory;
+    
     
     // TODO: Prompt the user to add the page... for that datatype
-    public ReactiveCommand<DataItemNode, Unit> AddCommand { get; }
-    public ReactiveCommand<Unit, Unit> AddCommand2 { get; }
+    public ReactiveCommand<Unit, Unit> AddCommand { get; }
     public ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
     
     public ReactiveCommand<Unit, Unit> ReIndexCommand { get; }
@@ -154,43 +156,50 @@ public class DataRootNode : OpenEditorNode
     
     public ReactiveCommand<DataItemNode, Unit> ResaveAsFile { get; }
     public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
-    public DataRootNode(IDialogService dialogService, string dataType, string editorKey, string title, string? icon = null) 
+    public DataRootNode(IDialogService dialogService, NodeFactory nodeFactory, string dataType, string editorKey, string title, string? icon = null) 
         : base(dialogService, title, icon ?? "", editorKey)
     {
         _dataType = dataType;
+        _nodeFactory = nodeFactory;
+        
+        Console.WriteLine(_dialogService);
 
-        DeleteCommand = ReactiveCommand.Create<DataItemNode>(node =>
+        DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(async (node) =>
         {
+            await MessageBoxWindowView.Show("TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd", "how are you", MessageBoxWindowView.MessageBoxButtons.YesNo, _dialogService);
+            // RenameWindowViewModel vm = new RenameWindowViewModel();
+            // bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
+
+            // if (!result)
+            //     return;
+            
             SubNodes.Remove(node);
+            
+ 
+            
             Console.WriteLine($"Deleting {node.Title} of type {_dataType}");
         });
         
-        AddCommand = ReactiveCommand.Create<DataItemNode>(node =>
-        {
-            SubNodes.Add(node);
-            Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
-            
-        });
-
+       
         ReIndexCommand = ReactiveCommand.CreateFromTask(async () =>
         {
             Console.WriteLine("Reindexing");
             // await
         });
-        AddCommand2 = ReactiveCommand.CreateFromTask(async () =>
+        AddCommand = ReactiveCommand.CreateFromTask(async () =>
         {
             RenameWindowViewModel vm = new RenameWindowViewModel();
 
             // await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
             
-            Console.WriteLine(_dialogService + "SERVICE");
             
             bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
 
             if (!result)
                 return;
 
-            Console.WriteLine($"New name: {vm.Name}");
+         
+            SubNodes.Add(_nodeFactory.CreateDataItemNode(vm.Name, "MonsterEditor", vm.Name + ":", "Icons.GhostFill"));
             
             // RenameWindowView window = new RenameWindowView();
             // RenameWindowViewModel vm = new RenameWindowViewModel();

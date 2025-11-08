@@ -170,33 +170,7 @@ public partial class MainWindow : ChromelessWindow
             SetContextMenuForTreeItem(child);
         }
     }
-
-    // private void MasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)
-    // {
-    //     Console.WriteLine("HI CON");
-    //     // Console.WriteLine(sender);
-    //     // e.TargetControl is the control that was right-clicked
-    //     if (e.Source is TreeViewItem tvi && tvi.DataContext is NodeBase node)
-    //     {
-    //         // Create context menu dynamically
-    //         var menu = new ContextMenu();
-    //
-    //         menu.ItemsSource = new[]
-    //         {
-    //             new MenuItem { Header = $"Title: {node.Title}" }, // dynamic title
-    //             new MenuItem { Header = "Rename" },
-    //             new MenuItem { Header = "Delete" }
-    //         };
-    //
-    //         // Attach menu to the TreeViewItem
-    //         tvi.ContextMenu = menu;
-    //
-    //         // Open it manually at the mouse pointer location
-    //         menu.Open(tvi);
-    //         e.Handled = true; // prevent default context menu
-    //     }
-    // }
-
+    
     private void MasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)
     {
 
@@ -215,7 +189,7 @@ public partial class MainWindow : ChromelessWindow
             menu.Items.Add(new MenuItem { Header = "Resave as Patch",  Command = parentNode.ResaveAsPatch, CommandParameter = node });
             menu.Items.Add(new Separator());
             menu.Items.Add(new MenuItem { Header = "Edit" });
-            menu.Items.Add(new MenuItem { Header = "Delete" });
+            menu.Items.Add(new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node  });
 
             menu.Closed += (_, _) => current.ContextMenu = null;
 
@@ -229,70 +203,13 @@ public partial class MainWindow : ChromelessWindow
             menu.Items.Add(new MenuItem { Header = "Resave all as File",  Command = root.ResaveAllAsFileCommand });
             menu.Items.Add(new MenuItem { Header = "Resave all as Diff", Command = root.ResaveAllAsDiffCommand });
             menu.Items.Add(new Separator());
-            menu.Items.Add(new MenuItem { Header = "Add", Command = root.AddCommand2 });
+            menu.Items.Add(new MenuItem { Header = "Add", Command = root.AddCommand });
             menu.Closed += (_, _) => current.ContextMenu = null;
             current.ContextMenu = menu;
             menu.Open(current);
             e.Handled = true;
         }
     }
-
-
-
-    private void MaaaasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)
-    {
-        Console.WriteLine("HI CON");
-        if (e.Source is not Visual sourceVisual)
-            return;
-
-        // Walk up the visual tree to find the TreeViewItem
-        var x = sourceVisual.GetSelfAndVisualAncestors()
-            .OfType<TreeViewItem>();
-        
-        foreach (var item in x)
-        {
-            Console.WriteLine(item.DataContext);
-            item.ContextMenu = null;
-        }
-
-        
-        var tvi = x.FirstOrDefault();
-
-        tvi.ContextMenu = null;
-        if (tvi.DataContext is DataItemNode node)
-        {
-            var menu = new ContextMenu
-            {
-                ItemsSource = new[]
-                {
-                    new MenuItem { Header = $"Title: {node.Title}" },
-                    new MenuItem { Header = "Rename" },
-                    new MenuItem { Header = "Delete" }
-                }
-            };
-
-            tvi.ContextMenu = menu;
-            menu.Open(tvi);
-            e.Handled = true;
-        }
-        else if (tvi?.DataContext is DataRootNode root)
-        {
-            var menu = new ContextMenu
-            {
-                ItemsSource = new[]
-                {
-                    new MenuItem { Header = $"A: {root.Title}" },
-                    new MenuItem { Header = "B" },
-                    new MenuItem { Header = "C" }
-                }
-            };
-
-            tvi.ContextMenu = menu;
-            menu.Open(tvi);
-            e.Handled = true;
-        }
-    }
-
 }
 
 

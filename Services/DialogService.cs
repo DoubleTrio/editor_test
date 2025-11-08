@@ -19,6 +19,9 @@ public interface IDialogService
 {
     Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel)
         where TViewModel : class;
+    
+    void Close<TViewModel, TResult>(TViewModel viewModel, TResult result)
+        where TViewModel : class;
 }
 
 public class DialogService : IDialogService
@@ -49,6 +52,16 @@ public class DialogService : IDialogService
         
         return await window.ShowDialog<TResult?>(mainWindow);
     }
+    
+    public void Close<TViewModel, TResult>(TViewModel viewModel, TResult result)
+        where TViewModel : class
+    {
+        var window = (App.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+            .Windows.FirstOrDefault(w => ReferenceEquals(w.DataContext, viewModel));
+
+        window?.Close(result);
+    }
+
 }
 
 public class DialogService2(Func<TopLevel?> topLevel)

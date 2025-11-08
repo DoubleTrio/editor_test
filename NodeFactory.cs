@@ -29,7 +29,9 @@ public class NodeFactory
         => Create<OpenEditorNode>(title, icon, editorKey);
 
     public DataRootNode CreateDataRootNode(string dataType, string editorKey, string title, string? icon = null)
-        => Create<DataRootNode>(dataType, editorKey, title, icon);
+    {
+        return Create<DataRootNode>(this, dataType, editorKey, title, icon);
+    }
 
     public DataItemNode CreateDataItemNode(string key, string editorKey, string title, string? icon = null)
         => Create<DataItemNode>(key, editorKey, title, icon);

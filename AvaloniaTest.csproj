@@ -50,5 +50,8 @@
       <Compile Update="Views\DialogBoxes\RenameWindowView.axaml.cs">
         <DependentUpon>RenameWindow.axaml</DependentUpon>
       </Compile>
+      <Compile Update="Views\CaptionButtons.axaml.cs">
+        <DependentUpon>CaptionButtons.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

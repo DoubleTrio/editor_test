@@ -302,13 +302,30 @@ public class MainWindowViewModel : ViewModelBase
     private void BuildNodes()
     {
         var halcyonNode = _nodeFactory.CreateOpenEditorNode("Halcyon", "Icons.FloppyDiskBackFill");
+        
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"));
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"));
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Ground Editor With A Long Name", "Icons.MapTrifoldFill", "GroundEditor"));
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"));
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Constants", "Icons.ListFill"));;
+        
         var monstersRoot = _nodeFactory.CreateDataRootNode("Monsters", "Monsters", "Monsters", "Icons.GhostFill");
 
+        
+        //             new OpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"),
+        //             new OpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"),
+        //             new OpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"),
+        //             new OpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"),
+        
+        
         monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("eevee", "MonsterEditor", "eevee: Eevee", "Icons.GhostFill"));
         monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("seviper", "MonsterEditor", "seviper: Seviper", "Icons.GhostFill"));
-
+        
         halcyonNode.SubNodes.Add(monstersRoot);
         Nodes = new ObservableCollection<NodeBase> { halcyonNode };
+
+        halcyonNode.IsExpanded = true;
+        monstersRoot.IsExpanded = true;
     }
 
     private void ApplyFilter(string filter)
