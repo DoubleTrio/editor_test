@@ -43,7 +43,6 @@
                  KeyDown="OnSearchBoxKeyDown"
                  BorderBrush="{DynamicResource Brush.Border2}"
                  VerticalContentAlignment="Center">
-            <!-- v:AutoFocusBehaviour.IsEnabled="True" -->
             <TextBox.InnerLeftContent>
                 <Path
                     Fill="{DynamicResource Brush.FG2}"
@@ -88,19 +87,15 @@
             </TreeView.Styles>
 
             <TreeView.DataTemplates>
-                <!-- OpenEditorNode -->
-
+                <!-- PageNode -->
                 <TreeDataTemplate DataType="vm:PageNode" ItemsSource="{Binding SubNodes}">
                     <Grid ColumnDefinitions="*, Auto">
                         <ContentPresenter Content="{Binding}"
                                           ContentTemplate="{StaticResource NodeContentTemplate}" />
-                        <ContentControl />
                     </Grid>
                 </TreeDataTemplate>
             </TreeView.DataTemplates>
         </TreeView>
-
-
     </Grid>
 </UserControl>
 

@@ -146,7 +146,7 @@
 
                         <TreeView Classes="custom" Grid.Row="2" Margin="0"
                                   x:Name="MasterTreeView"
-                                  ItemsSource="{Binding TreeSearch.Nodes}"
+                                  ItemsSource="{Binding Nodes}"
                                   SelectedItems="{Binding TreeSearch.SelectedNodes}"
                                   DoubleTapped="MasterTreeView_OnDoubleTapped"
                                   ContextRequested="MasterTreeView_OnContextRequested"

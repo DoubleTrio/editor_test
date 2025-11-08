@@ -19,9 +19,10 @@ using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Media;
 
-public class MainWindowViewModel : ViewModelBase, IDialogProvider
+public class MainWindowViewModel : ViewModelBase
 {
     private DialogViewModel? _dialog;
+    private readonly NodeFactory _nodeFactory;
     
     
     public DialogViewModel? Dialog
@@ -131,7 +132,7 @@ public class MainWindowViewModel : ViewModelBase, IDialogProvider
         }
         Pages.Add(page);
         
-        var node = new PageNode(page);
+        var node = new PageNode(_dialogService, page);
         TopLevelPages.Add(node);
         _pageToNodeMap[page] = node;
         ActivePage = page;
@@ -141,7 +142,7 @@ public class MainWindowViewModel : ViewModelBase, IDialogProvider
     {
         if (_pageToNodeMap.TryGetValue(parentPage, out var parentNode))
         {
-            var childNode = parentNode.AddChild(childPage);
+            var childNode = parentNode.AddChild(_dialogService, childPage);
             _pageToNodeMap[childPage] = childNode;
             Pages.Add(childPage);
         }
@@ -212,11 +213,18 @@ public class MainWindowViewModel : ViewModelBase, IDialogProvider
 
     public readonly PageFactory _pageFactory;
     public readonly TabEvents _tabEvents;
-    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new TabEvents()) {}
-    public MainWindowViewModel(PageFactory pageFactory, TabEvents tabEvents)
+    public readonly IDialogService _dialogService;
+    public ObservableCollection<NodeBase> Nodes { get; set; }
+    
+    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new NodeFactory(new DesignServiceProvider()), new DialogService(), new TabEvents()) {}
+    public MainWindowViewModel(PageFactory pageFactory, NodeFactory nodeFactory, IDialogService dialogService, TabEvents tabEvents)
     {
 
+  
         _tabEvents = tabEvents;
+        _nodeFactory = nodeFactory;
+        _dialogService = dialogService;
+        BuildNodes();
         
         
         _tabEvents.AddChildTabEvent += (parent, child) =>
@@ -290,9 +298,22 @@ public class MainWindowViewModel : ViewModelBase, IDialogProvider
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
 
+    
+    private void BuildNodes()
+    {
+        var halcyonNode = _nodeFactory.CreateOpenEditorNode("Halcyon", "Icons.FloppyDiskBackFill");
+        var monstersRoot = _nodeFactory.CreateDataRootNode("Monsters", "Monsters", "Monsters", "Icons.GhostFill");
+
+        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("eevee", "MonsterEditor", "eevee: Eevee", "Icons.GhostFill"));
+        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("seviper", "MonsterEditor", "seviper: Seviper", "Icons.GhostFill"));
+
+        halcyonNode.SubNodes.Add(monstersRoot);
+        Nodes = new ObservableCollection<NodeBase> { halcyonNode };
+    }
+
     private void ApplyFilter(string filter)
     {
-        foreach (var node in TreeSearch.Nodes)
+        foreach (var node in Nodes)
         {
             ApplyFilterRecursive(node, filter);
         }
@@ -503,6 +524,8 @@ public class MainWindowViewModel : ViewModelBase, IDialogProvider
     // Navigate to a page from tab switcher
     public void NavigateToPage(PageNode node)
     {
+        Console.WriteLine($"Navigating to page {node.Title}");
+        Console.WriteLine("yay");
         ActivePage = node.Page;
         
     }

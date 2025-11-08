@@ -1,13 +1,57 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using AvaloniaTest.ViewModels;
+using ReactiveUI;
 
 namespace AvaloniaTest.Services;
 
-public class DialogService(Func<TopLevel?> topLevel)
+
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+
+public interface IDialogService
+{
+    Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel)
+        where TViewModel : class;
+}
+
+public class DialogService : IDialogService
+{
+    private readonly ViewLocator _viewLocator;
+
+    public DialogService()
+    {
+        _viewLocator = new ViewLocator();
+    }
+    public DialogService(ViewLocator viewLocator)
+    {
+        _viewLocator = viewLocator;
+    }
+
+    public async Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel)
+        where TViewModel : class
+    {
+        var control = _viewLocator.Build(viewModel);
+        if (control is not Window window)
+            throw new InvalidOperationException($"View for {typeof(TViewModel).Name} must be a Window.");
+
+        window.DataContext = viewModel;
+
+        var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        if (mainWindow == null)
+            throw new InvalidOperationException("Main window not found for dialog parent.");
+        
+        return await window.ShowDialog<TResult?>(mainWindow);
+    }
+}
+
+public class DialogService2(Func<TopLevel?> topLevel)
 {
     public async Task ShowDialog<THost, TDialogViewModel>(THost host, TDialogViewModel dialogViewModel)
         where TDialogViewModel : DialogViewModel

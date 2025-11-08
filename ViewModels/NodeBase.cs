@@ -15,7 +15,7 @@ using System.Collections.ObjectModel;
 
 public class NodeBase : ViewModelBase
 {
-    private readonly IDialogProvider _dialogProvider;
+    protected readonly IDialogService _dialogService;
     public ObservableCollection<NodeBase> SubNodes { get; set; }
 
     // public NodeBase? Parent { get; internal set; } 
@@ -29,8 +29,9 @@ public class NodeBase : ViewModelBase
     }
     public string Icon { get; }
 
-    public NodeBase(string title = "", string? icon = null)
+    public NodeBase(IDialogService dialogService, string title = "", string? icon = null)
     {
+        _dialogService = dialogService;
         Title = title;
         Icon = icon ?? "";
         SubNodes = new ObservableCollection<NodeBase>();
@@ -80,8 +81,8 @@ public class OpenEditorNode : NodeBase
 
     public string EditorKey { get; }
     
-    public OpenEditorNode(string title, string? icon = null, string editorKey = "") 
-        : base(title, icon ?? "")
+    public OpenEditorNode(IDialogService dialogService, string title, string? icon = null, string editorKey = "") 
+        : base(dialogService, title, icon ?? "")
     {
         EditorKey = editorKey;
     }
@@ -93,8 +94,8 @@ public class ActionDataNode : NodeBase
     
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
-    public ActionDataNode(string title, string? icon = null) 
-        : base(title, icon ?? "")
+    public ActionDataNode(IDialogService dialogService, string title, string? icon = null) 
+        : base(dialogService, title, icon ?? "")
     {
         AddCommand = ReactiveCommand.Create(() => Console.WriteLine("Add command yayk"));
         DeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
@@ -116,8 +117,8 @@ public class DataItemNode : OpenEditorNode
 
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
-    public DataItemNode(string itemKey, string editorKey, string? title, string? icon = null) 
-        : base(title ?? "", icon ?? "", editorKey)
+    public DataItemNode(IDialogService dialogService, string itemKey, string editorKey, string? title, string? icon = null) 
+        : base(dialogService,title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
         DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -153,8 +154,8 @@ public class DataRootNode : OpenEditorNode
     
     public ReactiveCommand<DataItemNode, Unit> ResaveAsFile { get; }
     public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
-    public DataRootNode(string dataType, string editorKey, string title, string? icon = null) 
-        : base(title, icon ?? "", editorKey)
+    public DataRootNode(IDialogService dialogService, string dataType, string editorKey, string title, string? icon = null) 
+        : base(dialogService, title, icon ?? "", editorKey)
     {
         _dataType = dataType;
 
@@ -178,16 +179,29 @@ public class DataRootNode : OpenEditorNode
         });
         AddCommand2 = ReactiveCommand.CreateFromTask(async () =>
         {
-            RenameWindowView window = new RenameWindowView();
             RenameWindowViewModel vm = new RenameWindowViewModel();
-            window.DataContext = vm;
-            Window? mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-            bool result = await window.ShowDialog<bool>(mainWindow);
+            // await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
+            
+            Console.WriteLine(_dialogService + "SERVICE");
+            
+            bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
+
             if (!result)
                 return;
+
+            Console.WriteLine($"New name: {vm.Name}");
             
-            Console.WriteLine(window.DataContext);
+            // RenameWindowView window = new RenameWindowView();
+            // RenameWindowViewModel vm = new RenameWindowViewModel();
+            // window.DataContext = vm;
+            // Window? mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            // bool result = await window.ShowDialog<bool>(mainWindow);
+            // if (!result)
+            // return;
+
+            // Console.WriteLine(window.DataContext);
 
             // lock (GameBase.lockObj)
             // {
@@ -203,8 +217,8 @@ public class DataRootNode : OpenEditorNode
             // SubNodes.Add(item);
             // var 
             // Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
-            
-            
+
+
             // DataManager.Remove(assetName, _dataType);
         });
     }
@@ -218,8 +232,8 @@ public class PageNode : NodeBase
     public PageNode Parent { get; set; }
     public bool IsTopLevel => Parent == null;
 
-    public PageNode(EditorPageViewModel page, PageNode parent = null)
-        : base(page.Title, page.Icon)
+    public PageNode(IDialogService dialogService, EditorPageViewModel page, PageNode parent = null)
+        : base(dialogService, page.Title, page.Icon)
     {
         Page = page;
         Parent = parent;
@@ -234,9 +248,9 @@ public class PageNode : NodeBase
     
     public new string Title => Page.Title;
     
-    public PageNode AddChild(EditorPageViewModel childPage)
+    public PageNode AddChild(IDialogService dialogService, EditorPageViewModel childPage)
     {
-        var childNode = new PageNode(childPage, this);
+        var childNode = new PageNode(dialogService, childPage, this);
         SubNodes.Add(childNode);
         return childNode;
     }

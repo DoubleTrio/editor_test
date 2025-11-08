@@ -13,16 +13,9 @@ public class DesignServiceProvider : IServiceProvider
     public DesignServiceProvider()
     {
         var collection = new ServiceCollection();
-        
         collection.AddCommonServices();
-        
-
         _serviceProvider = collection.BuildServiceProvider();
-        
-        var factory = _serviceProvider.GetRequiredService<PageFactory>();
-        factory.Register<DevControlViewModel>("DevControl");
-        factory.Register<ZoneEditorPageViewModel>("ZoneEditor");
-        factory.Register<GroundEditorPageViewModel>("GroundEditor");
+        _serviceProvider.RegisterPages();
     }
 
     public object? GetService(Type serviceType)
@@ -78,3 +71,5 @@ public class PageFactory
         return null;
     }
 }
+
+
