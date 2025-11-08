@@ -9,9 +9,9 @@
     <Styles.Resources>
     <local:TreeViewItemIndentConverter x:Key="TreeViewIndentConverter"/>
     <ControlTheme x:Key="FluentTreeViewExpandCollapseChevron" TargetType="ToggleButton">
-        <Setter Property="Margin" Value="0" />
-        <Setter Property="Width" Value="8"/>
-        <Setter Property="Height" Value="8" />
+        <Setter Property="Margin" Value="20" />
+        <Setter Property="Width" Value="12"/>
+        <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="Transparent"
@@ -44,9 +44,9 @@
         <!--     <Setter Property="Margin" Value="3 0 3 0"/>    -->
         <!-- </Style> -->
         
-        <Style Selector="^ /template/ ToggleButton">
-            <Setter Property="Height" Value="8"/>   
-            <Setter Property="Width" Value="8"/> 
+        <Style Selector="^ /template/ ToggleButton Path">
+            <Setter Property="Height" Value="10"/>   
+            <Setter Property="Width" Value="10"/> 
             <!-- <Setter Property="Margin" Value="0 0 50 0"/>  -->
 
             

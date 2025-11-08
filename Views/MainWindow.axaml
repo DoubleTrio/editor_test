@@ -163,6 +163,32 @@
 
                             <TreeView.DataTemplates>
                                 
+                                <!-- DataRootNode -->
+                                <TreeDataTemplate DataType="vm:DataRootNode" ItemsSource="{Binding SubNodes}">
+                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
+                                            
+
+                                        <ContentPresenter Content="{Binding}"
+                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
+                                        
+                                        <!-- Bug or feature... the plus always shows up when the child elements are hovered... is it possible to check if Border#PART_LayoutRoot is hovered -->
+                                        
+                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
+                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" 
+                                                Command="{Binding AddCommand}">
+                                            <Path
+                                                Stretch="Fill"
+                                                
+                                                Fill="{DynamicResource Brush.FG1}"
+                                                Width="10" Height="10" Margin="0,0,0,0"
+                                                Data="{StaticResource Icons.Plus}" />
+                                        </Button>
+                                    </Grid>
+
+
+                                </TreeDataTemplate>
+
+
                                 <TreeDataTemplate DataType="vm:DataItemNode" ItemsSource="{Binding SubNodes}">
                                     <Grid ColumnDefinitions="*,Auto"
                                           Background="Transparent"
@@ -184,7 +210,7 @@
                                                 BorderThickness="0">
                                             <Path Stretch="Fill"
                                                   Fill="{DynamicResource Brush.FG1}"
-                                                  Width="7" Height="7"
+                                                  Width="10" Height="10"
                                                   Data="{StaticResource Icons.TrashFill}" />
                                         </Button>
                                     </Grid>
@@ -199,6 +225,38 @@
                                     </Grid>
                                 </TreeDataTemplate>
 
+                                
+                                    <!-- ActionDataNode -->
+                                <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
+                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
+                                        <Grid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Resave As File" />
+                                                <MenuItem Header="Resave As Patch" />
+                                                <MenuItem Header="Edit" />
+                                                <Separator />
+                                                <MenuItem Header="Delete" />
+                                            </ContextMenu>
+                                        </Grid.ContextMenu>
+
+                                        <ContentPresenter Content="{Binding}"
+                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
+                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
+                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" 
+                                                Command="{Binding AddCommand}">
+                                            <Path
+                                                Stretch="Fill"
+                                                
+                                                Fill="{DynamicResource Brush.FG1}"
+                                                Width="10" Height="10" Margin="0,0,0,0"
+                                                Data="{StaticResource Icons.Plus}" />
+                                        </Button>
+                                    </Grid>
+
+
+                                </TreeDataTemplate>
+                                    
+                                    
 
                              
                                 <!-- ActionDataNode -->
@@ -223,7 +281,7 @@
                                                 Stretch="Fill"
                                                 
                                                 Fill="{DynamicResource Brush.FG1}"
-                                                Width="7" Height="7" Margin="0,0,0,0"
+                                                Width="10" Height="10" Margin="0,0,0,0"
                                                 Data="{StaticResource Icons.Plus}" />
                                         </Button>
                                     </Grid>

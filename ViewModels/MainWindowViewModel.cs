@@ -305,7 +305,7 @@ public class MainWindowViewModel : ViewModelBase
         
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"));
-        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Ground Editor With A Long Name", "Icons.MapTrifoldFill", "GroundEditor"));
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Constants", "Icons.ListFill"));;
         

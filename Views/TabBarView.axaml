@@ -39,14 +39,15 @@
             <Setter Property="Opacity" Value="0"></Setter>
         </Style>
 
-        
+
         <Style Selector="controls|DragTabItem">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="Padding" Value="0"></Setter>
         </Style>
 
         <Style Selector="controls|DragTabItem">
             <!-- <Setter Property="Padding" Value="0"></Setter> -->
-            <Setter Property="Margin" Value="0,0,8, 0"></Setter>
+            <Setter Property="Margin" Value="0,0, 8, 0"></Setter>
         </Style>
 
 
@@ -72,7 +73,7 @@
         <Style Selector="Grid#CloseButtonContainer:pointerover > Button#CloseTabButton">
             <Setter Property="Opacity" Value="1"></Setter>
         </Style>
-        
+
         <Style Selector="controls|DragTabItem">
             <!-- <Setter Property="HorizontalContentAlignment" Value="Left"/> -->
             <!-- <Setter Property="VerticalContentAlignment" Value="Center"/> -->
@@ -101,7 +102,7 @@
                                                        VerticalAlignment="Stretch"
                                                        IsHitTestVisible="True"
                                                        Theme="{StaticResource DragTabItemThumb}"
-                                                       Margin="0,0,40,0" />
+                                                       Margin="0,0,32,0" />
 
                             <Border Name="PART_SelectedPipe"
                                     Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
@@ -148,25 +149,19 @@
             <controls:TabsControl SelectedItem="{Binding SelectedItem}"
                                   ShowDefaultCloseButton="False"
                                   ShowDefaultAddButton="False"
+                                  TabItemWidth="150"
                                   LeftThumbWidth="0"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                   RightThumbWidth="0"
                                   Padding="0"
                                   ItemsSource="{Binding Pages}">
-                
-                
-              
-                <!-- <controls:TabsControl.ItemsPanel> -->
-                <!--     <ItemsPanelTemplate> -->
-                <!--         ~1~ Horizontal stack so each tab measures to its own content @1@ -->
-                <!--         <StackPanel Orientation="Horizontal" /> -->
-                <!--     </ItemsPanelTemplate> -->
-                <!-- </controls:TabsControl.ItemsPanel> -->
-                <!-- ~1~ @1@ -->
+
                 <controls:TabsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:EditorPageViewModel}">
-                        <Grid Background="Transparent" Height="30">
-                            <Border Padding="8, 0">
+                        <Grid Background="Transparent" Height="30"
+                              Width="150"
+                              HorizontalAlignment="Left">
+                            <Border Padding="8, 0, 16, 0">
                                 <ToolTip.Tip>
                                     <Grid>
                                         <StackPanel Orientation="Horizontal">
@@ -176,9 +171,9 @@
                                 </ToolTip.Tip>
 
                                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
-                                <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                                <Grid ColumnDefinitions="*, Auto">
                                     <Grid Grid.Column="0"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
                                           ColumnDefinitions="Auto,*"
                                           IsHitTestVisible="False">
 
@@ -197,7 +192,8 @@
                                                    Text="{Binding Title}"
                                                    IsHitTestVisible="False" />
                                     </Grid>
-                                    <Grid Grid.Column="1" x:Name="CloseButtonContainer" IsHitTestVisible="True" ZIndex="100">
+                                    <Grid Grid.Column="1" x:Name="CloseButtonContainer" IsHitTestVisible="True"
+                                          ZIndex="100">
                                         <Ellipse x:Name="NeedToSaveEllipse"
                                                  IsVisible="{Binding Modified}"
                                                  Width="8" Height="8"
