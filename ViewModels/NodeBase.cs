@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Specialized;
 using System.Reactive;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using AvaloniaTest.Services;
 using AvaloniaTest.Views;
 using ReactiveUI;
@@ -15,8 +17,6 @@ using System.Collections.ObjectModel;
 
 public class NodeBase : ViewModelBase
 {
-    protected readonly IDialogService _dialogService;
-    protected readonly NodeFactory _nodeFactory;
     public ObservableCollection<NodeBase> SubNodes { get; set; }
 
     // public NodeBase? Parent { get; internal set; } 
@@ -32,7 +32,7 @@ public class NodeBase : ViewModelBase
 
     public NodeBase(IDialogService dialogService, string title = "", string? icon = null)
     {
-        _dialogService = dialogService;
+        // _dialogService = dialogService;
         Title = title;
         Icon = icon ?? "";
         SubNodes = new ObservableCollection<NodeBase>();
@@ -89,24 +89,120 @@ public class OpenEditorNode : NodeBase
     }
 }
 
-public class ActionDataNode : NodeBase
+public abstract class ItemRootNode : NodeBase
 {
-    public ReactiveCommand<Unit, Unit> AddCommand { get; }
+    protected readonly IDialogService _dialogService;
     
-    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
+    public abstract ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public abstract ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
 
-    public ActionDataNode(IDialogService dialogService, string title, string? icon = null) 
-        : base(dialogService, title, icon ?? "")
+    protected ItemRootNode(IDialogService dialogService, string title, string icon, string editorKey)
+        : base(dialogService, title, icon)
     {
-        AddCommand = ReactiveCommand.Create(() => Console.WriteLine("Add command yayk"));
-        DeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
+        _dialogService = dialogService;
     }
 }
 
+public class DataRootNode : ItemRootNode
+{
+    protected readonly string _dataType;
+    
+    protected readonly NodeFactory _nodeFactory;
+    
+
+    public override ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public override ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> ReIndexCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResaveAllAsFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResaveAllAsDiffCommand { get; }
+
+    public ReactiveCommand<DataItemNode, Unit> ResaveAsFile { get; }
+    public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
+
+    public DataRootNode(NodeFactory nodeFactory, IDialogService dialogService, string dataType, string editorKey, string title, string? icon = null)
+        : base(dialogService, title, icon ?? "", editorKey)
+    {
+        _nodeFactory = nodeFactory;
+        _dataType = dataType;
+
+        // Hook up commands to methods
+        AddCommand = ReactiveCommand.CreateFromTask(AddItemAsync);
+        DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(DeleteItemAsync);
+
+        ReIndexCommand = ReactiveCommand.CreateFromTask(ReIndexAsync);
+        ResaveAllAsFileCommand = ReactiveCommand.CreateFromTask(ResaveAllAsFileAsync);
+        ResaveAllAsDiffCommand = ReactiveCommand.CreateFromTask(ResaveAllAsDiffAsync);
+
+        ResaveAsFile = ReactiveCommand.CreateFromTask<DataItemNode>(ResaveItemAsFileAsync);
+        ResaveAsPatch = ReactiveCommand.CreateFromTask<DataItemNode>(ResaveItemAsPatchAsync);
+    }
+    private async Task AddItemAsync()
+    {
+        var vm = new RenameWindowViewModel();
+        bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm, $"Add new {_dataType}");
+
+        if (!result)
+            return;
+
+        SubNodes.Add(_nodeFactory.CreateDataItemNode(vm.Name, "MonsterEditor", $"{vm.Name}:", "Icons.GhostFill"));
+        Console.WriteLine($"Added {_dataType} item: {vm.Name}");
+    }
+
+    private async Task DeleteItemAsync(DataItemNode? node)
+    {
+        if (node is null)
+            return;
+
+        var res = await MessageBoxWindowView.Show(
+            $"Deleting {node.ItemKey} will reset it back to the base game.",
+            $"Delete {node.ItemKey}",
+            MessageBoxWindowView.MessageBoxButtons.YesNo,
+            _dialogService
+        );
+
+        if (res != MessageBoxWindowView.MessageBoxResult.Yes)
+            return;
+
+        SubNodes.Remove(node);
+        Console.WriteLine($"Deleted {node.Title} of type {_dataType}");
+    }
+
+    private async Task ReIndexAsync()
+    {
+        Console.WriteLine($"Reindexing {_dataType}...");
+        await Task.Delay(100);
+    }
+
+    private async Task ResaveAllAsFileAsync()
+    {
+        Console.WriteLine($"Resaving all {_dataType} as file...");
+        await Task.Delay(100);
+    }
+
+    private async Task ResaveAllAsDiffAsync()
+    {
+        Console.WriteLine($"Resaving all {_dataType} as diff...");
+        await Task.Delay(100);
+    }
+
+    private async Task ResaveItemAsFileAsync(DataItemNode node)
+    {
+        Console.WriteLine($"Resaving {node.Title} as file...");
+        await Task.Delay(100);
+    }
+
+    private async Task ResaveItemAsPatchAsync(DataItemNode node)
+    {
+        Console.WriteLine($"Resaving {node.Title} as patch...");
+        await Task.Delay(100);
+    }
+}
+
+
+
 public class DataItemNode : OpenEditorNode
 {
-    // public ReactiveCommand<Unit, Unit> DataDeleteCommand { get; }
-
     public string ItemKey { get; }
     
     private string _value = "";
@@ -115,122 +211,116 @@ public class DataItemNode : OpenEditorNode
         get => _value;
         set => this.RaiseAndSetIfChanged(ref _value, value);
     }
-
-    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
-
+    
     public DataItemNode(IDialogService dialogService, string itemKey, string editorKey, string? title, string? icon = null) 
         : base(dialogService,title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
-        DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            Console.WriteLine("deleting");
-            // await
-        });
-        // this.WhenAnyValue(x => x.Value).Subscribe(v => Title = $"{ItemKey}: {v}");
-        
-        // DataDeleteCommand = ReactiveCommand.Create(() => Console.WriteLine("Delete command"));
+
     }
 }
 
-
-public class DataRootNode : OpenEditorNode
+public class SpriteRootNode : ItemRootNode
 {
-    // Change to enum later!
     private readonly string _dataType;
-    private readonly string key;
-    private NodeFactory _nodeFactory;
-    
-    
-    // TODO: Prompt the user to add the page... for that datatype
-    public ReactiveCommand<Unit, Unit> AddCommand { get; }
-    public ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
-    
-    public ReactiveCommand<Unit, Unit> ReIndexCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResaveAllAsFileCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResaveAllAsDiffCommand { get; }
-    // public ReactiveCommand<DataItemNode, Unit> PatchCommand { get; }
-    // public ReactiveCommand<DataItemNode, Unit> PatchCommand { get; }
-    // public ReactiveCommand<string, Unit> PatchCommand { get; }
-    
-    
-    public ReactiveCommand<DataItemNode, Unit> ResaveAsFile { get; }
-    public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
-    public DataRootNode(IDialogService dialogService, NodeFactory nodeFactory, string dataType, string editorKey, string title, string? icon = null) 
+    private readonly string _key;
+    private readonly NodeFactory _nodeFactory;
+
+    public override ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public override ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> MassExportCommand { get; }
+    public ReactiveCommand<Unit, Unit> MassImportCommand { get; }
+    public ReactiveCommand<DataItemNode, Unit> ExportCommand { get; }
+    public ReactiveCommand<DataItemNode, Unit> ImportCommand { get; }
+    public ReactiveCommand<DataItemNode, Unit> ReImportCommand { get; }
+
+    public SpriteRootNode(
+        IDialogService dialogService,
+        NodeFactory nodeFactory,
+        string dataType,
+        string editorKey,
+        string title,
+        string? icon = null)
         : base(dialogService, title, icon ?? "", editorKey)
     {
         _dataType = dataType;
+        _key = editorKey;
         _nodeFactory = nodeFactory;
-        
-        Console.WriteLine(_dialogService);
 
-        DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(async (node) =>
+        AddCommand = ReactiveCommand.CreateFromTask(AddSpriteAsync);
+        DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(DeleteSpriteAsync);
+        MassExportCommand = ReactiveCommand.CreateFromTask(MassExportAsync);
+        MassImportCommand = ReactiveCommand.CreateFromTask(MassImportAsync);
+        ExportCommand = ReactiveCommand.CreateFromTask<DataItemNode>(ExportSpriteAsync);
+        ImportCommand = ReactiveCommand.CreateFromTask<DataItemNode>(ImportSpriteAsync);
+        ReImportCommand = ReactiveCommand.CreateFromTask<DataItemNode>(ReImportSpriteAsync);
+    }
+
+    // === Command Methods ===
+
+    private async Task AddSpriteAsync()
+    {
+        var vm = new RenameWindowViewModel();
+        bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm, "Add sprite ID");
+
+        if (!result)
+            return;
+
+        var node = _nodeFactory.CreateDataItemNode(vm.Name, "SpriteEditor", vm.Name + ":", "Icons.PaintBrushFill");
+        SubNodes.Add(node);
+
+        Console.WriteLine($"[SpriteRootNode] Added sprite: {vm.Name}");
+    }
+
+    private async Task DeleteSpriteAsync(DataItemNode node)
+    {
+        var res = await MessageBoxWindowView.Show(
+            $"Delete sprite '{node.Title}'?",
+            "Deleting Sprite",
+            MessageBoxWindowView.MessageBoxButtons.YesNo,
+            _dialogService);
+
+        if (res != MessageBoxWindowView.MessageBoxResult.Yes)
+            return;
+
+        SubNodes.Remove(node);
+        Console.WriteLine($"[SpriteRootNode] Deleted sprite: {node.Title}");
+    }
+
+    private async Task MassExportAsync()
+    {
+        var x = await _dialogService.ShowFolderPickerAsync(new FolderPickerOpenOptions( )
         {
-            var res = await MessageBoxWindowView.Show("Deleting this Zone will be reset back to the base game: ducktales woo-hoo", "Deleting Monster", MessageBoxWindowView.MessageBoxButtons.YesNo, _dialogService);
-            // RenameWindowViewModel vm = new RenameWindowViewModel();
-            // bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
-
-            // if (!result)
-            //     return;
-
-            if (res != MessageBoxWindowView.MessageBoxResult.Yes) return;
-            
-            
-            SubNodes.Remove(node);
-            Console.WriteLine($"Deleting {node.Title} of type {_dataType}");
-            
+            AllowMultiple = true,
+            Title = "Select a folder to mass export to"
         });
-        
-       
-        ReIndexCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            Console.WriteLine("Reindexing");
-            // await
-        });
-        AddCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            RenameWindowViewModel vm = new RenameWindowViewModel();
+        Console.WriteLine("[SpriteRootNode] Mass export triggered (TODO: implement export logic).");
+        await Task.CompletedTask;
+    }
 
-            // await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
-            
-            
-            bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm, "Rename");
+    private async Task MassImportAsync()
+    {
+        Console.WriteLine("[SpriteRootNode] Mass import triggered (TODO: implement import logic).");
+        await Task.CompletedTask;
+    }
 
-            if (!result)
-                return;
+    private async Task ExportSpriteAsync(DataItemNode node)
+    {
+        Console.WriteLine($"[SpriteRootNode] Exporting sprite: {node.Title}");
+        await Task.CompletedTask;
+    }
 
-         
-            SubNodes.Add(_nodeFactory.CreateDataItemNode(vm.Name, "MonsterEditor", vm.Name + ":", "Icons.GhostFill"));
-            
-            // RenameWindowView window = new RenameWindowView();
-            // RenameWindowViewModel vm = new RenameWindowViewModel();
-            // window.DataContext = vm;
-            // Window? mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+    private async Task ImportSpriteAsync(DataItemNode node)
+    {
+        Console.WriteLine($"[SpriteRootNode] Importing sprite: {node.Title}");
+        await Task.CompletedTask;
+    }
 
-            // bool result = await window.ShowDialog<bool>(mainWindow);
-            // if (!result)
-            // return;
-
-            // Console.WriteLine(window.DataContext);
-
-            // lock (GameBase.lockObj)
-            // {
-            //     string assetName = Text.GetNonConflictingName(Text.Sanitize(vm.Name).ToLower(), DataManager.Instance.DataIndices[dataType].ContainsKey);
-            //     DataManager.Instance.ContentChanged(dataType, assetName, createOp());
-            //     string newName = DataManager.Instance.DataIndices[dataType].Get(assetName).GetLocalString(true);
-            //     choices.AddEntry(assetName, newName);
-            //
-            //     if (dataType == DataManager.DataType.Zone)
-            //         LuaEngine.Instance.CreateZoneScriptDir(assetName);
-            // }
-            // var item = new DataItemNode("new key", "value");
-            // SubNodes.Add(item);
-            // var 
-            // Console.WriteLine($"Now adding a {node.Title} of type {_dataType}");
-
-
-            // DataManager.Remove(assetName, _dataType);
-        });
+    private async Task ReImportSpriteAsync(DataItemNode node)
+    {
+        Console.WriteLine($"[SpriteRootNode] Re-importing sprite: {node.Title}");
+        await Task.CompletedTask;
     }
 }
 
@@ -271,3 +361,47 @@ public class PageNode : NodeBase
         childNode.Parent = null;
     }
 }
+
+public interface IItemCommands
+{
+    ReactiveCommand<Unit, Unit> AddCommand { get; }
+    ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
+}
+
+// public class DefaultItemCommands : IItemCommands
+// {
+//     public ReactiveCommand<Unit, Unit> AddCommand { get; }
+//     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
+//
+//     public DefaultItemCommands(Action onAdd, Action onDelete)
+//     {
+//         // AddCommand = ReactiveCommand.CreateFromTask(onAdd);
+//         // DeleteCommand = ReactiveCommand.Create(onDelete);
+//     }
+// }
+//
+
+
+// public class DataRootItemCommands : IItemCommands
+// {
+//     public ReactiveCommand<Unit, Unit> AddCommand { get; }
+//     public ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
+//     
+//     public DataRootItemCommands(ItemRootNode node)
+//     {
+//         AddCommand = ReactiveCommand.CreateFromTask(async () =>
+//         {
+//             Console.WriteLine($"[DATA] Adding {dataType}...");
+//             await Task.Delay(500); // simulate work
+//             Console.WriteLine($"[DATA] Done adding {dataType}");
+//         });
+//
+//         DeleteCommand = ReactiveCommand.CreateFromTask(async () =>
+//         {
+//             Console.WriteLine($"[DATA] Deleting {dataType}...");
+//             await Task.Delay(500);
+//             Console.WriteLine($"[DATA] Done deleting {dataType}");
+//         });
+//     }
+//
+// }

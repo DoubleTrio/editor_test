@@ -9,13 +9,13 @@ public class DevControlViewModel : EditorPageViewModel
 
     public TestComboBoxViewModel Fruits { get; }
     
-    public DevControlViewModel(TabEvents tabEvents, IDialogService dialogService) : base(tabEvents, dialogService)
+    public DevControlViewModel (PageFactory pageFactory, TabEvents tabEvents, IDialogService dialogService) : base(pageFactory, tabEvents, dialogService)
     {
        
         Fruits = new TestComboBoxViewModel();
     }
     
-    public DevControlViewModel() : base(new TabEvents(), new DialogService())
+    public DevControlViewModel() : base(new PageFactory(new DesignServiceProvider()), new TabEvents(new PageFactory(new DesignServiceProvider())), new DialogService())
     {
         Title = "Dev Control";
         Fruits = new TestComboBoxViewModel();

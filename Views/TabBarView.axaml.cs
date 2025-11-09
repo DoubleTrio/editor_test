@@ -24,6 +24,7 @@ namespace AvaloniaTest.Views
         {
             InitializeComponent();
         }
+
         private void OnTabContextRequested(object sender, ContextRequestedEventArgs e)
         {
             if (sender is Border { DataContext: ViewModels.EditorPageViewModel page } border &&
@@ -66,14 +67,51 @@ namespace AvaloniaTest.Views
             e.Handled = true;
         }
 
-        private void OnCloseTab(object sender, RoutedEventArgs e)
+        private async void OnCloseTab(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Close Tab");
-            if (sender is Button btn && DataContext is ViewModels.MainWindowViewModel vm)
-                vm.RemovePage(btn.DataContext as ViewModels.EditorPageViewModel);
+            try
+            {
+                if (sender is Button btn && DataContext is ViewModels.MainWindowViewModel vm)
+                {
+                    if (btn.DataContext is ViewModels.EditorPageViewModel page)
+                    {
+                        if (vm.PageHasChildren(page))
+                        {
+                            var res = await MessageBoxWindowView.Show(
+                                "Are you sure you want to close all subtabs?  Your changes will not be saved.",
+                                "Confirm Close",
+                                MessageBoxWindowView.MessageBoxButtons.YesNo,
+                                vm._dialogService
+                            );
 
-            e.Handled = true;
-            Console.WriteLine("Close Tab");
+                            if (res != MessageBoxWindowView.MessageBoxResult.Yes)
+                            {
+                                e.Handled = true;
+                                return;
+                            }
+                        }
+
+                        Console.WriteLine($"Closing tab: {page.Title}");
+                        vm.RemovePage(page);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or display the error — this prevents a crash
+                Console.Error.WriteLine($"Error closing tab: {ex}");
+                await MessageBoxWindowView.Show(
+                    $"An error occurred while closing the tab:\n\n{ex.Message}",
+                    "Error",
+                    MessageBoxWindowView.MessageBoxButtons.Ok,
+                    (DataContext as ViewModels.MainWindowViewModel)?._dialogService
+                );
+            }
+            finally
+            {
+                e.Handled = true;
+            }
         }
+
     }
 }

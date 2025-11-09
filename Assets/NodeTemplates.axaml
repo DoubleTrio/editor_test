@@ -16,4 +16,26 @@
                        ClipToBounds="True" />
         </Grid>
     </DataTemplate>
+    
+    
+    <DataTemplate x:Key="RootNodeTemplate" DataType="vm:ItemRootNode">
+        <Grid ColumnDefinitions="Auto, *, 16" Height="16">
+
+            <ContentPresenter Content="{Binding}"
+                              ContentTemplate="{StaticResource NodeContentTemplate}" />
+
+            <Button Classes="icon_button"
+                    Grid.Column="2"
+                    IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
+                    Command="{Binding AddCommand}">
+                <Path Stretch="Fill"
+                      Fill="{DynamicResource Brush.FG1}"
+                      Width="10" Height="10"
+                      Data="{StaticResource Icons.Plus}" />
+            </Button>
+        </Grid>
+    </DataTemplate>
+
+    
+    
 </ResourceDictionary>

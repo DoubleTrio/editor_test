@@ -60,7 +60,7 @@ public class EditorPageViewModel : ViewModelBase
         }
     private readonly TabEvents _tabEvents;
     
-    public EditorPageViewModel(TabEvents tabEvents, IDialogService dialogService)
+    public EditorPageViewModel(PageFactory pageFactory, TabEvents tabEvents, IDialogService dialogService)
     {
         // Children = new ObservableCollection<EditorPageViewModel>();
         _tabEvents = tabEvents;

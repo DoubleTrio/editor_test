@@ -58,18 +58,7 @@
                                 <!-- <Button Content="Open" Command="{Binding OpenEditorCommand}" /> -->
                             </StackPanel>
                         </TreeDataTemplate>
-
-                        <!-- ActionDataNode -->
-                        <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <Svg Width="16" Height="16" Path="{Binding Icon, Converter={StaticResource SvgKeyToPathConverter}}"/>
-                                
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
-                                <Button Content="+" Command="{Binding AddCommand}" />
-                                <!-- <Button Content="−" Command="{Binding DeleteCommand}" /> -->
-                            </StackPanel>
-                        </TreeDataTemplate>
-
+                        
                     
                         <!-- Default Node -->
                         <TreeDataTemplate DataType="vm:NodeBase" ItemsSource="{Binding SubNodes}">

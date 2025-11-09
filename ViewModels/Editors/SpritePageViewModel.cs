@@ -1,5 +1,6 @@
 using System;
 using System.Reactive;
+using Avalonia.Platform.Storage;
 using AvaloniaTest.Services;
 using ReactiveUI;
 
@@ -12,17 +13,19 @@ public class SpritePageViewModel : EditorPageViewModel
     public override string Title => "Sprite Stuff";
 
     
-    public SpritePageViewModel(TabEvents tabEvents, IDialogService dialogService) : base(tabEvents, dialogService)
+    public SpritePageViewModel (PageFactory pageFactory, TabEvents tabEvents, IDialogService dialogService) : base(pageFactory, tabEvents, dialogService)
     {
-        CreateATab = ReactiveCommand.Create(() => tabEvents.AddChildPage(this, new SpritePageViewModel(tabEvents, dialogService)));
+        CreateATab = ReactiveCommand.Create(() => tabEvents.AddChildPage(this, pageFactory.CreatePage("SpritePage")));
         TestDialog = ReactiveCommand.CreateFromTask(async () =>
             {
                 var rename = new RenameWindowViewModel();
-                var result = await dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(rename, "Hi");
+                var result = await dialogService.ShowFolderPickerAsync(new FolderPickerOpenOptions()
+                {
+                    AllowMultiple = false,
+                    Title = "Select a folder"
+                });
                 Console.WriteLine(rename.Name);
-
             }
-            
         );
     }
 }

@@ -14,8 +14,6 @@ using AvaloniaTest.ViewModels;
 
 namespace AvaloniaTest.Views;
 
-
-
 public partial class MainWindow : ChromelessWindow
 {
     public static readonly StyledProperty<GridLength> CaptionHeightProperty =
@@ -58,9 +56,7 @@ public partial class MainWindow : ChromelessWindow
 
     private void OnTabSwitcherClosed(object? sender, EventArgs e)
     {
-
-        // TabSwitcherFlyoutButton.Flyout?.Hide();
-
+        TabSwitcherFlyoutButton.Flyout?.Hide();
     }
 
     public MainWindow()
@@ -170,46 +166,115 @@ public partial class MainWindow : ChromelessWindow
             SetContextMenuForTreeItem(child);
         }
     }
-    
+
     private void MasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)
     {
-
         if (e.Source is not Visual visual)
             return;
-        
+
         var current = visual.GetSelfAndVisualAncestors().OfType<TreeViewItem>().FirstOrDefault();
-        
         var parent = visual.GetSelfAndVisualAncestors().OfType<TreeViewItem>().Skip(1).FirstOrDefault();
+
+        if (current == null)
+            return;
+
+        if (current.DataContext is DataItemNode itemNode &&
+            parent?.DataContext is DataRootNode parentRoot)
+        {
+            ShowDataItemNodeMenu(current, itemNode, parentRoot, e);
+        }
         
-        if (current?.DataContext is DataItemNode node &&
-            parent?.DataContext is DataRootNode parentNode)
+        else if (current.DataContext is DataItemNode itemNode2 &&
+            parent?.DataContext is SpriteRootNode spriteRootMode)
         {
-            var menu = new ContextMenu();
-            menu.Items.Add(new MenuItem { Header = "Resave as File", Command = parentNode.ResaveAsFile, CommandParameter = node});
-            menu.Items.Add(new MenuItem { Header = "Resave as Patch",  Command = parentNode.ResaveAsPatch, CommandParameter = node });
-            menu.Items.Add(new Separator());
-            menu.Items.Add(new MenuItem { Header = "Edit" });
-            menu.Items.Add(new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node  });
-
-            menu.Closed += (_, _) => current.ContextMenu = null;
-
-            current.ContextMenu = menu;
-            menu.Open(current);
-            e.Handled = true;
-        } else if (current?.DataContext is DataRootNode root)
+            ShowSpriteItemNodeMenu(current, itemNode2, spriteRootMode, e);
+        }
+        else if (current.DataContext is DataRootNode rootNode)
         {
-            var menu = new ContextMenu();
-            menu.Items.Add(new MenuItem { Header = "Re-Index", Command = root.ReIndexCommand });
-            menu.Items.Add(new MenuItem { Header = "Resave all as File",  Command = root.ResaveAllAsFileCommand });
-            menu.Items.Add(new MenuItem { Header = "Resave all as Diff", Command = root.ResaveAllAsDiffCommand });
-            menu.Items.Add(new Separator());
-            menu.Items.Add(new MenuItem { Header = "Add", Command = root.AddCommand });
-            menu.Closed += (_, _) => current.ContextMenu = null;
-            current.ContextMenu = menu;
-            menu.Open(current);
-            e.Handled = true;
+            ShowRootNodeMenu(current, rootNode, e);
+        } 
+        else if (current.DataContext is SpriteRootNode spriteRoot)
+        {
+            ShowSpriteRootNodeMenu(current, spriteRoot, e);
+            
         }
     }
+
+    private void ShowDataItemNodeMenu(TreeViewItem current, DataItemNode node, DataRootNode parentNode,
+        ContextRequestedEventArgs e)
+    {
+        var menu = new ContextMenu
+        {
+            Items =
+            {
+                new MenuItem { Header = "Resave as File", Command = parentNode.ResaveAsFile, CommandParameter = node },
+                new MenuItem
+                    { Header = "Resave as Patch", Command = parentNode.ResaveAsPatch, CommandParameter = node },
+                new Separator(),
+                new MenuItem { Header = "Edit" },
+                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node }
+            }
+        };
+
+        AttachAndOpenMenu(current, menu, e);
+    }
+
+    private void ShowSpriteItemNodeMenu(TreeViewItem current, DataItemNode node, SpriteRootNode parentNode,
+        ContextRequestedEventArgs e)
+    {
+        var menu = new ContextMenu
+        {
+            Items =
+            {
+                new MenuItem { Header = "Import", Command = parentNode.ImportCommand, CommandParameter = node },
+                new MenuItem { Header = "Re-Import", Command = parentNode.ReImportCommand, CommandParameter = node },
+                new MenuItem { Header = "Export", Command = parentNode.ExportCommand, CommandParameter = node },
+                new Separator(),
+                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node }
+            }
+        };
+
+        AttachAndOpenMenu(current, menu, e);
+    }
+
+    private void ShowRootNodeMenu(TreeViewItem current, DataRootNode root, ContextRequestedEventArgs e)
+    {
+        var menu = new ContextMenu
+        {
+            Items =
+            {
+                new MenuItem { Header = "Re-Index", Command = root.ReIndexCommand },
+                new MenuItem { Header = "Resave all as File", Command = root.ResaveAllAsFileCommand },
+                new MenuItem { Header = "Resave all as Diff", Command = root.ResaveAllAsDiffCommand },
+                new Separator(),
+                new MenuItem { Header = "Add", Command = root.AddCommand }
+            }
+        };
+
+        AttachAndOpenMenu(current, menu, e);
+    }
+    
+    private void ShowSpriteRootNodeMenu(TreeViewItem current, SpriteRootNode root, ContextRequestedEventArgs e)
+    {
+        var menu = new ContextMenu
+        {
+            Items =
+            {
+                new MenuItem { Header = "Mass Import", Command = root.MassImportCommand },
+                new MenuItem { Header = "Mass Export", Command = root.MassExportCommand },
+                new Separator(),
+                new MenuItem { Header = "Add", Command = root.AddCommand }
+            }
+        };
+
+        AttachAndOpenMenu(current, menu, e);
+    }
+
+    private static void AttachAndOpenMenu(TreeViewItem current, ContextMenu menu, ContextRequestedEventArgs e)
+    {
+        menu.Closed += (_, _) => current.ContextMenu = null;
+        current.ContextMenu = menu;
+        menu.Open(current);
+        e.Handled = true;
+    }
 }
-
-

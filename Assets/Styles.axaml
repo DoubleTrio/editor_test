@@ -67,10 +67,11 @@
                             <DropShadowEffect OffsetX="0" OffsetY="0" BlurRadius="4" Color="Black" Opacity=".6" />
                         </Border.Effect>
                     </Border>
-
+                    <!-- -->
+                    <!-- Margin="4" -->
+                    <!-- Padding="8" -->
                     <Border Name="LayoutRoot"
-                            Margin="4"
-                            Padding="8"
+                      
                             Background="{DynamicResource Brush.Popup}"
                             BorderThickness="0"
                             CornerRadius="{TemplateBinding CornerRadius}">

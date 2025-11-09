@@ -71,13 +71,13 @@
 
 
             <!-- Settings -->
-            <Button Grid.Column="1" Classes="icon_button" Command="{Binding AddDevControlTab}" Padding="0, 4, 0, 0">
+            <Button Grid.Column="1" Classes="icon_button" Command="{Binding AddTestTab}" Padding="0, 4, 0, 0">
                 <Path HorizontalAlignment="Center" Width="16" Height="16" Margin="0,2,0,0"
                       Data="{StaticResource Icons.GearFill}" />
             </Button>
 
             <!-- Switch Mod Button  -->
-            <Button Grid.Column="3" Classes="icon_button" Command="{Binding AddDevControlTab}" Padding="0, 4, 0, 0">
+            <Button Grid.Column="3" Classes="icon_button" Command="{Binding AddTestTab}" Padding="0, 4, 0, 0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Padding="0, 0, 6, 0">Halcyon</TextBlock>
                     <Path HorizontalAlignment="Center" Width="10" Height="10" Margin="0,2,0,0"
@@ -188,6 +188,29 @@
 
                                 </TreeDataTemplate>
 
+                                
+                                <!-- SpriteRootNode -->
+                                <TreeDataTemplate DataType="vm:SpriteRootNode" ItemsSource="{Binding SubNodes}">
+                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
+                                            
+
+                                        <ContentPresenter Content="{Binding}"
+                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
+                                        
+                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
+                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" 
+                                                Command="{Binding AddCommand}">
+                                            <Path
+                                                Stretch="Fill"
+                                                
+                                                Fill="{DynamicResource Brush.FG1}"
+                                                Width="10" Height="10" Margin="0,0,0,0"
+                                                Data="{StaticResource Icons.Plus}" />
+                                        </Button>
+                                    </Grid>
+
+
+                                </TreeDataTemplate>
 
                                 <TreeDataTemplate DataType="vm:DataItemNode" ItemsSource="{Binding SubNodes}">
                                     <Grid ColumnDefinitions="*,Auto"
@@ -201,7 +224,7 @@
                                         <Button Grid.Column="1"
                                                 Classes="icon_button"
                                                 Width="16" Height="16"
-                                                Command="{Binding $parent[TreeViewItem;1].((vm:DataRootNode)DataContext).DeleteCommand}"
+                                                Command="{Binding $parent[TreeViewItem;1].((vm:ItemRootNode)DataContext).DeleteCommand}"
                                                 CommandParameter="{Binding}"
                                                 IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
                                                 VerticalAlignment="Center"
@@ -224,72 +247,7 @@
                                         
                                     </Grid>
                                 </TreeDataTemplate>
-
                                 
-                                    <!-- ActionDataNode -->
-                                <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
-                                        <Grid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Resave As File" />
-                                                <MenuItem Header="Resave As Patch" />
-                                                <MenuItem Header="Edit" />
-                                                <Separator />
-                                                <MenuItem Header="Delete" />
-                                            </ContextMenu>
-                                        </Grid.ContextMenu>
-
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
-                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" 
-                                                Command="{Binding AddCommand}">
-                                            <Path
-                                                Stretch="Fill"
-                                                
-                                                Fill="{DynamicResource Brush.FG1}"
-                                                Width="10" Height="10" Margin="0,0,0,0"
-                                                Data="{StaticResource Icons.Plus}" />
-                                        </Button>
-                                    </Grid>
-
-
-                                </TreeDataTemplate>
-                                    
-                                    
-
-                             
-                                <!-- ActionDataNode -->
-                                <TreeDataTemplate DataType="vm:ActionDataNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
-                                        <Grid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Resave As File" />
-                                                <MenuItem Header="Resave As Patch" />
-                                                <MenuItem Header="Edit" />
-                                                <Separator />
-                                                <MenuItem Header="Delete" />
-                                            </ContextMenu>
-                                        </Grid.ContextMenu>
-
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
-                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" 
-                                                Command="{Binding AddCommand}">
-                                            <Path
-                                                Stretch="Fill"
-                                                
-                                                Fill="{DynamicResource Brush.FG1}"
-                                                Width="10" Height="10" Margin="0,0,0,0"
-                                                Data="{StaticResource Icons.Plus}" />
-                                        </Button>
-                                    </Grid>
-
-
-                                </TreeDataTemplate>
-
-
                                 <!-- Default Node -->
                                 <!-- <TreeDataTemplate DataType="vm:NodeBase" ItemsSource="{Binding SubNodes}"> -->
                                 <!--     <Grid ColumnDefinitions="*,Auto"> -->

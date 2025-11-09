@@ -20,16 +20,12 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<PageFactory>();
         collection.AddSingleton<NodeFactory>();
         collection.AddTransient<MainWindowViewModel>();
-        collection.AddTransient<DevControlViewModel>();
-        collection.AddTransient<ZoneEditorPageViewModel>();
-        collection.AddTransient<GroundEditorPageViewModel>();
-        collection.AddTransient<RandomInfoPageViewModel>();
+
          
         
         
         
         collection.AddTransient<NodeBase>();
-        collection.AddTransient<ActionDataNode>();
         collection.AddTransient<DataRootNode>();
         collection.AddTransient<DataItemNode>();
         collection.AddTransient<OpenEditorNode>();
@@ -39,7 +35,6 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<Func<Type, NodeBase>>(x => type => type switch
         {
             _ when type == typeof(NodeBase) => x.GetRequiredService<NodeBase>(),
-            _ when type == typeof(ActionDataNode) => x.GetRequiredService<ActionDataNode>(),
             _ when type == typeof(DataRootNode) => x.GetRequiredService<DataRootNode>(),
             _ when type == typeof(DataItemNode) => x.GetRequiredService<DataItemNode>(),
             _ when type == typeof(OpenEditorNode) => x.GetRequiredService<OpenEditorNode>(),
@@ -49,6 +44,12 @@ public static class ServiceCollectionExtensions
         
         collection.AddSingleton<ViewLocator>();
         collection.AddSingleton<IDialogService, DialogService>();
+        
+        collection.AddTransient<DevControlViewModel>();
+        collection.AddTransient<ZoneEditorPageViewModel>();
+        collection.AddTransient<GroundEditorPageViewModel>();
+        collection.AddTransient<RandomInfoPageViewModel>();
+        collection.AddTransient<SpritePageViewModel>();
         
         
     }
@@ -61,6 +62,7 @@ public static class ServiceCollectionExtensions
         pageFactory.Register<ZoneEditorPageViewModel>("ZoneEditor");
         pageFactory.Register<GroundEditorPageViewModel>("GroundEditor");
         pageFactory.Register<RandomInfoPageViewModel>("RandomInfo");
+        pageFactory.Register<SpritePageViewModel>("SpritePage");
     }
 }
 
@@ -76,9 +78,6 @@ public partial class App : Application
         var collection = new ServiceCollection();
         collection.AddCommonServices();
         
-        var services = collection.BuildServiceProvider();
-        
-        services.RegisterPages();
         // TopLevel provider
         collection.AddSingleton<Func<TopLevel?>>(x => () =>
         {
@@ -90,6 +89,11 @@ public partial class App : Application
 
             return null;
         });
+        
+        var services = collection.BuildServiceProvider();
+        
+        services.RegisterPages();
+ 
         
         var vm = services.GetRequiredService<MainWindowViewModel>();
         

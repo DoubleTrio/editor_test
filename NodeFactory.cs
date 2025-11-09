@@ -36,10 +36,10 @@ public class NodeFactory
     public DataItemNode CreateDataItemNode(string key, string editorKey, string title, string? icon = null)
         => Create<DataItemNode>(key, editorKey, title, icon);
 
-    public ActionDataNode CreateActionDataNode(string title, string? icon = null)
-        => Create<ActionDataNode>(title, icon);
-
     public PageNode CreatePageNode(string title, string? icon = null, string editorKey = "")
         => Create<PageNode>(title, icon, editorKey);
+    
+    public SpriteRootNode CreateSpriteRootNode(string dataType, string editorKey, string title, string? icon = null)
+        => Create<SpriteRootNode>(this, dataType, editorKey, title, icon);
     
 }

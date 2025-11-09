@@ -50,16 +50,6 @@ public class PageFactory
     {
         _map[key] = typeof(TPage);
     }
-
-    // public EditorPageViewModel? CreatePage(OpenEditorNode node)
-    // {
-    //     if (_map.TryGetValue(node.EditorKey, out var type))
-    //     {
-    //         return (EditorPageViewModel)_provider.GetRequiredService(type);
-    //     }
-    //
-    //     return null;
-    // }
     
     public EditorPageViewModel? CreatePage(string key)
     {
@@ -67,8 +57,24 @@ public class PageFactory
         {
             return (EditorPageViewModel)_provider.GetRequiredService(type);
         }
-
+    
         return null;
+    }
+    
+    // TODO: see if create page or the one above is better...
+    public T CreatePage<T>() where T : EditorPageViewModel
+    {
+        Console.WriteLine("Don't use this...");
+        return _provider.GetRequiredService<T>();
+    }
+    
+    public void PrintRegisteredPages()
+    {
+        Console.WriteLine("Registered pages:");
+        foreach (var entry in _map)
+        {
+            Console.WriteLine($"  Key: {entry.Key}, Type: {entry.Value.FullName}");
+        }
     }
 }
 

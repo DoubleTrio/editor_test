@@ -50,7 +50,6 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
     public TabSwitcherViewModel()
     {
         _mainWindow = new MainWindowViewModel();
-        _mainWindow.AddNewTab();
         UpdateVisiblePages(_searchFilter);
         SelectedPage = _mainWindow.ActivePage;
         this.WhenAnyValue(x => x.SearchFilter).Subscribe(UpdateVisiblePages);
@@ -66,6 +65,7 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
 
     public void Switch()
     {
+        Console.WriteLine(_selectedPage + "NEW");
         _mainWindow.ActivePage = _selectedPage ?? _mainWindow.ActivePage;
         _mainWindow.CancelSwitcher();
     }

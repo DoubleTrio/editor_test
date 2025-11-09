@@ -41,7 +41,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> ClearFilterCommand { get; }
 
-    public ReactiveCommand<Unit, Unit> AddDevControlTab { get; }
+    public ReactiveCommand<Unit, Unit> AddTestTab { get; }
     private string _filter = "";
 
 
@@ -103,6 +103,7 @@ public class MainWindowViewModel : ViewModelBase
     public void AddTopLevelPage(EditorPageViewModel page)
     {
         
+        Console.WriteLine($"Adding top level page {page}");
         // Navigate to the tab if it already exists
         if (page.UniqueId != null)
         {
@@ -140,6 +141,14 @@ public class MainWindowViewModel : ViewModelBase
         {
             AddTopLevelPage(childPage);
         }
+    }
+
+    public bool PageHasChildren(EditorPageViewModel page)
+    {
+        if (!_pageToNodeMap.TryGetValue(page, out var node))
+            return false;
+        
+        return node.SubNodes.Count > 0;
     }
     
     public void RemovePage(EditorPageViewModel page)
@@ -206,11 +215,12 @@ public class MainWindowViewModel : ViewModelBase
     public readonly IDialogService _dialogService;
     public ObservableCollection<NodeBase> Nodes { get; set; }
     
-    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new NodeFactory(new DesignServiceProvider()), new DialogService(), new TabEvents()) {}
+    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new NodeFactory(new DesignServiceProvider()), new DialogService(), new TabEvents(new PageFactory(new DesignServiceProvider()))) {}
     public MainWindowViewModel(PageFactory pageFactory, NodeFactory nodeFactory, IDialogService dialogService, TabEvents tabEvents)
     {
 
-  
+
+        _pageFactory = pageFactory;
         _tabEvents = tabEvents;
         _nodeFactory = nodeFactory;
         _dialogService = dialogService;
@@ -261,10 +271,17 @@ public class MainWindowViewModel : ViewModelBase
         // TODO: move this own view
         ClearFilterCommand = ReactiveCommand.Create(() => { Filter = string.Empty; });
 
-        AddDevControlTab = ReactiveCommand.Create(() =>
+        AddTestTab = ReactiveCommand.Create(() =>
         {
-            var page = new SpritePageViewModel(_tabEvents, _dialogService);
-            AddTopLevelPage(page);
+            var page = _pageFactory.CreatePage("SpritePage");
+            
+            _pageFactory.PrintRegisteredPages();
+
+            if (page != null)
+            {
+                AddTopLevelPage(page);
+            }
+
             ActivePage = page;
         });
 
@@ -282,9 +299,9 @@ public class MainWindowViewModel : ViewModelBase
             return Unit.Default;
         });
 
-        var tab = new DevControlViewModel(_tabEvents, _dialogService);
-        tab.Icon = "Icons.GameControllerFill";
-        AddTopLevelPage(tab);
+        // var tab = _pageFactory.CreatePage("DevControl");
+        // tab.Icon = "Icons.GameControllerFill";
+        // AddTopLevelPage(tab);
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
 
@@ -310,6 +327,45 @@ public class MainWindowViewModel : ViewModelBase
         
         monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("eevee", "MonsterEditor", "eevee: Eevee", "Icons.GhostFill"));
         monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("seviper", "MonsterEditor", "seviper: Seviper", "Icons.GhostFill"));
+        
+        var particlesRoot = _nodeFactory.CreateSpriteRootNode("particles", "", "Particles", "Icons.PaintBrushFill");
+        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Blue", "SpriteEditor", "Acid_Blue", "Icons.PaintBrushFill"));
+        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Red", "SpriteEditor", "Acid_Redr", "Icons.PaintBrushFill"));
+
+        halcyonNode.SubNodes.Add(particlesRoot);
+        //             new NodeBase("Sprites", "Icons.PaintBrushFill")
+        //             {
+        //                 SubNodes = new ObservableCollection<NodeBase>
+        //                 {
+        //                     new NodeBase("Char Sprites", "Icons.GhostFill"),
+        //                     new NodeBase("Portraits", "Icons.ImagesSquareFill"),
+        //                     new ActionDataNode("Particles", "Icons.ShootingStarFill")
+        //                     {
+        //                         SubNodes = new ObservableCollection<NodeBase>
+        //                         {
+        //                             new NodeBase("Absorb", "Icons.ShootingStarFill"),
+        //                             new NodeBase("Acid_Blue", "Icons.ShootingStarFill"),
+        //                         }
+        //                     },
+        //                     new ActionDataNode("Beam", "Icons.HeadlightsFill")
+        //                     {
+        //                         SubNodes = new ObservableCollection<NodeBase>
+        //                         {
+        //                             new NodeBase("Beam_2", "Icons.HeadlightsFill"),
+        //                             new NodeBase("Beam_Pink", "Icons.HeadlightsFill"),
+        //                         }
+        //                     },
+        //                 }
+        //             },
+        //             new NodeBase("Mods", "Icons.SwordFill")
+        //             {
+        //                 SubNodes = new ObservableCollection<NodeBase>
+        //                 {
+        //                     new NodeBase("halcyon: Halcyon", "Icons.SwordFill"),
+        //                     new NodeBase("zorea_mystery_dungeon: Zorea Mystery Dungeon", "Icons.SwordFill"),
+        //                 }
+        //             }
+        //         }
         
         halcyonNode.SubNodes.Add(monstersRoot);
         Nodes = new ObservableCollection<NodeBase> { halcyonNode };
@@ -360,16 +416,7 @@ public class MainWindowViewModel : ViewModelBase
 
         return nodeBase.IsVisible;
     }
-
-
-    public void AddNewTab()
-    {
-        var page = new DevControlViewModel(_tabEvents, _dialogService);
-        AddTopLevelPage(page);
-        var page2 = new SpritePageViewModel(_tabEvents, _dialogService);
-        AddChildPage(page, page2);
-    }
-
+    
     private bool _ignoreIndexChange = false;
 
     public void MoveTab(EditorPageViewModel from, EditorPageViewModel to)

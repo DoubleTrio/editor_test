@@ -22,19 +22,25 @@ public interface IDialogService
     
     void Close<TViewModel, TResult>(TViewModel viewModel, TResult result)
         where TViewModel : class;
+    
+    Task<string?> ShowFolderPickerAsync(FolderPickerOpenOptions options);
+
 }
 
 public class DialogService : IDialogService
 {
     private readonly ViewLocator _viewLocator;
+    private readonly Func<TopLevel?> _topLevelFunc;
 
     public DialogService()
     {
         _viewLocator = new ViewLocator();
+        _topLevelFunc = () => (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
     }
-    public DialogService(ViewLocator viewLocator)
+    public DialogService(ViewLocator viewLocator, Func<TopLevel?> topLevelFunc)
     {
         _viewLocator = viewLocator;
+        _topLevelFunc = topLevelFunc;
     }
 
     public async Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel, string title = "")
@@ -62,61 +68,91 @@ public class DialogService : IDialogService
 
         window?.Close(result);
     }
-
-}
-
-public class DialogService2(Func<TopLevel?> topLevel)
-{
-    public async Task ShowDialog<THost, TDialogViewModel>(THost host, TDialogViewModel dialogViewModel)
-        where TDialogViewModel : DialogViewModel
-        where THost : IDialogProvider
-    {
-        host.Dialog = dialogViewModel;
-        dialogViewModel.Show();
-
-
-        await dialogViewModel.WaitAsnyc();
-    }
     
-    public async Task ShowDialog<TDialogViewModel>(TDialogViewModel dialogViewModel)
-        where TDialogViewModel : DialogViewModel
+    public async Task<string?> ShowFolderPickerAsync(FolderPickerOpenOptions options)
     {
-
-        dialogViewModel.Show();
-        
-        await dialogViewModel.WaitAsnyc();
-    }
-
-    public async Task<string?> FolderPicker()
-    {
-        var topLevelVisual = topLevel();
+        var topLevelVisual = _topLevelFunc();
         if (topLevelVisual == null) return null;
-        
-        var folders = await topLevelVisual.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
-        {
-            AllowMultiple = false,
-            Title = "Select a folder"
-        });
+
+        var folders = await topLevelVisual.StorageProvider.OpenFolderPickerAsync(options);
 
         var path = folders.FirstOrDefault()?.Path;
         if (path == null) return null;
         return path.IsAbsoluteUri ? path.LocalPath : path.OriginalString;
     }
-    
-    public async Task<string[]> FilePicker(string title = "Select a file", bool allowMultiple = false, FilePickerFileType[]? fileTypes = null)
-    {
-        fileTypes ??= [FilePickerFileTypes.All];
-        
-        var topLevelVisual = topLevel();
-        if (topLevelVisual == null) return [];
-        
-        var files = await topLevelVisual.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
-        {
-            AllowMultiple = allowMultiple,
-            Title = title,
-            FileTypeFilter = fileTypes
-        });
 
-        return files.Select(file => file.Path.IsAbsoluteUri ? file.Path.LocalPath : file.Path.OriginalString).ToArray();
-    }
+
 }
+
+// public async Task<string[]> FilePicker(string title = "Select a file", bool allowMultiple = false, FilePickerFileType[]? fileTypes = null)
+// {
+//     fileTypes ??= [FilePickerFileTypes.All];
+//         
+//     var topLevelVisual = topLevel();
+//     if (topLevelVisual == null) return [];
+//         
+//     var files = await topLevelVisual.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+//     {
+//         AllowMultiple = allowMultiple,
+//         Title = title,
+//         FileTypeFilter = fileTypes
+//     });
+//
+//     return files.Select(file => file.Path.IsAbsoluteUri ? file.Path.LocalPath : file.Path.OriginalString).ToArray();
+// }
+
+// public class DialogService2(Func<TopLevel?> topLevel)
+// {
+//     public async Task ShowDialog<THost, TDialogViewModel>(THost host, TDialogViewModel dialogViewModel)
+//         where TDialogViewModel : DialogViewModel
+//         where THost : IDialogProvider
+//     {
+//         host.Dialog = dialogViewModel;
+//         dialogViewModel.Show();
+//
+//
+//         await dialogViewModel.WaitAsnyc();
+//     }
+//     
+//     public async Task ShowDialog<TDialogViewModel>(TDialogViewModel dialogViewModel)
+//         where TDialogViewModel : DialogViewModel
+//     {
+//
+//         dialogViewModel.Show();
+//         
+//         await dialogViewModel.WaitAsnyc();
+//     }
+//
+//     public async Task<string?> FolderPicker()
+//     {
+//         var topLevelVisual = topLevel();
+//         if (topLevelVisual == null) return null;
+//         
+//         var folders = await topLevelVisual.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+//         {
+//             AllowMultiple = false,
+//             Title = "Select a folder"
+//         });
+//
+//         var path = folders.FirstOrDefault()?.Path;
+//         if (path == null) return null;
+//         return path.IsAbsoluteUri ? path.LocalPath : path.OriginalString;
+//     }
+//     
+//     public async Task<string[]> FilePicker(string title = "Select a file", bool allowMultiple = false, FilePickerFileType[]? fileTypes = null)
+//     {
+//         fileTypes ??= [FilePickerFileTypes.All];
+//         
+//         var topLevelVisual = topLevel();
+//         if (topLevelVisual == null) return [];
+//         
+//         var files = await topLevelVisual.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+//         {
+//             AllowMultiple = allowMultiple,
+//             Title = title,
+//             FileTypeFilter = fileTypes
+//         });
+//
+//         return files.Select(file => file.Path.IsAbsoluteUri ? file.Path.LocalPath : file.Path.OriginalString).ToArray();
+//     }
+// }

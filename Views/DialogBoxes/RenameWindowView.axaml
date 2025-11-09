@@ -5,8 +5,9 @@
                     xmlns:v="using:AvaloniaTest.Views"
                     x:DataType="vm:RenameWindowViewModel"
                     CanResize="False"
-                    Width="200"
-                    Height="125"
+                    Width="500"
+                    MaxWidth="350"
+                    Height="120"
                     x:Name="ThisControl">
 
     <Grid RowDefinitions="Auto,*">
@@ -23,6 +24,7 @@
                   IsVisible="{OnPlatform True, macOS=False}" />
 
             <TextBlock Classes="bold"
+                       x:Name="TitleText"
                        Text="{Binding #ThisControl.Title}"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        IsHitTestVisible="False" />
