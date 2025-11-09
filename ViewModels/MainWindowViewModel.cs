@@ -239,7 +239,7 @@ public class MainWindowViewModel : ViewModelBase
             RemovePage(tab);
         };
 
-        // _pageFactory = pageFactory;
+        _pageFactory = pageFactory;
         
         _selectedItem = this.WhenAnyValue(
                 x => x.ActivePage,
