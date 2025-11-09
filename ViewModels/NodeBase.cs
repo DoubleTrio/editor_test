@@ -166,18 +166,19 @@ public class DataRootNode : OpenEditorNode
 
         DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(async (node) =>
         {
-            await MessageBoxWindowView.Show("TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd TRjjdkkdkddkd", "how are you", MessageBoxWindowView.MessageBoxButtons.YesNo, _dialogService);
+            var res = await MessageBoxWindowView.Show("Deleting this Zone will be reset back to the base game: ducktales woo-hoo", "Deleting Monster", MessageBoxWindowView.MessageBoxButtons.YesNo, _dialogService);
             // RenameWindowViewModel vm = new RenameWindowViewModel();
             // bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
 
             // if (!result)
             //     return;
+
+            if (res != MessageBoxWindowView.MessageBoxResult.Yes) return;
+            
             
             SubNodes.Remove(node);
-            
- 
-            
             Console.WriteLine($"Deleting {node.Title} of type {_dataType}");
+            
         });
         
        
@@ -193,7 +194,7 @@ public class DataRootNode : OpenEditorNode
             // await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
             
             
-            bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm);
+            bool result = await _dialogService.ShowDialogAsync<RenameWindowViewModel, bool>(vm, "Rename");
 
             if (!result)
                 return;

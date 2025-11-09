@@ -21,16 +21,7 @@ using Avalonia.Media;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private DialogViewModel? _dialog;
     private readonly NodeFactory _nodeFactory;
-    
-    
-    public DialogViewModel? Dialog
-    {
-        get => _dialog;
-        set => this.RaiseAndSetIfChanged(ref _dialog, value);
-    }
-        
     public void OnTabSwitcherOpened()
     {
         if (TabSwitcher == null)
@@ -38,7 +29,6 @@ public class MainWindowViewModel : ViewModelBase
             TabSwitcher = new TabSwitcherViewModel(this);
         }
     }
-
     public void OnTabSwitcherClosed()
     {
         if (TabSwitcher != null)
@@ -249,7 +239,7 @@ public class MainWindowViewModel : ViewModelBase
             RemovePage(tab);
         };
 
-        _pageFactory = pageFactory;
+        // _pageFactory = pageFactory;
         
         _selectedItem = this.WhenAnyValue(
                 x => x.ActivePage,
@@ -273,7 +263,7 @@ public class MainWindowViewModel : ViewModelBase
 
         AddDevControlTab = ReactiveCommand.Create(() =>
         {
-            var page = new SpritePageViewModel(_tabEvents);
+            var page = new SpritePageViewModel(_tabEvents, _dialogService);
             AddTopLevelPage(page);
             ActivePage = page;
         });
@@ -292,7 +282,7 @@ public class MainWindowViewModel : ViewModelBase
             return Unit.Default;
         });
 
-        var tab = new DevControlViewModel(_tabEvents);
+        var tab = new DevControlViewModel(_tabEvents, _dialogService);
         tab.Icon = "Icons.GameControllerFill";
         AddTopLevelPage(tab);
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
@@ -374,9 +364,9 @@ public class MainWindowViewModel : ViewModelBase
 
     public void AddNewTab()
     {
-        var page = new DevControlViewModel(_tabEvents);
+        var page = new DevControlViewModel(_tabEvents, _dialogService);
         AddTopLevelPage(page);
-        var page2 = new SpritePageViewModel(_tabEvents);
+        var page2 = new SpritePageViewModel(_tabEvents, _dialogService);
         AddChildPage(page, page2);
     }
 

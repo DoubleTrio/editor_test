@@ -2,6 +2,7 @@ using ReactiveUI;
 
 using System;
 using System.Collections.ObjectModel;
+using AvaloniaTest.Services;
 
 
 namespace AvaloniaTest.ViewModels;
@@ -59,7 +60,7 @@ public class EditorPageViewModel : ViewModelBase
         }
     private readonly TabEvents _tabEvents;
     
-    public EditorPageViewModel(TabEvents tabEvents)
+    public EditorPageViewModel(TabEvents tabEvents, IDialogService dialogService)
     {
         // Children = new ObservableCollection<EditorPageViewModel>();
         _tabEvents = tabEvents;

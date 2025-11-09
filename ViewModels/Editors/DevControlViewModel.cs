@@ -1,3 +1,5 @@
+using AvaloniaTest.Services;
+
 namespace AvaloniaTest.ViewModels;
 
 public class DevControlViewModel : EditorPageViewModel
@@ -7,13 +9,13 @@ public class DevControlViewModel : EditorPageViewModel
 
     public TestComboBoxViewModel Fruits { get; }
     
-    public DevControlViewModel(TabEvents tabEvents) : base(tabEvents)
+    public DevControlViewModel(TabEvents tabEvents, IDialogService dialogService) : base(tabEvents, dialogService)
     {
        
         Fruits = new TestComboBoxViewModel();
     }
     
-    public DevControlViewModel() : base(new TabEvents())
+    public DevControlViewModel() : base(new TabEvents(), new DialogService())
     {
         Title = "Dev Control";
         Fruits = new TestComboBoxViewModel();

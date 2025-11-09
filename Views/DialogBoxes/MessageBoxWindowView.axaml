@@ -5,7 +5,7 @@
                     x:DataType="vm:MessageBoxWindowViewModel"
                     xmlns:v="using:AvaloniaTest.Views"
                     CanResize="False"
-                    MaxWidth="500"
+                    MaxWidth="400"
                     x:Name="ThisControl"
                     SizeToContent="WidthAndHeight">
 

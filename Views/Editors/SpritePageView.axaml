@@ -8,5 +8,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SpritePageViewModel"
              x:Class="AvaloniaTest.Views.SpritePageView">
-    <Button Command="{Binding CreateATab}" Content="Add a child tab to this one!"/> 
+    <Grid ColumnDefinitions="Auto, Auto">
+        <Button Command="{Binding CreateATab}" Content="Add a child tab to this one!"/>
+        <Button Grid.Column="1" Command="{Binding  TestDialog}" Content="Test out a dialogue!"/>
+        
+    </Grid>
+ 
 </UserControl>

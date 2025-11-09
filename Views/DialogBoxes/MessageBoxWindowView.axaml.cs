@@ -65,7 +65,7 @@ namespace AvaloniaTest.Views
             
             vm.CloseRequested += (_, result) => dialogService.Close(vm, result);
 
-            var resultValue = await dialogService.ShowDialogAsync<MessageBoxWindowViewModel, MessageBoxResult>(vm);
+            var resultValue = await dialogService.ShowDialogAsync<MessageBoxWindowViewModel, MessageBoxResult>(vm, title);
             return resultValue;
         }
     }

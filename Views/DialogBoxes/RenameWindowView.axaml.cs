@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AvaloniaTest.Views
 {
-    public partial class RenameWindowView : Window
+    public partial class RenameWindowView: ChromelessWindow
     {
         public RenameWindowView()
         {
