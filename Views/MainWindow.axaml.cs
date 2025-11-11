@@ -86,9 +86,18 @@ public partial class MainWindow : ChromelessWindow
         if (DataContext is MainWindowViewModel vm)
         {
             vm.OnTabSwitcherOpened();
+            
         }
     }
 
+    void PrintAllControls(Visual visual, int indent = 0)
+    {
+        var indentText = new string(' ', indent);
+        Console.WriteLine($"{indentText}- {visual.GetType().Name}");
+
+        foreach (var child in visual.GetVisualChildren())
+            PrintAllControls(child, indent + 2);
+    }
     private void FlyoutBase_OnClosed(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)

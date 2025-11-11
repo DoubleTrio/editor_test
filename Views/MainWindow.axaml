@@ -157,7 +157,27 @@
                                 <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                                    <Setter Property="Focusable" Value="False"/>
+                                 
+                                    
+                                    <!--  Selected state  -->
+                                    <!-- <Style Selector="^:selected /template/ Border#PART_LayoutRoot"> -->
+                                    <!--     <Setter Property="Background" Value="Transparent" /> -->
+                                    <!--     <Setter Property="BorderBrush" Value="Transparent" /> -->
+                                    <!-- </Style> -->
+                                    <!-- -->
+                                           
+                                    <!--  Selected Pressed state  -->
+                                    <!-- <Style Selector="^:pressed:selected /template/ Border#PART_LayoutRoot:pointerover"> -->
+                                    <!--     <Setter Property="Background" Value="Transparent" /> -->
+                                    <!--     <Setter Property="BorderBrush" Value="Transparent" /> -->
+                                    <!-- </Style> -->
                                 </Style>
+                              
+                                
+                                <!-- <Style Selector="TreeViewItem:selected /template/ ContentPresenter"> -->
+                                <!--     <Setter Property="Background" Value="Red" /> -->
+                                <!-- </Style> -->
                             </TreeView.Styles>
 
 

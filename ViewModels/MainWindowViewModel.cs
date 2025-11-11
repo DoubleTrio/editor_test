@@ -100,6 +100,8 @@ public class MainWindowViewModel : ViewModelBase
     
     private Dictionary<EditorPageViewModel, PageNode> _pageToNodeMap;
     
+    
+    // Add to the end of the list
     public void AddTopLevelPage(EditorPageViewModel page)
     {
         
@@ -129,17 +131,93 @@ public class MainWindowViewModel : ViewModelBase
         ActivePage = page;
     }
     
+    
+    public void AddTopLevelPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
+    {
+      
+        // Prevent duplicates
+        if (childPage.UniqueId != null)
+        {
+            var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
+            if (existing != null)
+            {
+                ActivePage = existing;
+                return;
+            }
+        }
+
+        // Find parent index
+        var parentIndex = Pages.IndexOf(parentPage);
+        if (parentIndex == -1)
+        {
+            // Fallback: if parent isn't found, just add to the end
+            Pages.Add(childPage);
+            var fallbackNode = new PageNode(_dialogService, childPage);
+            TopLevelPages.Add(fallbackNode);
+            _pageToNodeMap[childPage] = fallbackNode;
+            ActivePage = childPage;
+            return;
+        }
+
+        // Insert the child right after the parent
+        var insertIndex = parentIndex + 1;
+        Pages.Insert(insertIndex, childPage);
+
+        // Create and insert the node at the same position
+        var childNode = new PageNode(_dialogService, childPage);
+        var parentNode = _pageToNodeMap.TryGetValue(parentPage, out var pNode) ? pNode : null;
+        if (parentNode != null)
+        {
+            var parentNodeIndex = TopLevelPages.IndexOf(parentNode);
+            if (parentNodeIndex != -1)
+            {
+                TopLevelPages.Insert(parentNodeIndex + 1, childNode);
+            }
+            else
+            {
+                TopLevelPages.Add(childNode);
+            }
+        }
+        else
+        {
+            TopLevelPages.Insert(insertIndex, childNode);
+        }
+
+        _pageToNodeMap[childPage] = childNode;
+        ActivePage = childPage;
+    }
+
+    
     public void AddChildPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
     {
+        
+        if (childPage.UniqueId != null)
+        {
+            var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
+            if (existing != null)
+            {
+                ActivePage = existing;
+                return;
+            }
+        }
+
         if (_pageToNodeMap.TryGetValue(parentPage, out var parentNode))
         {
             var childNode = parentNode.AddChild(_dialogService, childPage);
             _pageToNodeMap[childPage] = childNode;
-            Pages.Add(childPage);
+            var parentIndex = Pages.IndexOf(parentPage);
+            if (parentIndex == -1)
+            {
+                Pages.Add(childPage);
+            }
+            else
+            {
+                Pages.Insert(parentIndex + 1, childPage);
+            }
         }
         else
         {
-            AddTopLevelPage(childPage);
+            AddTopLevelPage(parentPage);
         }
     }
 
@@ -159,8 +237,7 @@ public class MainWindowViewModel : ViewModelBase
 
         bool wasActive = (page == _activePage);
         int removeIdx = Pages.IndexOf(page);
-
-        // Recursively close all children (may also remove this page)
+        
         ClosePageAndChildren(node);
 
         if (wasActive)
@@ -199,10 +276,8 @@ public class MainWindowViewModel : ViewModelBase
             node.Parent.RemoveChild(node);
         }
         
-        // Clean up mapping
         _pageToNodeMap.Remove(node.Page);
         
-        // Dispose if page implements IDisposable
         if (node.Page is IDisposable disposable)
         {
             disposable.Dispose();
@@ -417,6 +492,7 @@ public class MainWindowViewModel : ViewModelBase
         return nodeBase.IsVisible;
     }
     
+    
     private bool _ignoreIndexChange = false;
 
     public void MoveTab(EditorPageViewModel from, EditorPageViewModel to)
@@ -572,7 +648,6 @@ public class MainWindowViewModel : ViewModelBase
     public void CancelSwitcher()
     {
         OnTabSwitcherClosed();
-        // IsSwitcherOpen = false; // This will handle disposal automatically
     }
 
     // Navigate to a page from tab switcher

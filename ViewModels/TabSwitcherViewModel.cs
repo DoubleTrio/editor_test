@@ -10,16 +10,21 @@ namespace AvaloniaTest.ViewModels;
 
 public class TabSwitcherViewModel: ViewModelBase, IDisposable
 {
-    public ObservableCollection<EditorPageViewModel> VisiblePages { get; set; } =
-        new ObservableCollection<EditorPageViewModel>();
-    
+    public ObservableCollection<EditorPageViewModel> VisiblePages { get; } = new ObservableCollection<EditorPageViewModel>();
+
+
+    private EditorPageViewModel _selectedPage = null;
+
+    public EditorPageViewModel SelectedPage
+    {
+        get => _selectedPage;
+        set { this.RaiseAndSetIfChanged(ref _selectedPage, value); }
+    }
     public MainWindowViewModel _mainWindow 
     {
         get;
     }
 
-    private EditorPageViewModel _selectedPage = null;
-    
     private string _searchFilter = string.Empty;
 
     public string SearchFilter
@@ -27,45 +32,46 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
         get => _searchFilter;
         set { this.RaiseAndSetIfChanged(ref _searchFilter, value); }
     }
-    
-    public EditorPageViewModel SelectedPage
+
+    private bool _isTreeView = false;
+
+    public bool IsTreeView
     {
-        get => _selectedPage;
-        set { this.RaiseAndSetIfChanged(ref _selectedPage, value); }
+        get => _isTreeView;
+        set { this.RaiseAndSetIfChanged(ref _isTreeView, value); }
     }
+    
+  
 
     public TabSwitcherViewModel(MainWindowViewModel mainWindow)
     {
         _mainWindow = mainWindow;
         UpdateVisiblePages(_searchFilter);
-        SelectedPage = _mainWindow.ActivePage;
+
         this.WhenAnyValue(x => x.SearchFilter).Subscribe(UpdateVisiblePages);
         SelectPageCommand = ReactiveCommand.Create<PageNode>(node => 
         {
             _mainWindow.NavigateToPage(node);
         });
+        VisiblePages = new ObservableCollection<EditorPageViewModel>(_mainWindow.Pages);
+        SelectedPage = _mainWindow.ActivePage;
     }
 
+    public TabSwitcherViewModel() : this(new MainWindowViewModel()) {}
     
-    public TabSwitcherViewModel()
-    {
-        _mainWindow = new MainWindowViewModel();
-        UpdateVisiblePages(_searchFilter);
-        SelectedPage = _mainWindow.ActivePage;
-        this.WhenAnyValue(x => x.SearchFilter).Subscribe(UpdateVisiblePages);
-        SelectPageCommand = ReactiveCommand.Create<PageNode>(node => 
-        {
-            _mainWindow.NavigateToPage(node);
-        });
-    }
     public void ClearFilter()
     {
         SearchFilter = string.Empty;
     }
 
+    
+    public void ToggleSearchMode()
+    {
+        IsTreeView = !IsTreeView;
+    }
+
     public void Switch()
     {
-        Console.WriteLine(_selectedPage + "NEW");
         _mainWindow.ActivePage = _selectedPage ?? _mainWindow.ActivePage;
         _mainWindow.CancelSwitcher();
     }
@@ -86,18 +92,13 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
         {
             ApplyFilterRecursive(node, filter);
         }
+        
+        UpdateVisiblePagesList(filter);
     }
 
     private bool ApplyFilterRecursive(PageNode nodeBase, string filter)
     {
-        bool match = string.IsNullOrWhiteSpace(filter);
-
-        // Split by any combination of spaces, underscores, and colons. Might need to adjust later. 
-        var tokens = Regex.Split(nodeBase.
-            Title, @"[\s_:]+");
-
-        match |= tokens.Any(token =>
-            token.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+        bool match = MatchesFilter(nodeBase.Title, filter);
 
         bool childMatch = false;
         foreach (PageNode child in nodeBase.SubNodes)
@@ -114,37 +115,28 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
         return nodeBase.IsVisible;
     }
     
-    // private void UpdateVisiblePages()
-    // {
+    private bool MatchesFilter(string title, string filter)
+    {
+        if (string.IsNullOrWhiteSpace(filter))
+            return true;
         
+        var tokens = Regex.Split(title, @"[\s_:]+");
+
+        return tokens.Any(token =>
+            token.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+    }
+
+    
+    private void UpdateVisiblePagesList(string filter)
+    {
+        VisiblePages.Clear();
+
+        foreach (var page in _mainWindow.Pages)
+        {
+            if (MatchesFilter(page.Title, filter))
+                VisiblePages.Add(page);
+        }
         
-        // VisiblePages.Clear();
-        //
-        // if (string.IsNullOrWhiteSpace(_searchFilter))
-        // {
-        //     foreach (var page in _mainWindow.Pages)
-        //         VisiblePages.Add(page);
-        // }
-        // else
-        // {
-        //     foreach (var page in _mainWindow.Pages)
-        //     {
-        //         if (page.Title.StartsWith(_searchFilter, StringComparison.OrdinalIgnoreCase))
-        //             VisiblePages.Add(page);
-        //     }
-        //     
-        //     foreach (var page in _mainWindow.Pages)
-        //     {
-        //         if (!page.Title.StartsWith(_searchFilter, StringComparison.OrdinalIgnoreCase) &&
-        //             page.Title.Contains(_searchFilter, StringComparison.OrdinalIgnoreCase))
-        //         {
-        //             VisiblePages.Add(page);
-        //         }
-        //     }
-        // }
-        //
-        // SelectedPage = VisiblePages.Count > 0 ? VisiblePages[0] : null;
-    // }
-
-
+        SelectedPage = VisiblePages.Count > 0 ? VisiblePages[0] : null;
+    }
 }
