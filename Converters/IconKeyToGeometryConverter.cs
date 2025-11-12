@@ -51,11 +51,13 @@ public class ObjectToColorKeyConverter3 : IMultiValueConverter
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
+
+// Note: This is a workaround for not being able to set the selected page to null for Tabalonia
+// and so we make the selected tab seems unselected... 
 public class ObjectToColorKeyConverter : IMultiValueConverter
 {
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
-        Console.WriteLine("ObjectToColorKeyConverter");
         if (values.Count < 2)
             throw new Exception("Expected at least 2 values: object, mandatoryKey, [optionalKey]");
 
@@ -65,9 +67,7 @@ public class ObjectToColorKeyConverter : IMultiValueConverter
         
         if (mandatoryKey == null)
             throw new Exception("Mandatory key must be a string");
-
-
-
+        
         if (value == null)
         {
             if (Application.Current?.TryGetResource(mandatoryKey, 

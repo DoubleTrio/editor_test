@@ -135,6 +135,7 @@
                                   SelectedItems="{Binding TreeSearch.SelectedNodes}"
                                   DoubleTapped="MasterTreeView_OnDoubleTapped"
                                   ContextRequested="MasterTreeView_OnContextRequested"
+                                  SelectionChanged="MasterTreeView_OnSelectionChanged"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 

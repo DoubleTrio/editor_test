@@ -120,62 +120,23 @@ public partial class MainWindow : ChromelessWindow
                 editor.SetTabInfo(selectedItem);
                 vm.AddTopLevelPage(editor);
             }
-            // var node = new SpritePageViewModel(vm._tabEvents);
-
-
-            // Handle the double-click on the selected item
-
-            // Your logic here
         }
     }
-
-    private void MasterTreeView_OnContainerPrepared(object? sender, ContainerPreparedEventArgs e)
+    
+    private void MasterTreeView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (e.Container is TreeViewItem treeViewItem)
+        // Deselect the item after we
+        Dispatcher.UIThread.Post(() =>
         {
-            SetContextMenuForTreeItem(treeViewItem);
-        }
-    }
-
-    private void SetContextMenuForTreeItem(TreeViewItem treeViewItem)
-    {
-        Console.WriteLine(treeViewItem.DataContext);
-        var nodeData = treeViewItem.DataContext;
-
-        var contextMenu = nodeData switch
-        {
-            PageNode => new ContextMenu
+            if (sender is TreeView tree)
             {
-                ItemsSource = new[]
-                {
-                    new MenuItem { Header = "Close Tab" },
-                    new MenuItem { Header = "Close Children" },
-                    new MenuItem { Header = "Duplicate" }
-                }
-            },
-
-            DataRootNode => new ContextMenu
-            {
-                ItemsSource = new[]
-                {
-                    new MenuItem { Header = "Add Item" },
-                    new MenuItem { Header = "Refresh" },
-                    new MenuItem { Header = "Export" }
-                }
-            },
-
-            _ => null
-        };
-
-        treeViewItem.ContextMenu = contextMenu;
-
-        // Recursively set context menus for all children
-        foreach (var child in treeViewItem.GetLogicalChildren().OfType<TreeViewItem>())
-        {
-            SetContextMenuForTreeItem(child);
-        }
+                tree.SelectedItem = null;
+            }
+            
+        });
+       
     }
-
+    
     private void MasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)
     {
         if (e.Source is not Visual visual)
