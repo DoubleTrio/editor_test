@@ -22,6 +22,15 @@ using Avalonia.Media;
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly NodeFactory _nodeFactory;
+
+    
+    private bool _isTreeView = false;
+
+    public bool IsTreeView
+    {
+        get => _isTreeView;
+        set { this.RaiseAndSetIfChanged(ref _isTreeView, value); }
+    }
     public void OnTabSwitcherOpened()
     {
         if (TabSwitcher == null)
@@ -29,6 +38,7 @@ public class MainWindowViewModel : ViewModelBase
             TabSwitcher = new TabSwitcherViewModel(this);
         }
     }
+
     public void OnTabSwitcherClosed()
     {
         if (TabSwitcher != null)
@@ -50,7 +60,7 @@ public class MainWindowViewModel : ViewModelBase
         get { return _filter; }
         set { this.RaiseAndSetIfChanged(ref _filter, value); }
     }
-    
+
 
     private ObservableCollection<EditorPageViewModel> _pages;
 
@@ -77,7 +87,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _temporaryTab, value);
     }
     
-    private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
+private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     
     public EditorPageViewModel? SelectedItem
     {
@@ -113,6 +123,8 @@ public class MainWindowViewModel : ViewModelBase
             if (existing != null)
             {
                 ActivePage = existing;
+                TemporaryTab = null;
+                Console.WriteLine($"Already exists, navigating to {existing}");
                 return;
             }
         }
@@ -196,6 +208,7 @@ public class MainWindowViewModel : ViewModelBase
             var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
             if (existing != null)
             {
+                TemporaryTab = null;
                 ActivePage = existing;
                 return;
             }

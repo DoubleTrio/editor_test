@@ -16,20 +16,6 @@
     </Design.DataContext>
 
     <UserControl.Resources>
-        <!-- <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/> -->
-        <!-- <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase"> -->
-        <!--     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4"> -->
-        <!--         <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" -->
-        <!--               Width="16" Height="16" -->
-        <!--               Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/> -->
-        <!--         <TextBlock Grid.Column="1" -->
-        <!--                    VerticalAlignment="Center" -->
-        <!--                    Text="{Binding Title}" -->
-        <!--                    TextTrimming="CharacterEllipsis" -->
-        <!--                    TextWrapping="NoWrap" -->
-        <!--                    ClipToBounds="True" /> -->
-        <!--     </Grid> -->
-        <!-- </DataTemplate> -->
     </UserControl.Resources>
     <Grid RowDefinitions="Auto, Auto">
         <!-- <Grid Grid.Row="0" ColumnDefinitions="*, Auto" HorizontalAlignment="Stretch"> -->
@@ -76,7 +62,7 @@
                     <Button Classes="icon_button"
                             Width="24"
                             Margin="3, 0"
-                            IsVisible="{Binding IsTreeView}"
+                            IsVisible="{Binding _mainWindow.IsTreeView}"
                             Padding="0, 0, 0, 0"
                             Click="ToggleButtonOnClick"
                             ToolTip.Placement="Right"
@@ -92,7 +78,7 @@
                             Width="24"
                             Margin="3, 0"
                             Padding="0, 0, 0, 0"
-                            IsVisible="{Binding !IsTreeView}"
+                            IsVisible="{Binding !_mainWindow.IsTreeView}"
                             Click="ToggleButtonOnClick"
                             ToolTip.Placement="Pointer"
                             ToolTip.Tip="Switch to tab tree view (ordered by which tabs added first)"
@@ -126,7 +112,7 @@
         <TreeView Grid.Row="1" Margin="0"
                   Width="400"
                   MaxHeight="300"
-                  IsVisible="{Binding IsTreeView}"
+                  IsVisible="{Binding _mainWindow.IsTreeView}"
                   x:Name="TreeViewTabSwitcher"
                   ItemsSource="{Binding _mainWindow.TopLevelPages}"
                   SelectionMode="Single"
@@ -161,7 +147,7 @@
                  x:Name="PagesListBox"
                  Width="400"
                  MaxHeight="400"
-                 IsVisible="{Binding !IsTreeView}"
+                 IsVisible="{Binding !_mainWindow.IsTreeView}"
                  BorderThickness="0"
                  SelectionMode="Single"
                  KeyDown="PagesListBox_KeyDown"
@@ -209,17 +195,7 @@
                         <!--       Data="{StaticResource Icons.Repositories}" -->
                         <!--       IsVisible="{Binding !Node.IsRepository}" -->
                         <!--       IsHitTestVisible="False"/> -->
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                  Width="12" Height="12" Margin="0,0,6,0"
-                                  Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/>
-                            <TextBlock Grid.Column="1"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding Title}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       ClipToBounds="True" />
-                        </Grid>
+                        <v:IconText Text="{Binding Title}" Icon="{Binding Icon}" IconSize="12" />
                         <!-- IsVisible="{Binding Node.IsRepository}" -->
                         <!-- <TextBlock Grid.Column="2" -->
                         <!--            Classes="primary" -->

@@ -1,20 +1,11 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:AvaloniaTest.Converters"
+                    xmlns:v="clr-namespace:AvaloniaTest.Views"
                     xmlns:vm="clr-namespace:AvaloniaTest.ViewModels">
     <local:IconKeyToGeometryConverter x:Key="IconKeyConverter"/>
     <DataTemplate x:Key="NodeContentTemplate" DataType="vm:NodeBase">
-        <Grid ColumnDefinitions="Auto,*">
-            <Path IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                  Width="12" Height="12" Margin="0,0,6,0"
-                  Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"/>
-            <TextBlock Grid.Column="1"
-                       VerticalAlignment="Center"
-                       Text="{Binding Title}"
-                       TextTrimming="CharacterEllipsis"
-                       TextWrapping="NoWrap"
-                       ClipToBounds="True" />
-        </Grid>
+        <v:IconText Text="{Binding Title}" Icon="{Binding Icon}" IconSize="12" />
     </DataTemplate>
     
     

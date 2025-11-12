@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Text.RegularExpressions;
+using Avalonia.Media;
 using DynamicData;
 using ReactiveUI;
 
@@ -11,8 +12,7 @@ namespace AvaloniaTest.ViewModels;
 public class TabSwitcherViewModel: ViewModelBase, IDisposable
 {
     public ObservableCollection<EditorPageViewModel> VisiblePages { get; } = new ObservableCollection<EditorPageViewModel>();
-
-
+    
     private EditorPageViewModel _selectedPage = null;
 
     public EditorPageViewModel SelectedPage
@@ -33,16 +33,7 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
         set { this.RaiseAndSetIfChanged(ref _searchFilter, value); }
     }
 
-    private bool _isTreeView = false;
-
-    public bool IsTreeView
-    {
-        get => _isTreeView;
-        set { this.RaiseAndSetIfChanged(ref _isTreeView, value); }
-    }
     
-  
-
     public TabSwitcherViewModel(MainWindowViewModel mainWindow)
     {
         _mainWindow = mainWindow;
@@ -67,7 +58,7 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
     
     public void ToggleSearchMode()
     {
-        IsTreeView = !IsTreeView;
+        _mainWindow.IsTreeView = !_mainWindow.IsTreeView;
     }
 
     public void Switch()

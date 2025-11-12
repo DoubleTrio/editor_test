@@ -31,8 +31,25 @@ public partial class TabSwitcherView : UserControl
             
             Dispatcher.UIThread.Post(() =>
             {
+
+            
                 ExpandAllNodes();
-                SetFocusToSelectedPage();
+                if (DataContext is TabSwitcherViewModel { _mainWindow.TemporaryTab: not null })
+                {
+                    TabSwitcherTextBox.Focus();
+                    var allItems = GetAllVisibleTreeViewItems(TreeViewTabSwitcher).ToList();
+
+                    foreach (var item in allItems)
+                    {
+                        item.IsSelected = false;
+                    }
+                    
+                }
+                else
+                {
+                    SetFocusToSelectedPage();
+                    
+                }
                
             },  DispatcherPriority.Loaded);
         };
@@ -42,8 +59,15 @@ public partial class TabSwitcherView : UserControl
             
             Dispatcher.UIThread.Post(() =>
             {
-                PagesListBox.Focus();
-
+                if (DataContext is TabSwitcherViewModel { _mainWindow.TemporaryTab: not null })
+                {
+                    (DataContext as TabSwitcherViewModel).SelectedPage = null;
+                    TabSwitcherTextBox.Focus();
+                }
+                else
+                {
+                    PagesListBox.Focus();
+                }
             },  DispatcherPriority.Loaded);
         };
     }
@@ -78,14 +102,11 @@ public partial class TabSwitcherView : UserControl
     {
         if (DataContext is TabSwitcherViewModel switcher)
         {
-            // First expand to the selected page
             ExpandToPage(TreeViewTabSwitcher, switcher.SelectedPage);
-
-            // Wait for visual tree to update after expansion
+            
             Dispatcher.UIThread.Post(() =>
             {
                 var allItems = GetAllVisibleTreeViewItems(TreeViewTabSwitcher).ToList();
-                Console.WriteLine("ALL ITEMS: " + allItems.Count);
 
                 foreach (var item in allItems)
                 {
@@ -176,7 +197,7 @@ public partial class TabSwitcherView : UserControl
         if (PagesListBox.ItemCount == 0)
             return;
 
-        if (!switcher.IsTreeView)
+        if (!switcher._mainWindow.IsTreeView)
         {
             if (e.Key == Key.Down)
             {
@@ -219,7 +240,7 @@ public partial class TabSwitcherView : UserControl
         if (PagesListBox.ItemCount == 0)
             return;
 
-        if (!switcher.IsTreeView)
+        if (!switcher._mainWindow.IsTreeView)
         {
             if (e.Key == Key.Down)
             {

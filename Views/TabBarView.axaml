@@ -13,7 +13,7 @@
              x:Name="MainTabBar">
 
     <UserControl.Resources>
-        <local:IconKeyToGeometryConverter x:Key="IconKeyConverter" />
+        <local:ObjectToColorKeyConverter x:Key="ObjectToColorKeyConverter" />
         <ControlTheme x:Key="DragTabItemThumb" TargetType="controls:LeftPressedThumb">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -48,16 +48,47 @@
         <Style Selector="controls|DragTabItem">
             <!-- <Setter Property="Padding" Value="0"></Setter> -->
             <Setter Property="Margin" Value="0,0, 8, 0"></Setter>
+            <Style Selector="^:selected">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
+                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                            <Binding Source="SelectedTabItemBackgroundBrush" />
+                        </MultiBinding>
+
+                    </Setter.Value>
+                </Setter>
+            
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
+                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                            <!-- highlight color -->
+                            <Binding Source="TabItemHeaderForegroundSelected" />
+                            <!-- deselect color -->
+                            <Binding Source="TabItemHeaderForegroundUnselected" />
+            
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <Style Selector="^:selected:pointerover">
+                <Setter Property="Background">
+                    <!-- TabItemHeaderBackgroundUnselectedPointerOver -->
+                    <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
+                        <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                        <Binding Source="SelectedTabItemBackgroundBrush" />
+                        <Binding Source="TabItemHeaderBackgroundUnselectedPointerOver" />
+            
+                    </MultiBinding>
+                </Setter>
+            
+                
+            </Style>
+            
         </Style>
-
-
-        <!-- <Style Selector="ListBoxItem:selected Path#CloseTabPath"> -->
-        <!--     <Setter Property="Opacity" Value="1"></Setter> -->
-        <!-- </Style> -->
-        <!-- <Style Selector="ListBoxItem:pointerover Path#CloseTabPath"> -->
-        <!--     <Setter Property="Opacity" Value="1"></Setter> -->
-        <!-- </Style> -->
-
+        
         <Style Selector="Button#CloseTabButton:pointerover">
             <Setter Property="Opacity" Value="1"></Setter>
         </Style>
@@ -140,13 +171,10 @@
                 </ControlTemplate>
             </Setter>
         </Style>
-        <!-- <Style Selector="Path#CloseTabPath"> -->
-        <!--     <Setter Property="Opacity" Value="0"></Setter> -->
-        <!-- </Style> -->
     </UserControl.Styles>
     <Grid ColumnDefinitions="*,Auto,Auto">
         <Grid ColumnDefinitions="*">
-            <controls:TabsControl SelectedItem="{Binding SelectedItem}"
+            <controls:TabsControl SelectedItem="{Binding ActivePage}"
                                   ShowDefaultCloseButton="False"
                                   ShowDefaultAddButton="False"
                                   TabItemWidth="175"
@@ -164,33 +192,11 @@
                               ToolTip.Tip="{Binding Title}"
                               IsHitTestVisible="True"
                               HorizontalAlignment="Left">
-                            <Border   IsHitTestVisible="True"  ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0" Background="Transparent">
+                            <Border IsHitTestVisible="True" ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0" Background="Transparent">
                          
                                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
                                 <Grid ColumnDefinitions="*, Auto">
-                                    <Grid Grid.Column="0"
-                       
-                                          HorizontalAlignment="Left"
-                                          ColumnDefinitions="Auto,*">
-
-                                        <Path Grid.Column="0"
-                                              Width="12" Height="12" Margin="0, 0, 6, 0"
-                                              Data="{Binding Icon, Converter={StaticResource IconKeyConverter}}"
-                                              IsVisible="{Binding Icon, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-
-                                        <TextBlock Grid.Column="1"
-                                                   Classes="primary"
-                                                   Padding="0 0 0 0"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center"
-                                                   FontSize="12"
-                                                   IsHitTestVisible="True"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap"
-                                                   TextAlignment="Center"
-                                                   Text="{Binding Title}"
-                                                   />
-                                    </Grid>
+                                    <v:IconText Text="{Binding Title}" Icon="{Binding Icon}" IconSize="12" />
                                     <Grid Grid.Column="1" x:Name="CloseButtonContainer"
                                           ZIndex="100">
                                         <Ellipse x:Name="NeedToSaveEllipse"

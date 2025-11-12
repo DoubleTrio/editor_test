@@ -112,6 +112,5 @@ namespace AvaloniaTest.Views
                 e.Handled = true;
             }
         }
-
     }
 }
