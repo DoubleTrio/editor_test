@@ -49,6 +49,8 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
+    public ReactiveCommand<Unit, Unit> OpenPreferencesWindow { get; }
+    
     public ReactiveCommand<Unit, Unit> ClearFilterCommand { get; }
 
     public ReactiveCommand<Unit, Unit> AddTestTab { get; }
@@ -312,6 +314,8 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         _tabEvents = tabEvents;
         _nodeFactory = nodeFactory;
         _dialogService = dialogService;
+        
+        
         BuildNodes();
         
         
@@ -372,6 +376,15 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
 
             ActivePage = page;
         });
+        
+        
+        OpenPreferencesWindow = ReactiveCommand.CreateFromTask(async () =>
+        {
+            
+            // ADD A SHOW DIALOG THAT DOESN't RELY IN THE VIEW MODAL... show window only
+            var res = await _dialogService.ShowDialogAsync<PreferencesWindowViewModel, bool>(PreferencesWindowViewModel.Instance, "Preferences", false);
+            
+        });
 
         OpenTabSwitcher = ReactiveCommand.Create(() =>
         {
@@ -396,14 +409,16 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     
     private void BuildNodes()
     {
-        var halcyonNode = _nodeFactory.CreateOpenEditorNode("Halcyon", "Icons.FloppyDiskBackFill");
+        var halcyonNode = _nodeFactory.CreateOpenEditorNode("Halcyon", "Icons.FloppyDiskBackFill", "ModInfoEditor");
         
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"));
-        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Constants", "Icons.ListFill"));;
-        
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Tab Test", "Icons.AirplaneFill", "SpritePage"));
+
+        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Constants", "Icons.ListFill"));
+
         var monstersRoot = _nodeFactory.CreateDataRootNode("Monsters", "Monsters", "Monsters", "Icons.GhostFill");
 
         
@@ -418,7 +433,7 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         
         var particlesRoot = _nodeFactory.CreateSpriteRootNode("particles", "", "Particles", "Icons.PaintBrushFill");
         particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Blue", "SpriteEditor", "Acid_Blue", "Icons.PaintBrushFill"));
-        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Red", "SpriteEditor", "Acid_Redr", "Icons.PaintBrushFill"));
+        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Red", "SpriteEditor", "Acid_Red", "Icons.PaintBrushFill"));
 
         halcyonNode.SubNodes.Add(particlesRoot);
         //             new NodeBase("Sprites", "Icons.PaintBrushFill")

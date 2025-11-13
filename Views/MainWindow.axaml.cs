@@ -78,6 +78,7 @@ public partial class MainWindow : ChromelessWindow
         }
 
         this.DataContextChanged += MainWindow_DataContextChanged;
+     
         InitializeComponent();
     }
 
@@ -87,6 +88,16 @@ public partial class MainWindow : ChromelessWindow
         {
             vm.OnTabSwitcherOpened();
             
+        }
+    }
+    
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        base.OnClosing(e);
+
+        if (!Design.IsDesignMode && DataContext is ViewModels.MainWindowViewModel)
+        {
+            PreferencesWindowViewModel.Instance.Save();
         }
     }
 
@@ -125,14 +136,13 @@ public partial class MainWindow : ChromelessWindow
     
     private void MasterTreeView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        // Deselect the item after we
+        // Deselect the item after MasterTreeView_OnDoubleTapped
         Dispatcher.UIThread.Post(() =>
         {
             if (sender is TreeView tree)
             {
                 tree.SelectedItem = null;
             }
-            
         });
        
     }
@@ -177,12 +187,12 @@ public partial class MainWindow : ChromelessWindow
         {
             Items =
             {
-                new MenuItem { Header = "Resave as File", Command = parentNode.ResaveAsFile, CommandParameter = node },
+                new MenuItem { Header = "Resave as File", Command = parentNode.ResaveAsFile, CommandParameter = node, Icon = App.CreateMenuIcon("Icons.FileFill") },
                 new MenuItem
-                    { Header = "Resave as Patch", Command = parentNode.ResaveAsPatch, CommandParameter = node },
+                    { Header = "Resave as Patch", Command = parentNode.ResaveAsPatch, CommandParameter = node, Icon = App.CreateMenuIcon("Icons.FileTextFill") },
                 new Separator(),
-                new MenuItem { Header = "Edit" },
-                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node }
+                new MenuItem { Header = "Edit", Icon = App.CreateMenuIcon("Icons.PencilFill") },
+                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node,  Icon = App.CreateMenuIcon("Icons.TrashFill") }
             }
         };
 
@@ -196,11 +206,11 @@ public partial class MainWindow : ChromelessWindow
         {
             Items =
             {
-                new MenuItem { Header = "Import", Command = parentNode.ImportCommand, CommandParameter = node },
-                new MenuItem { Header = "Re-Import", Command = parentNode.ReImportCommand, CommandParameter = node },
-                new MenuItem { Header = "Export", Command = parentNode.ExportCommand, CommandParameter = node },
+                new MenuItem { Header = "Import", Command = parentNode.ImportCommand, CommandParameter = node, Icon = App.CreateMenuIcon("Icons.DownloadSimpleFill") },
+                new MenuItem { Header = "Re-Import", Command = parentNode.ReImportCommand, CommandParameter = node, Icon = App.CreateMenuIcon("Icons.RepeatFill") },
+                new MenuItem { Header = "Export", Command = parentNode.ExportCommand, CommandParameter = node, Icon = App.CreateMenuIcon("Icons.ExportFill") },
                 new Separator(),
-                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node }
+                new MenuItem { Header = "Delete", Command = parentNode.DeleteCommand, CommandParameter = node, Icon =  App.CreateMenuIcon("Icons.TrashFill") }
             }
         };
 
@@ -213,11 +223,11 @@ public partial class MainWindow : ChromelessWindow
         {
             Items =
             {
-                new MenuItem { Header = "Re-Index", Command = root.ReIndexCommand },
-                new MenuItem { Header = "Resave all as File", Command = root.ResaveAllAsFileCommand },
-                new MenuItem { Header = "Resave all as Diff", Command = root.ResaveAllAsDiffCommand },
+                new MenuItem { Header = "Re-Index", Command = root.ReIndexCommand, Icon = App.CreateMenuIcon("Icons.ListNumbersFill") },
+                new MenuItem { Header = "Resave all as File", Command = root.ResaveAllAsFileCommand, Icon = App.CreateMenuIcon("Icons.FileFill") },
+                new MenuItem { Header = "Resave all as Diff", Command = root.ResaveAllAsDiffCommand, Icon = App.CreateMenuIcon("Icons.PlusMinusFill") },
                 new Separator(),
-                new MenuItem { Header = "Add", Command = root.AddCommand }
+                new MenuItem { Header = "Add", Command = root.AddCommand, Icon = App.CreateMenuIcon("Icons.Plus") }
             }
         };
 
@@ -230,10 +240,10 @@ public partial class MainWindow : ChromelessWindow
         {
             Items =
             {
-                new MenuItem { Header = "Mass Import", Command = root.MassImportCommand },
-                new MenuItem { Header = "Mass Export", Command = root.MassExportCommand },
+                new MenuItem { Header = "Mass Import", Command = root.MassImportCommand, Icon = App.CreateMenuIcon("Icons.DownloadSimpleFill") },
+                new MenuItem { Header = "Mass Export", Command = root.MassExportCommand, Icon = App.CreateMenuIcon("Icons.ExportFill") },
                 new Separator(),
-                new MenuItem { Header = "Add", Command = root.AddCommand }
+                new MenuItem { Header = "Add", Command = root.AddCommand,  Icon = App.CreateMenuIcon("Icons.Plus") }
             }
         };
 

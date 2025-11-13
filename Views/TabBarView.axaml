@@ -54,6 +54,9 @@
                         <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
                             <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
                             <Binding Source="SelectedTabItemBackgroundBrush" />
+                            <Binding Source="" />
+                            <Binding Path="RequestedThemeVariant" Source="{x:Static Application.Current}" />
+                            
                         </MultiBinding>
 
                     </Setter.Value>
@@ -67,7 +70,8 @@
                             <Binding Source="TabItemHeaderForegroundSelected" />
                             <!-- deselect color -->
                             <Binding Source="TabItemHeaderForegroundUnselected" />
-            
+                            <Binding Path="RequestedThemeVariant"
+                                     Source="{x:Static Application.Current}" />
                         </MultiBinding>
                     </Setter.Value>
                 </Setter>
@@ -80,7 +84,8 @@
                         <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
                         <Binding Source="SelectedTabItemBackgroundBrush" />
                         <Binding Source="TabItemHeaderBackgroundUnselectedPointerOver" />
-            
+                        <Binding Path="RequestedThemeVariant"
+                                 Source="{x:Static Application.Current}" />
                     </MultiBinding>
                 </Setter>
             
@@ -106,46 +111,74 @@
         </Style>
 
         <Style Selector="controls|DragTabItem">
-            <!-- <Setter Property="HorizontalContentAlignment" Value="Left"/> -->
-            <!-- <Setter Property="VerticalContentAlignment" Value="Center"/> -->
-            <!-- <Setter Property="Width" Value="Auto"/> -->
+        
+            <!-- Highlight selected tab and bring it above the blue border -->
+            <!-- <Style Selector="^:selected"> -->
+            <!--     <Setter Property="BorderBrush" Value="Blue"/> -->
+            <!--     <Setter Property="BorderThickness" Value="0 0 0 4"/> -->
+            <!--     <Setter Property="CornerRadius" Value="00,0,6,6"/> -->
+            <!-- -->
+            <!-- </Style> -->
+            <!-- -->
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border
-                        Name="PART_LayoutRoot"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="0"
-                        Padding="{TemplateBinding Padding}">
-                        <Grid>
-                            <ContentPresenter Name="PART_ContentPresenter"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Content="{TemplateBinding Header}"
-                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                              FontFamily="{TemplateBinding FontFamily}"
-                                              FontSize="{TemplateBinding FontSize}"
-                                              FontWeight="{TemplateBinding FontWeight}" />
+                    <Grid>
+                        <Border
+                            Name="PART_LayoutRoot"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <ContentPresenter Name="PART_ContentPresenter"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  FontFamily="{TemplateBinding FontFamily}"
+                                                  FontSize="{TemplateBinding FontSize}"
+                                                  FontWeight="{TemplateBinding FontWeight}" />
 
-                            <controls:LeftPressedThumb Name="PART_Thumb"
-                                                       HorizontalAlignment="Stretch"
-                                                       VerticalAlignment="Stretch"
-                                                       IsHitTestVisible="True"
-                                                       Theme="{StaticResource DragTabItemThumb}"
-                                                       Margin="0,0,32,0" />
+                                <controls:LeftPressedThumb Name="PART_Thumb"
+                                                           HorizontalAlignment="Stretch"
+                                                           VerticalAlignment="Stretch"
+                                                           IsHitTestVisible="True"
+                                                           Theme="{StaticResource DragTabItemThumb}"
+                                                           Margin="0,0,32,0" />
 
-                            <Border Name="PART_SelectedPipe"
-                                    Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                                    IsVisible="False" />
-                        </Grid>
-                    </Border>
+                                <Border Name="PART_SelectedPipe"
+                                        Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        IsVisible="False" />
+                            </Grid>
+                            
+                        </Border>
+                        <!-- Selection indicator -->
+                        <Border x:Name="Indicator"
+                                Height="4"
+                                CornerRadius="20"
+                                Background="Transparent"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center"
+                                Width="166" />
+                    </Grid>
                 </ControlTemplate>
 
             </Setter>
+          
 
         </Style>
+        <Style Selector="controls|DragTabItem:selected /template/ Border#Indicator">
+            <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
+            <!-- <Setter Property="IsVisible" Value="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/> -->
+            <!-- -->
+            <Setter Property="IsVisible" 
+                    Value="{Binding ((vm:MainWindowViewModel)DataContext).TemporaryTab, RelativeSource={RelativeSource AncestorType=controls:TabsControl}, Converter={x:Static ObjectConverters.IsNull}}" />
+
+        </Style>
+        
+        
         <Style Selector="controls|TabsControl">
             <Setter Property="Margin" Value="0" />
             <Setter Property="Template">
@@ -192,8 +225,10 @@
                               ToolTip.Tip="{Binding Title}"
                               IsHitTestVisible="True"
                               HorizontalAlignment="Left">
-                            <Border IsHitTestVisible="True" ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0" Background="Transparent">
-                         
+                            <Border IsHitTestVisible="True" ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0" 
+                                    Background="Transparent" BorderBrush="{DynamicResource Color.Window}" 
+                                    BorderThickness="0 0 0 1" 
+                                    Margin="0, 0, 0, -3">
                                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
                                 <Grid ColumnDefinitions="*, Auto">
                                     <v:IconText Text="{Binding Title}" Icon="{Binding Icon}" IconSize="12" />

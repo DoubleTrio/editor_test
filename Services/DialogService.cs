@@ -17,7 +17,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 public interface IDialogService
 {
-    Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel, string title = "")
+    Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel, string title = "", bool initVm = true)
         where TViewModel : class;
     
     void Close<TViewModel, TResult>(TViewModel viewModel, TResult result)
@@ -43,14 +43,18 @@ public class DialogService : IDialogService
         _topLevelFunc = topLevelFunc;
     }
 
-    public async Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel, string title = "")
+    public async Task<TResult?> ShowDialogAsync<TViewModel, TResult>(TViewModel viewModel, string title = "", bool initVm = true)
         where TViewModel : class
     {
         var control = _viewLocator.Build(viewModel);
         if (control is not Window window)
             throw new InvalidOperationException($"View for {typeof(TViewModel).Name} must be a Window.");
 
-        window.DataContext = viewModel;
+        if (initVm)
+        {
+            // window.DataContext = viewModel;
+        }
+
         window.Title = title;
 
         var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;

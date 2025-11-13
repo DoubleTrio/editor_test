@@ -80,7 +80,7 @@ namespace AvaloniaTest.Views
                             var res = await MessageBoxWindowView.Show(
                                 "Are you sure you want to close all subtabs?  Your changes will not be saved.",
                                 "Confirm Close",
-                                MessageBoxWindowView.MessageBoxButtons.YesNo,
+                                MessageBoxWindowView.MessageBoxButtons.YesNoCancel,
                                 vm._dialogService
                             );
 

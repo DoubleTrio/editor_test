@@ -45,8 +45,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding Name}" VerticalAlignment="Center" Margin="4" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnOK_Click" Margin="4" Grid.Row="1" Grid.Column="0">OK</Button>
-            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnCancel_Click" Margin="4" Grid.Row="1" Grid.Column="1">Cancel</Button>
+            <Button Classes="flat" HorizontalContentAlignment="Center" Click="btnCancel_Click" Margin="4" Grid.Row="1" Grid.Column="0">Cancel</Button>
+            <Button Classes="flat primary"  Click="btnOK_Click" Margin="4" Grid.Row="1" Grid.Column="1">OK</Button>
         </Grid>
     </Grid>
 </v:ChromelessWindow>

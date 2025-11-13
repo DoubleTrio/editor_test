@@ -158,7 +158,8 @@ public class DataRootNode : ItemRootNode
             $"Deleting {node.ItemKey} will reset it back to the base game.",
             $"Delete {node.ItemKey}",
             MessageBoxWindowView.MessageBoxButtons.YesNo,
-            _dialogService
+            _dialogService,
+            true
         );
 
         if (res != MessageBoxWindowView.MessageBoxResult.Yes)

@@ -6,6 +6,7 @@
                     xmlns:v="using:AvaloniaTest.Views"
                     CanResize="False"
                     MaxWidth="400"
+                    MinWidth="300"
                     x:Name="ThisControl"
                     SizeToContent="WidthAndHeight">
 
@@ -38,16 +39,12 @@
             <ItemsControl ItemsSource="{Binding Buttons}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" />
+                        <UniformGrid Columns="{Binding Buttons.Count}" ColumnSpacing="8"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Caption}"
-                                Width="80"
-                                HorizontalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
+                        <Button Classes="flat" Classes.primary="{Binding IsPrimary}" Classes.danger="{Binding Danger}" Content="{Binding Caption}"
                                 Command="{Binding Command}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

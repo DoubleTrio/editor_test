@@ -34,32 +34,33 @@ namespace AvaloniaTest.Views
             string text,
             string title,
             MessageBoxButtons buttons,
-            IDialogService dialogService)
+            IDialogService dialogService, 
+            bool danger = false)
         {
             var vm = new MessageBoxWindowViewModel(title, text);
 
-            void AddButton(string caption, MessageBoxResult result)
+            void AddButton(string caption, MessageBoxResult result, bool _danger = false)
             {
-                vm.Buttons.Add(new MessageBoxWindowViewModel.ButtonViewModel(caption, result, vm));
+                vm.Buttons.Add(new MessageBoxWindowViewModel.ButtonViewModel(caption, result, vm, _danger));
             }
 
             switch (buttons)
             {
                 case MessageBoxButtons.Ok:
-                    AddButton("Ok", MessageBoxResult.Ok);
+                    AddButton("Ok", MessageBoxResult.Ok, danger);
                     break;
                 case MessageBoxButtons.OkCancel:
-                    AddButton("Ok", MessageBoxResult.Ok);
-                    AddButton("Cancel", MessageBoxResult.Cancel);
+                    AddButton("Cancel", MessageBoxResult.Cancel, false);
+                    AddButton("Ok", MessageBoxResult.Ok, danger);
                     break;
                 case MessageBoxButtons.YesNo:
-                    AddButton("Yes", MessageBoxResult.Yes);
-                    AddButton("No", MessageBoxResult.No);
+                    AddButton("No", MessageBoxResult.No, false);
+                    AddButton("Yes", MessageBoxResult.Yes, danger);
                     break;
                 case MessageBoxButtons.YesNoCancel:
-                    AddButton("Yes", MessageBoxResult.Yes);
-                    AddButton("No", MessageBoxResult.No);
-                    AddButton("Cancel", MessageBoxResult.Cancel);
+                    AddButton("No", MessageBoxResult.No, false);
+                    AddButton("Cancel", MessageBoxResult.Cancel, false);
+                    AddButton("Yes", MessageBoxResult.Yes, danger);
                     break;
             }
             

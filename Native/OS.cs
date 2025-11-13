@@ -18,7 +18,24 @@ namespace AvaloniaTest.Native
             void SetupWindow(Window window);
         }
 
+        public static string DataDir
+        {
+            get;
+            private set;
+        } = string.Empty;
         
+        public static void SetupDataDir()
+        {
+            var execFile = Process.GetCurrentProcess().MainModule!.FileName!;
+            var execDir = Path.GetDirectoryName(execFile)!;
+            var dataDir = Path.Combine(execDir, "data");
+
+            if (!Directory.Exists(dataDir))
+                Directory.CreateDirectory(dataDir);
+
+            DataDir = dataDir;
+        }
+
 
         public static bool UseSystemWindowFrame
         {
