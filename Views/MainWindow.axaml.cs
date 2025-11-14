@@ -50,16 +50,10 @@ public partial class MainWindow : ChromelessWindow
         base.OnDataContextChanged(e);
         if (DataContext is MainWindowViewModel vm)
         {
-            vm.TabSwitcherClosed += OnTabSwitcherClosed;
             vm.ModSwitcherClosed += OnModSwitcherClosed;
         }
     }
-    
-    private void OnTabSwitcherClosed(object? sender, EventArgs e)
-    {
-        TabSwitcherFlyoutButton.Flyout?.Hide();
-    }
-
+ 
     
     private void OnModSwitcherClosed(object? sender, EventArgs e)
     {
@@ -85,15 +79,6 @@ public partial class MainWindow : ChromelessWindow
         }
         
         InitializeComponent();
-    }
-
-    private void TabSwitcherFlyout_OnOpened(object? sender, EventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.OnTabSwitcherOpened();
-            
-        }
     }
     
     private void ModSwitcherFlyout_OnOpened(object? sender, EventArgs e)
@@ -122,14 +107,6 @@ public partial class MainWindow : ChromelessWindow
         foreach (var child in visual.GetVisualChildren())
             PrintAllControls(child, indent + 2);
     }
-    private void TabSwitcherFlyout_OnClosed(object? sender, EventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.OnTabSwitcherClosed();
-        }
-    }
-    
     private void ModSwitcherFlyout_OnClosed(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)

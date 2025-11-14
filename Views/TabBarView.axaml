@@ -46,26 +46,25 @@
         </Style>
 
         <Style Selector="controls|DragTabItem">
-            <!-- <Setter Property="Padding" Value="0"></Setter> -->
             <Setter Property="Margin" Value="0,0, 8, 0"></Setter>
             <Style Selector="^:selected">
                 <Setter Property="Background">
                     <Setter.Value>
                         <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
-                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab"
+                                     RelativeSource="{RelativeSource AncestorType=controls:TabsControl}" />
                             <Binding Source="SelectedTabItemBackgroundBrush" />
                             <Binding Source="" />
                             <Binding Path="RequestedThemeVariant" Source="{x:Static Application.Current}" />
-                            
                         </MultiBinding>
-
                     </Setter.Value>
                 </Setter>
-            
+
                 <Setter Property="Foreground">
                     <Setter.Value>
                         <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
-                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                            <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab"
+                                     RelativeSource="{RelativeSource AncestorType=controls:TabsControl}" />
                             <!-- highlight color -->
                             <Binding Source="TabItemHeaderForegroundSelected" />
                             <!-- deselect color -->
@@ -76,24 +75,22 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <Style Selector="^:selected:pointerover">
                 <Setter Property="Background">
                     <!-- TabItemHeaderBackgroundUnselectedPointerOver -->
                     <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
-                        <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/>
+                        <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab"
+                                 RelativeSource="{RelativeSource AncestorType=controls:TabsControl}" />
                         <Binding Source="SelectedTabItemBackgroundBrush" />
                         <Binding Source="TabItemHeaderBackgroundUnselectedPointerOver" />
                         <Binding Path="RequestedThemeVariant"
                                  Source="{x:Static Application.Current}" />
                     </MultiBinding>
                 </Setter>
-            
-                
             </Style>
-            
         </Style>
-        
+
         <Style Selector="Button#CloseTabButton:pointerover">
             <Setter Property="Opacity" Value="1"></Setter>
         </Style>
@@ -111,7 +108,7 @@
         </Style>
 
         <Style Selector="controls|DragTabItem">
-        
+
             <!-- Highlight selected tab and bring it above the blue border -->
             <!-- <Style Selector="^:selected"> -->
             <!--     <Setter Property="BorderBrush" Value="Blue"/> -->
@@ -152,7 +149,7 @@
                                         CornerRadius="{DynamicResource ControlCornerRadius}"
                                         IsVisible="False" />
                             </Grid>
-                            
+
                         </Border>
                         <!-- Selection indicator -->
                         <Border x:Name="Indicator"
@@ -166,19 +163,17 @@
                 </ControlTemplate>
 
             </Setter>
-          
+
 
         </Style>
         <Style Selector="controls|DragTabItem:selected /template/ Border#Indicator">
-            <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
-            <!-- <Setter Property="IsVisible" Value="((vm:MainWindowViewModel)DataContext).TemporaryTab" RelativeSource="{RelativeSource AncestorType=controls:TabsControl}"/> -->
-            <!-- -->
-            <Setter Property="IsVisible" 
+            <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+            <Setter Property="IsVisible"
                     Value="{Binding ((vm:MainWindowViewModel)DataContext).TemporaryTab, RelativeSource={RelativeSource AncestorType=controls:TabsControl}, Converter={x:Static ObjectConverters.IsNull}}" />
 
         </Style>
-        
-        
+
+
         <Style Selector="controls|TabsControl">
             <Setter Property="Margin" Value="0" />
             <Setter Property="Template">
@@ -199,6 +194,9 @@
                             </ScrollViewer>
                             <Thumb Grid.Column="2" Name="PART_RightDragWindowThumb"
                                    MinWidth="{TemplateBinding RightThumbWidth}" />
+                            
+                            <ContentPresenter Grid.Column="2" Name="PART_RightContent"
+                                              Content="{TemplateBinding RightContent}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -211,11 +209,30 @@
                                   ShowDefaultCloseButton="False"
                                   ShowDefaultAddButton="False"
                                   TabItemWidth="175"
-                                  LeftThumbWidth="0"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                                  RightThumbWidth="0"
                                   Padding="0"
+                                  RightThumbWidth="0"
+                                  LeftThumbWidth="0"
                                   ItemsSource="{Binding Pages}">
+
+                <controls:TabsControl.RightContent>
+                    <StackPanel VerticalAlignment="Center">
+                        <!-- Tab Switcher Button -->
+                        <Button Background="Transparent" Grid.Column="1" Classes="icon_button"
+                                VerticalAlignment="Bottom"
+                                Margin="0, 0, 0, 0"
+                                Name="TabSwitcherFlyoutButton">
+                            <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}" />
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight" Opened="TabSwitcherFlyout_OnOpened" Closed="TabSwitcherFlyout_OnClosed">
+                                    <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
+                                        <ContentControl Content="{Binding TabSwitcher}" Margin="0" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </controls:TabsControl.RightContent>
                 
                 <controls:TabsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:EditorPageViewModel}">
@@ -225,9 +242,9 @@
                               ToolTip.Tip="{Binding Title}"
                               IsHitTestVisible="True"
                               HorizontalAlignment="Left">
-                            <Border IsHitTestVisible="True" ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0" 
-                                    Background="Transparent" BorderBrush="{DynamicResource Color.Window}" 
-                                    BorderThickness="0 0 0 1" 
+                            <Border IsHitTestVisible="True" ToolTip.Tip="{Binding Title}" Padding="8, 0, 16, 0"
+                                    Background="Transparent" BorderBrush="{DynamicResource Color.Window}"
+                                    BorderThickness="0 0 0 1"
                                     Margin="0, 0, 0, -3">
                                 <!-- <Grid Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=UseFixedTabWidth, Converter={x:Static c:BoolConverters.ToPageTabWidth}}" Height="30" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center"> -->
                                 <Grid ColumnDefinitions="*, Auto">
@@ -254,6 +271,7 @@
                         </Grid>
                     </DataTemplate>
                 </controls:TabsControl.ItemTemplate>
+             
             </controls:TabsControl>
         </Grid>
     </Grid>

@@ -154,32 +154,15 @@
                           Background="Transparent"
                           MinWidth="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-
                           BorderThickness="0,0,1,0" />
 
             <!-- Editor Panel -->
             <Grid Margin="2, 0, 0, 0" Grid.Column="2" RowDefinitions="Auto, *">
                 <Border BorderThickness="0, 0, 0, 1" BorderBrush="{DynamicResource Brush.Border0}"
                         Background="{DynamicResource TabControlWindowActiveBackgroundBrush}">
-                    <Grid ColumnDefinitions="*, 32">
-                        <!-- Tabs Row -->
-                        <views:TabBarView Grid.Column="0" Height="30" VerticalAlignment="Bottom" Margin="0,0,0,0" />
-                        <!-- Tab Switcher Button -->
-                        <Button Background="Transparent" Grid.Column="1" Classes="icon_button"
-                                VerticalAlignment="Bottom"
-                                Name="TabSwitcherFlyoutButton">
-                            <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}" />
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight"
-                                        Opened="TabSwitcherFlyout_OnOpened"
-                                        Closed="TabSwitcherFlyout_OnClosed">
-                                    <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
-                                        <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                    </Grid>
+                    <!-- Tab Bar -->
+                    <views:TabBarView Height="30" VerticalAlignment="Bottom" Margin="0,0,0,0" />
+
                 </Border>
 
                 <!-- Editor Content -->

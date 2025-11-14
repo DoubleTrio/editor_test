@@ -32,13 +32,7 @@ public class MainWindowViewModel : ViewModelBase
         get => _isTreeView;
         set { this.RaiseAndSetIfChanged(ref _isTreeView, value); }
     }
-    public void OnTabSwitcherOpened()
-    {
-        if (TabSwitcher == null)
-        {
-            TabSwitcher = new TabSwitcherViewModel(this);
-        }
-    }
+   
 
     private ModHeader _currentMod = new ModHeader("Halcyon", "halcyon");
 
@@ -48,12 +42,14 @@ public class MainWindowViewModel : ViewModelBase
         set { this.RaiseAndSetIfChanged(ref _currentMod, value); }
     }
     
-    public void OnTabSwitcherClosed()
+    public void OnTabSwitcherOpened()
     {
-        if (TabSwitcher != null)
-        {
-            TabSwitcher = null;
-        }
+        TabSwitcher = new TabSwitcherViewModel(this);
+    }
+    
+    public void OnTabSwitcherClosed()
+    { 
+        TabSwitcher = null;
     }
     
     public void OnModSwitcherOpened()
@@ -671,7 +667,7 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
 
     private TabSwitcherViewModel? _tabSwitcher = null;
 
-    public event EventHandler TabSwitcherClosed = delegate { };
+    // public event EventHandler TabSwitcherClosed = delegate { };
 
     public TabSwitcherViewModel? TabSwitcher
     {
@@ -679,11 +675,6 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         set
         {
             this.RaiseAndSetIfChanged(ref _tabSwitcher, value);
-            if (value == null)
-            {
-                Console.WriteLine("A");
-                TabSwitcherClosed.Invoke(this, EventArgs.Empty);
-            }
         }
     }
     
