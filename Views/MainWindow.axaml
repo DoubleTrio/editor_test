@@ -34,17 +34,20 @@
                     Background="{DynamicResource Brush.TitleBar}"
                     BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}" />
             <Border Grid.Column="0" Width="72" IsVisible="{Binding #WindowMain.HasLeftCaptionButton}" />
-            
-            <StackPanel Grid.Column="{Binding #WindowMain.WindowState, Converter={StaticResource WindowStateToColumnConverter}}" Orientation="Horizontal">
+
+            <StackPanel
+                Grid.Column="{Binding #WindowMain.WindowState, Converter={StaticResource WindowStateToColumnConverter}}"
+                Orientation="Horizontal">
                 <!-- Settings -->
                 <Button Classes="icon_button" Command="{Binding OpenPreferencesWindow}"
                         Padding="8, 4, 0, 0">
                     <Path HorizontalAlignment="Center" Width="14" Height="14" Margin="0,2,0,0"
                           Data="{StaticResource Icons.GearFill}" />
                 </Button>
-            
+
                 <!-- Switch Mod Button  -->
-                <Button ToolTip.Tip="{Binding CurrentMod.Key}" Margin="12, 0, 0, 0"  Grid.Column="3" Classes="icon_button"
+                <Button ToolTip.Tip="{Binding CurrentMod.Key}" Margin="12, 0, 0, 0" Grid.Column="3"
+                        Classes="icon_button"
                         x:Name="ModSwitcherFlyoutButton" Command="{Binding OpenModSwitcher}" Padding="0, 4, 0, 0">
 
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -64,9 +67,9 @@
                     </Button.Flyout>
                 </Button>
             </StackPanel>
-            
-            <Border Grid.Column="3" Margin="16,0,0,0"  IsVisible="{Binding #WindowMain.HasRightCaptionButton}" >
-                <v:CaptionButtons Height="30" VerticalAlignment="Top"/>
+
+            <Border Grid.Column="3" Margin="16,0,0,0" IsVisible="{Binding #WindowMain.HasRightCaptionButton}">
+                <v:CaptionButtons Height="30" VerticalAlignment="Top" />
             </Border>
         </Grid>
         <Grid Grid.Row="1">
@@ -119,7 +122,7 @@
                                 Background="{DynamicResource Brush.Border2}"
                                 HorizontalAlignment="Stretch" />
 
-                        <TreeView Classes="custom" Grid.Row="2" Margin="0"
+                        <TreeView Grid.Row="2" Margin="0"
                                   x:Name="MasterTreeView"
                                   SelectionMode="Toggle"
                                   ItemsSource="{Binding Nodes}"
@@ -129,112 +132,20 @@
                                   SelectionChanged="MasterTreeView_OnSelectionChanged"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
                             <TreeView.Styles>
                                 <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                                    <Setter Property="Focusable" Value="False" />
                                 </Style>
                             </TreeView.Styles>
                             <TreeView.DataTemplates>
-
-                                <!-- DataRootNode -->
-                                <TreeDataTemplate DataType="vm:DataRootNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
-
-
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-
-                                        <!-- Bug or feature... the plus always shows up when the child elements are hovered... is it possible to check if Border#PART_LayoutRoot is hovered -->
-                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
-                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
-                                                Command="{Binding AddCommand}">
-                                            <Path
-                                                Stretch="Fill"
-
-                                                Fill="{DynamicResource Brush.FG1}"
-                                                Width="10" Height="10" Margin="0,0,0,0"
-                                                Data="{StaticResource Icons.Plus}" />
-                                        </Button>
-                                    </Grid>
-
-
-                                </TreeDataTemplate>
-
-
-                                <!-- SpriteRootNode -->
-                                <TreeDataTemplate DataType="vm:SpriteRootNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="Auto, *, 16" Height="16">
-
-
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-
-                                        <Button x:Name="DataRootAddButton" Grid.Column="2" Classes="icon_button"
-                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
-                                                Command="{Binding AddCommand}">
-                                            <Path
-                                                Stretch="Fill"
-
-                                                Fill="{DynamicResource Brush.FG1}"
-                                                Width="10" Height="10" Margin="0,0,0,0"
-                                                Data="{StaticResource Icons.Plus}" />
-                                        </Button>
-                                    </Grid>
-
-
-                                </TreeDataTemplate>
-
-                                <TreeDataTemplate DataType="vm:DataItemNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="*,Auto"
-                                          Background="Transparent"
-                                          ClipToBounds="False"
-                                          Height="16">
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-
-                                        <!-- Right trash button -->
-                                        <Button Grid.Column="1"
-                                                Classes="icon_button"
-                                                Width="16" Height="16"
-                                                Command="{Binding $parent[TreeViewItem;1].((vm:ItemRootNode)DataContext).DeleteCommand}"
-                                                CommandParameter="{Binding}"
-                                                IsVisible="{Binding IsPointerOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Right"
-                                                Background="Transparent"
-                                                BorderThickness="0">
-                                            <Path Stretch="Fill"
-                                                  Fill="{DynamicResource Brush.FG1}"
-                                                  Width="10" Height="10"
-                                                  Data="{StaticResource Icons.TrashFill}" />
-                                        </Button>
-                                    </Grid>
-                                </TreeDataTemplate>
-
-
-                                <TreeDataTemplate DataType="vm:OpenEditorNode" ItemsSource="{Binding SubNodes}">
-                                    <Grid ColumnDefinitions="*, Auto">
-                                        <ContentPresenter Content="{Binding}"
-                                                          ContentTemplate="{StaticResource NodeContentTemplate}" />
-
-                                    </Grid>
-                                </TreeDataTemplate>
-
-                                <!-- Default Node -->
-                                <!-- <TreeDataTemplate DataType="vm:NodeBase" ItemsSource="{Binding SubNodes}"> -->
-                                <!--     <Grid ColumnDefinitions="*,Auto"> -->
-                                <!--         <ContentPresenter Content="{Binding}" -->
-                                <!--                           ContentTemplate="{StaticResource NodeContentTemplate}" /> -->
-                                <!-- -->
-                                <!--         <ContentControl /> -->
-                                <!--     </Grid> -->
-                                <!-- </TreeDataTemplate> -->
+                                <!-- Note the DataRoot and SpriteRoot follow the ItemRootTemplate -->
+                                <StaticResource ResourceKey="ItemRootTemplate" />
+                                <StaticResource ResourceKey="DataItemTemplate" />
+                                <StaticResource ResourceKey="OpenEditorTemplate" />
+                                <StaticResource ResourceKey="NodeBaseTemplate" />
                             </TreeView.DataTemplates>
                         </TreeView>
-
                     </Grid>
                 </Border>
             </Border>
@@ -272,7 +183,7 @@
                         </Button>
                     </Grid>
                 </Border>
-                
+
                 <!-- Editor Content -->
                 <Panel Grid.Row="1" Background="{DynamicResource Brush.PageBackground}">
                     <ContentControl Content="{Binding TemporaryTab}"
