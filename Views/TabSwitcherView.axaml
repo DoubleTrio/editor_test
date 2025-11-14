@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:m="using:AvaloniaTest.DataModel"
              xmlns:local="clr-namespace:AvaloniaTest.Converters"
              xmlns:vm="using:AvaloniaTest.ViewModels"
              xmlns:c="using:AvaloniaTest.Converters"
@@ -146,7 +145,7 @@
         <ListBox Grid.Row="1"
                  x:Name="PagesListBox"
                  Width="400"
-                 MaxHeight="400"
+                 MaxHeight="300"
                  IsVisible="{Binding !_mainWindow.IsTreeView}"
                  BorderThickness="0"
                  SelectionMode="Single"
@@ -183,26 +182,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="vm:EditorPageViewModel">
                     <Grid ColumnDefinitions="Auto,6,*" Background="Transparent" Tapped="OnItemTapped">
-                        <!-- <Path Grid.Column="0" -->
-                        <!--       Width="12" Height="12" -->
-                        <!--       Fill="{Binding Node.Bookmark, Converter={x:Static c:IntConverters.ToBookmarkBrush}}" -->
-                        <!--       Data="{StaticResource Icons.Bookmark}" -->
-                        <!--       IsVisible="{Binding Node.IsRepository}" -->
-                        <!--       IsHitTestVisible="False"/> -->
-                        <!-- <Path Grid.Column="0" -->
-                        <!--       Width="12" Height="12" -->
-                        <!--       Fill="{DynamicResource Brush.FG1}" -->
-                        <!--       Data="{StaticResource Icons.Repositories}" -->
-                        <!--       IsVisible="{Binding !Node.IsRepository}" -->
-                        <!--       IsHitTestVisible="False"/> -->
                         <v:IconText Text="{Binding Title}" Icon="{Binding Icon}" IconSize="12" />
-                        <!-- IsVisible="{Binding Node.IsRepository}" -->
-                        <!-- <TextBlock Grid.Column="2" -->
-                        <!--            Classes="primary" -->
-                        <!--            VerticalAlignment="Center" -->
-                        <!--            Text="{DynamicResource Text.PageTabBar.Welcome.Title}" -->
-                        <!--            IsVisible="{Binding !Node.IsRepository}" -->
-                        <!--            IsHitTestVisible="False"/> -->
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

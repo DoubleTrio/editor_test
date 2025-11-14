@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using AvaloniaTest.Models;
 using AvaloniaTest.Services;
 using AvaloniaTest.Views;
 using ReactiveUI;
@@ -39,15 +40,37 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private ModHeader _currentMod = new ModHeader("Halcyon", "halcyon");
+
+    public ModHeader CurrentMod
+    {
+        get => _currentMod;
+        set { this.RaiseAndSetIfChanged(ref _currentMod, value); }
+    }
+    
     public void OnTabSwitcherClosed()
     {
         if (TabSwitcher != null)
         {
-            TabSwitcher.Dispose();
             TabSwitcher = null;
         }
     }
+    
+    public void OnModSwitcherOpened()
+    {
+        if (ModSwitcher == null)
+        {
+            ModSwitcher = new ModSwitcherViewModel(this);
+        }
+    }
 
+    public void OnModSwitcherClosed()
+    {
+        if (ModSwitcher != null)
+        {
+            ModSwitcher = null;
+        }
+    }
 
     public ReactiveCommand<Unit, Unit> OpenPreferencesWindow { get; }
     
@@ -393,9 +416,17 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
             return vm;
         });
 
+        
+        OpenModSwitcher = ReactiveCommand.Create(() =>
+        {
+            var vm = new ModSwitcherViewModel(this);
+            ModSwitcher = vm;
+            return vm;
+        });
+        
         CloseTabSwitcher = ReactiveCommand.Create(() =>
         {
-            _switcher?.Dispose();
+            _tabSwitcher?.Dispose();
             TabSwitcher = null;
             return Unit.Default;
         });
@@ -522,27 +553,7 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     
     
     private bool _ignoreIndexChange = false;
-
-    public void MoveTab(EditorPageViewModel from, EditorPageViewModel to)
-    {
-        _ignoreIndexChange = true;
-
-        var fromIdx = Pages.IndexOf(from);
-        var toIdx = Pages.IndexOf(to);
-        Pages.Move(fromIdx, toIdx);
-        ActivePage = from;
-
-        // ActiveWorkspace.Repositories.Clear();
-        // foreach (var p in Pages)
-        // {
-        //     if (p.Data is Repository r)
-        //         ActiveWorkspace.Repositories.Add(r.FullPath);
-        // }
-        // ActiveWorkspace.ActiveIdx = ActiveWorkspace.Repositories.IndexOf(from.Node.Id);
-
-        _ignoreIndexChange = false;
-    }
-
+    
     public void GotoNextTab()
     {
         if (Pages.Count == 1)
@@ -554,7 +565,10 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     }
 
     public ReactiveCommand<Unit, TabSwitcherViewModel> OpenTabSwitcher { get; }
+    
+    public ReactiveCommand<Unit, ModSwitcherViewModel> OpenModSwitcher { get; }
     public ReactiveCommand<Unit, Unit> CloseTabSwitcher { get; }
+
 
     public void GotoPrevTab()
     {
@@ -655,20 +669,38 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         GC.Collect();
     }
 
-    private IDisposable? _switcher = null;
+    private TabSwitcherViewModel? _tabSwitcher = null;
 
-    public event EventHandler? TabSwitcherClosed;
+    public event EventHandler TabSwitcherClosed = delegate { };
 
-    public IDisposable? TabSwitcher
+    public TabSwitcherViewModel? TabSwitcher
     {
-        get => _switcher;
+        get => _tabSwitcher;
         set
         {
-            this.RaiseAndSetIfChanged(ref _switcher, value);
+            this.RaiseAndSetIfChanged(ref _tabSwitcher, value);
             if (value == null)
             {
                 Console.WriteLine("A");
-                TabSwitcherClosed?.Invoke(this, EventArgs.Empty);
+                TabSwitcherClosed.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+    
+    
+    private ModSwitcherViewModel? _modSwitcher = null;
+
+    public event EventHandler ModSwitcherClosed = delegate { };
+
+    public ModSwitcherViewModel? ModSwitcher
+    {
+        get => _modSwitcher;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _modSwitcher, value);
+            if (value == null)
+            {
+                ModSwitcherClosed?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -676,6 +708,11 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     public void CancelSwitcher()
     {
         OnTabSwitcherClosed();
+    }
+
+    public void CancelModSwitcher()
+    {
+        OnModSwitcherClosed();
     }
 
     // Navigate to a page from tab switcher

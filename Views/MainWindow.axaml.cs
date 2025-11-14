@@ -45,20 +45,27 @@ public partial class MainWindow : ChromelessWindow
         }
     }
 
-
-    private void MainWindow_DataContextChanged(object? sender, EventArgs e)
+    protected override void OnDataContextChanged(EventArgs e)
     {
+        base.OnDataContextChanged(e);
         if (DataContext is MainWindowViewModel vm)
         {
             vm.TabSwitcherClosed += OnTabSwitcherClosed;
+            vm.ModSwitcherClosed += OnModSwitcherClosed;
         }
     }
-
+    
     private void OnTabSwitcherClosed(object? sender, EventArgs e)
     {
         TabSwitcherFlyoutButton.Flyout?.Hide();
     }
 
+    
+    private void OnModSwitcherClosed(object? sender, EventArgs e)
+    {
+        ModSwitcherFlyoutButton.Flyout?.Hide();
+    }
+    
     public MainWindow()
     {
         if (OperatingSystem.IsMacOS())
@@ -76,18 +83,24 @@ public partial class MainWindow : ChromelessWindow
         {
             CaptionHeight = new GridLength(38);
         }
-
-        this.DataContextChanged += MainWindow_DataContextChanged;
-     
+        
         InitializeComponent();
     }
 
-    private void FlyoutBase_OnOpened(object? sender, EventArgs e)
+    private void TabSwitcherFlyout_OnOpened(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
         {
             vm.OnTabSwitcherOpened();
             
+        }
+    }
+    
+    private void ModSwitcherFlyout_OnOpened(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.OnModSwitcherOpened();
         }
     }
     
@@ -109,11 +122,19 @@ public partial class MainWindow : ChromelessWindow
         foreach (var child in visual.GetVisualChildren())
             PrintAllControls(child, indent + 2);
     }
-    private void FlyoutBase_OnClosed(object? sender, EventArgs e)
+    private void TabSwitcherFlyout_OnClosed(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
         {
             vm.OnTabSwitcherClosed();
+        }
+    }
+    
+    private void ModSwitcherFlyout_OnClosed(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.OnModSwitcherClosed();
         }
     }
 

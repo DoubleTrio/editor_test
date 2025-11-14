@@ -67,12 +67,23 @@
             <!-- </Button> -->
 
             <!-- Switch Mod Button  -->
-            <Button Grid.Column="3" Classes="icon_button" Command="{Binding OpenPreferencesWindow}" Padding="0, 4, 0, 0">
+            <Button ToolTip.Tip="{Binding CurrentMod.Key}" Grid.Column="3" Classes="icon_button" x:Name="ModSwitcherFlyoutButton" Command="{Binding OpenModSwitcher}" Padding="0, 4, 0, 0">
+                
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Padding="0, 0, 6, 0">Halcyon</TextBlock>
+                    <TextBlock Padding="0, 0, 6, 0" Text="{Binding CurrentMod.Name}"/>
                     <Path HorizontalAlignment="Center" Width="10" Height="10" Margin="0,2,0,0"
                           Data="{StaticResource Icons.CaretDownFill}" />
                 </StackPanel>
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft"
+                            VerticalOffset="8"
+                            Opened="ModSwitcherFlyout_OnOpened"
+                            Closed="ModSwitcherFlyout_OnClosed">
+                        <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
+                            <ContentControl Content="{Binding ModSwitcher}" Margin="8,8,8,8" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
 
 
@@ -84,7 +95,7 @@
         <!--     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Bold" -->
         <!--                Text="Editing Mod: Halcyon" /> -->
         <!-- </Grid> -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" MinWidth="200" MaxWidth="500" />
                 <ColumnDefinition Width="0" />
@@ -291,22 +302,14 @@
                     <Grid ColumnDefinitions="*, 32">
                         <!-- Tabs Row -->
                         <views:TabBarView Grid.Column="0" Height="30" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-                        <!-- <views:TabBarView.RenderTransform> -->
-                        <!--     <TranslateTransform Y="-1"/> -->
-                        <!-- </views:TabBarView.RenderTransform> -->
-
-                        <!-- <views:TabBarView></views:TabBarView> -->
-                        <!-- <views:TabBarView> -->
-                            <!-- <TranslateTransform Y="1"/> -->
-                        <!-- </views:TabBarView> -->
                         <!-- Tab Switcher Button -->
                         <Button Background="Transparent" Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom"
                                 Name="TabSwitcherFlyoutButton">
                             <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}" />
                             <Button.Flyout>
                                 <Flyout Placement="BottomEdgeAlignedRight"
-                                        Opened="FlyoutBase_OnOpened"
-                                        Closed="FlyoutBase_OnClosed">
+                                        Opened="TabSwitcherFlyout_OnOpened"
+                                        Closed="TabSwitcherFlyout_OnClosed">
                                     <StackPanel Orientation="Vertical" Background="{DynamicResource Brush.Popup}">
                                         <ContentControl Content="{Binding TabSwitcher}" Margin="8,8,8,8" />
                                     </StackPanel>
