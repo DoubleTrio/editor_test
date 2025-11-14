@@ -15,7 +15,7 @@ public partial class PreferencesWindowView: ChromelessWindow
         InitializeComponent();
     }
     
-    protected override async void OnClosing(WindowClosingEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
 

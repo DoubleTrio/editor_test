@@ -79,75 +79,73 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <!-- Left Side -->
-            <Border Background="{DynamicResource Brush.Window}" Grid.Column="0" Margin="0,0,0,0" BorderThickness="1"
+            <Border Grid.Column="0" Margin="0,0,0,0" BorderThickness="1"
                     BorderBrush="{DynamicResource Brush.ToolBar}" CornerRadius="6">
-                <Border Margin="0 0">
-                    <Grid RowDefinitions="28, 3, *">
-                        <TextBox
-                            Margin="0,0,0,0"
-                            Height="28"
+                <Grid RowDefinitions="28, 3, *">
+                    <TextBox
+                        Margin="0,0,0,0"
+                        Height="28"
 
-                            BorderThickness="0"
-                            CornerRadius="0"
-                            BorderBrush="{DynamicResource Brush.Border2}"
-                            Watermark="Search..."
-                            Text="{Binding Filter, Mode=TwoWay}"
-                            VerticalContentAlignment="Center">
-                            <TextBox.InnerLeftContent>
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        BorderBrush="{DynamicResource Brush.Border2}"
+                        Watermark="Search..."
+                        Text="{Binding Filter, Mode=TwoWay}"
+                        VerticalContentAlignment="Center">
+                        <TextBox.InnerLeftContent>
+                            <Path
+                                Fill="{DynamicResource Brush.FG2}"
+                                Width="12" Height="12"
+                                Margin="6,0,0,0"
+                                Data="{StaticResource Icons.MagnifyingGlassFill}" />
+
+
+                        </TextBox.InnerLeftContent>
+                        <TextBox.InnerRightContent>
+                            <Button Classes="icon_button"
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,0,6,0"
+                                    Command="{Binding ClearFilterCommand}"
+                                    IsVisible="{Binding Filter, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                    HorizontalAlignment="Right">
                                 <Path
-                                    Fill="{DynamicResource Brush.FG2}"
-                                    Width="12" Height="12"
-                                    Margin="6,0,0,0"
-                                    Data="{StaticResource Icons.MagnifyingGlassFill}" />
+                                    Width="14" Height="14"
+                                    Margin="0,1,0,0"
+                                    Data="{StaticResource Icons.XCircleFill}" />
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+                    <Border Grid.Row="1"
+                            Height="1"
+                            Background="{DynamicResource Brush.Border2}"
+                            HorizontalAlignment="Stretch" />
 
-
-                            </TextBox.InnerLeftContent>
-                            <TextBox.InnerRightContent>
-                                <Button Classes="icon_button"
-                                        Width="16"
-                                        Height="16"
-                                        Margin="0,0,6,0"
-                                        Command="{Binding ClearFilterCommand}"
-                                        IsVisible="{Binding Filter, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                        HorizontalAlignment="Right">
-                                    <Path
-                                        Width="14" Height="14"
-                                        Margin="0,1,0,0"
-                                        Data="{StaticResource Icons.XCircleFill}" />
-                                </Button>
-                            </TextBox.InnerRightContent>
-                        </TextBox>
-                        <Border Grid.Row="1"
-                                Height="1"
-                                Background="{DynamicResource Brush.Border2}"
-                                HorizontalAlignment="Stretch" />
-
-                        <TreeView Grid.Row="2" Margin="0"
-                                  x:Name="MasterTreeView"
-                                  SelectionMode="Toggle"
-                                  ItemsSource="{Binding Nodes}"
-                                  SelectedItems="{Binding TreeSearch.SelectedNodes}"
-                                  DoubleTapped="MasterTreeView_OnDoubleTapped"
-                                  ContextRequested="MasterTreeView_OnContextRequested"
-                                  SelectionChanged="MasterTreeView_OnSelectionChanged"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <TreeView.Styles>
-                                <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
-                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                                </Style>
-                            </TreeView.Styles>
-                            <TreeView.DataTemplates>
-                                <!-- Note the DataRoot and SpriteRoot follow the ItemRootTemplate -->
-                                <StaticResource ResourceKey="ItemRootTemplate" />
-                                <StaticResource ResourceKey="DataItemTemplate" />
-                                <StaticResource ResourceKey="OpenEditorTemplate" />
-                                <StaticResource ResourceKey="NodeBaseTemplate" />
-                            </TreeView.DataTemplates>
-                        </TreeView>
-                    </Grid>
-                </Border>
+                    <TreeView Grid.Row="2" Margin="0"
+                              x:Name="MasterTreeView"
+                              SelectionMode="Toggle"
+                              ItemsSource="{Binding Nodes}"
+                              SelectedItems="{Binding TreeSearch.SelectedNodes}"
+                              DoubleTapped="MasterTreeView_OnDoubleTapped"
+                              ContextRequested="MasterTreeView_OnContextRequested"
+                              SelectionChanged="MasterTreeView_OnSelectionChanged"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView.Styles>
+                            <Style Selector="TreeViewItem" x:DataType="vm:NodeBase">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                            </Style>
+                        </TreeView.Styles>
+                        <TreeView.DataTemplates>
+                            <!-- Note the DataRoot and SpriteRoot follow the ItemRootTemplate -->
+                            <StaticResource ResourceKey="ItemRootTemplate" />
+                            <StaticResource ResourceKey="DataItemTemplate" />
+                            <StaticResource ResourceKey="OpenEditorTemplate" />
+                            <StaticResource ResourceKey="NodeBaseTemplate" />
+                        </TreeView.DataTemplates>
+                    </TreeView>
+                </Grid>
             </Border>
 
             <!--  Splitter -->

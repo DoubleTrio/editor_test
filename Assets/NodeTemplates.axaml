@@ -32,10 +32,6 @@
                           ContentTemplate="{StaticResource ItemRootDataTemplate}" />
     </TreeDataTemplate>
     
-    <!-- <TreeDataTemplate x:Key="DataRootTemplate" DataType="vm:DataRootNode" ItemsSource="{Binding SubNodes}"> -->
-    <!--     <ContentPresenter Content="{Binding}" -->
-    <!--                       ContentTemplate="{StaticResource ItemRootTemplate}" /> -->
-    <!-- </TreeDataTemplate> -->
     
     <!-- DataRootNode -->
     <!-- <TreeDataTemplate x:Key="DataRootTemplate" DataType="vm:DataRootNode" ItemsSource="{Binding SubNodes}"> -->
