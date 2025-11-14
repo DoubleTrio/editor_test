@@ -44,6 +44,12 @@ public class ChromelessWindow : Window
             e.Handled = true;
         }
 
+        
+        public bool IsFullScreen(object _, TappedEventArgs e)
+        {
+            return WindowState == WindowState.Maximized;
+        }
+        
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);

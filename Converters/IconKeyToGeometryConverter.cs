@@ -27,33 +27,6 @@ public class IconKeyToGeometryConverter : IValueConverter
 }
 
 
-public class ObjectToColorKeyConverter3 : IMultiValueConverter
-{
-    public object Convert(IList<object?> values, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (values.Count < 3)
-            throw new Exception("Expected 3 values: object, keyWhenNotNull, keyWhenNull");
-
-        var value = values[0];
-        var keyWhenNotNull = values[1] as string;
-        var keyWhenNull = values[2] as string;
-
-        string keyToUse = value != null ? keyWhenNotNull : keyWhenNull;
-        
-        if (Application.Current?.TryGetResource(keyToUse, 
-                Application.Current.ActualThemeVariant, out var brush) == true)
-        {
-            return brush;
-        }
-        
-        return Brushes.Transparent;
-    }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        => throw new NotImplementedException();
-}
-
-
 public class ToLocaleConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -97,6 +70,22 @@ public static class StringConverters
 }
 
 
+public class WindowStateToColumnConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is WindowState ws)
+        {
+            if (ws == WindowState.FullScreen || !OperatingSystem.IsMacOS())
+                return 0;
+            
+        }
+        return 1;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
 
 
 // Note: This is a workaround for not being able to set the selected page to null for Tabalonia
