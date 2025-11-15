@@ -21,6 +21,7 @@ public partial class TabSwitcherView : UserControl
         InitializeComponent();
 
         
+        
         TreeViewTabSwitcher.AddHandler(KeyDownEvent, TreeViewTabSwitcher_OnKeyDown,
             RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
         TreeViewTabSwitcher.AddHandler(PointerPressedEvent, TreeViewTabSwitcher_OnPointerPressed,

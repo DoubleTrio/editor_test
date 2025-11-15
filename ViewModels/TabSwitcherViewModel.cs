@@ -4,21 +4,22 @@ using System.Linq;
 using System.Reactive;
 using System.Text.RegularExpressions;
 using Avalonia.Media;
+using AvaloniaTest.Utility;
 using DynamicData;
 using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels;
 
-public class TabSwitcherViewModel: ViewModelBase, IDisposable
+public class TabSwitcherViewModel: ViewModelBase
 {
     public ObservableCollection<EditorPageViewModel> VisiblePages { get; } = new ObservableCollection<EditorPageViewModel>();
     
-    private EditorPageViewModel _selectedPage = null;
+    private EditorPageViewModel? _selectedPage;
 
-    public EditorPageViewModel SelectedPage
+    public EditorPageViewModel? SelectedPage
     {
         get => _selectedPage;
-        set { this.RaiseAndSetIfChanged(ref _selectedPage, value); }
+        set => this.RaiseAndSetIfChanged(ref _selectedPage, value);
     }
     public MainWindowViewModel _mainWindow 
     {
@@ -38,14 +39,10 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
     {
         _mainWindow = mainWindow;
         UpdateVisiblePages(_searchFilter);
-
-        this.WhenAnyValue(x => x.SearchFilter).Subscribe(UpdateVisiblePages);
-        SelectPageCommand = ReactiveCommand.Create<PageNode>(node => 
-        {
-            _mainWindow.NavigateToPage(node);
-        });
+        
         VisiblePages = new ObservableCollection<EditorPageViewModel>(_mainWindow.Pages);
         SelectedPage = _mainWindow.ActivePage;
+        this.WhenAnyValue(x => x.SearchFilter).Subscribe(UpdateVisiblePages);
     }
 
     public TabSwitcherViewModel() : this(new MainWindowViewModel()) {}
@@ -63,47 +60,19 @@ public class TabSwitcherViewModel: ViewModelBase, IDisposable
 
     public void Switch()
     {
-        _mainWindow.ActivePage = _selectedPage ?? _mainWindow.ActivePage;
-        _mainWindow.CancelSwitcher();
+        _mainWindow.ActivePage = _selectedPage;
+        _mainWindow.CloseTabSwitcher();
     }
-
-    public void Dispose()
-    {
-        // VisiblePages.Clear();
-        // _selectedPage = null;
-        // _searchFilter = string.Empty;
-    }
-
-    public ReactiveCommand<PageNode, Unit> SelectPageCommand { get; }
     
-    
+    // Do it for both the tab list and the tab tree view!
     private void UpdateVisiblePages(string filter)
     {
         foreach (var node in _mainWindow.TopLevelPages)
         {
-            ApplyFilterRecursive(node, filter);
+            NodeHelper.FilterRecursive(node, filter);
         }
         
         UpdateVisiblePagesList(filter);
-    }
-
-    private bool ApplyFilterRecursive(PageNode nodeBase, string filter)
-    {
-        bool match = MatchesFilter(nodeBase.Title, filter);
-
-        bool childMatch = false;
-        foreach (PageNode child in nodeBase.SubNodes)
-        {
-            if (ApplyFilterRecursive(child, filter))
-                childMatch = true;
-        }
-
-        nodeBase.IsVisible = match || childMatch;
-
-        if (!string.IsNullOrWhiteSpace(filter))
-            nodeBase.IsExpanded = childMatch;
-
-        return nodeBase.IsVisible;
     }
     
     private bool MatchesFilter(string title, string filter)

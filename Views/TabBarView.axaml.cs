@@ -7,26 +7,18 @@ namespace AvaloniaTest.Views
 {
     public partial class TabBarView : UserControl
     {
-        private void TabSwitcherFlyout_OnOpened(object? sender, EventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-                vm.OnTabSwitcherOpened();
-            }
-        }
-
-        private void TabSwitcherFlyout_OnClosed(object? sender, EventArgs e)
-        {
-            if (DataContext is MainWindowViewModel vm)
-            {
-                TabSwitcherFlyoutButton.Flyout?.Hide();
-                vm.OnTabSwitcherClosed();
-            }
-        }
-
         public TabBarView()
         {
             InitializeComponent();
+        }
+        
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.TabSwitcherClosed += () => TabSwitcherFlyoutButton.Flyout?.Hide();;
+            }
         }
 
         private async void OnCloseTab(object? sender, RoutedEventArgs e)
@@ -51,6 +43,23 @@ namespace AvaloniaTest.Views
             }
 
             vm.RemovePage(page);
+        }
+        
+        
+        private void TabSwitcherFlyout_OnOpened(object? sender, EventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.OpenTabSwitcher();
+            }
+        }
+
+        private void TabSwitcherFlyout_OnClosed(object? sender, EventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.CloseTabSwitcher();
+            }
         }
     }
 }

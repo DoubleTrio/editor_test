@@ -35,7 +35,7 @@ public partial class ModSwitcherView : UserControl
 
             if ((ModsListBox.SelectedItem as ModHeader).Key == switcher._mainWindow.CurrentMod.Key)
             {
-                switcher._mainWindow.CancelModSwitcher();
+                switcher._mainWindow.OnModSwitcherClosed();
                 return;
             }
             
@@ -49,7 +49,7 @@ public partial class ModSwitcherView : UserControl
             if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
                 return;
             switcher._mainWindow.CurrentMod = ModsListBox.SelectedItem as ModHeader;
-            switcher._mainWindow.CancelModSwitcher();
+            switcher._mainWindow.OnModSwitcherClosed();
             // switcher._mainWindow._dialogService.ShowDialogAsync<>()
             e.Handled = true;
         }
@@ -81,7 +81,7 @@ public partial class ModSwitcherView : UserControl
         {
             if ((ModsListBox.SelectedItem as ModHeader).Key == switcher._mainWindow.CurrentMod.Key)
             {
-                switcher._mainWindow.CancelModSwitcher();
+                switcher._mainWindow.OnModSwitcherClosed();
                 return;
             }
             
@@ -95,7 +95,7 @@ public partial class ModSwitcherView : UserControl
             if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
                 return;
             switcher._mainWindow.CurrentMod = ModsListBox.SelectedItem as ModHeader;
-            switcher._mainWindow.CancelModSwitcher();
+            switcher._mainWindow.OnModSwitcherClosed();
             // switcher._mainWindow._dialogService.ShowDialogAsync<>()
             e.Handled = true;
  

@@ -44,24 +44,12 @@ public partial class MainWindow : ChromelessWindow
             return OperatingSystem.IsWindows();
         }
     }
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.ModSwitcherClosed += OnModSwitcherClosed;
-        }
-    }
- 
     
-    private void OnModSwitcherClosed(object? sender, EventArgs e)
-    {
-        ModSwitcherFlyoutButton.Flyout?.Hide();
-    }
+    
     
     public MainWindow()
     {
+        
         if (OperatingSystem.IsMacOS())
         {
             HasLeftCaptionButton = true;
@@ -89,6 +77,15 @@ public partial class MainWindow : ChromelessWindow
         }
     }
     
+    private void ModSwitcherFlyout_OnClosed(object? sender, EventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.OnModSwitcherClosed();
+            ModSwitcherFlyoutButton.Flyout?.Hide();
+        }
+    }
+    
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
@@ -99,22 +96,8 @@ public partial class MainWindow : ChromelessWindow
         }
     }
 
-    void PrintAllControls(Visual visual, int indent = 0)
-    {
-        var indentText = new string(' ', indent);
-        Console.WriteLine($"{indentText}- {visual.GetType().Name}");
-
-        foreach (var child in visual.GetVisualChildren())
-            PrintAllControls(child, indent + 2);
-    }
-    private void ModSwitcherFlyout_OnClosed(object? sender, EventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.OnModSwitcherClosed();
-        }
-    }
-
+  
+ 
     private void MasterTreeView_OnDoubleTapped(object? sender, TappedEventArgs e)
     {
         if (DataContext is MainWindowViewModel vm && sender is TreeView { SelectedItem: not null } treeView)

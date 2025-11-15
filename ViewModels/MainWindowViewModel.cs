@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using AvaloniaTest.Models;
 using AvaloniaTest.Services;
+using AvaloniaTest.Utility;
 using AvaloniaTest.Views;
 using ReactiveUI;
 
@@ -14,9 +15,6 @@ namespace AvaloniaTest.ViewModels;
 
 using Avalonia.Collections;
 using Avalonia.Threading;
-
-
-
 using Avalonia;
 using Avalonia.Media;
 
@@ -24,7 +22,7 @@ public class MainWindowViewModel : ViewModelBase
 {
     private readonly NodeFactory _nodeFactory;
 
-    
+
     private bool _isTreeView = false;
 
     public bool IsTreeView
@@ -32,7 +30,7 @@ public class MainWindowViewModel : ViewModelBase
         get => _isTreeView;
         set { this.RaiseAndSetIfChanged(ref _isTreeView, value); }
     }
-   
+
 
     private ModHeader _currentMod = new ModHeader("Halcyon", "halcyon");
 
@@ -41,17 +39,18 @@ public class MainWindowViewModel : ViewModelBase
         get => _currentMod;
         set { this.RaiseAndSetIfChanged(ref _currentMod, value); }
     }
-    
-    public void OnTabSwitcherOpened()
+
+    public void OpenTabSwitcher()
     {
         TabSwitcher = new TabSwitcherViewModel(this);
     }
-    
-    public void OnTabSwitcherClosed()
-    { 
+    public event Action? TabSwitcherClosed;
+    public void CloseTabSwitcher()
+    {
         TabSwitcher = null;
+        TabSwitcherClosed?.Invoke();
     }
-    
+
     public void OnModSwitcherOpened()
     {
         if (ModSwitcher == null)
@@ -69,7 +68,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     public ReactiveCommand<Unit, Unit> OpenPreferencesWindow { get; }
-    
+
     public ReactiveCommand<Unit, Unit> ClearFilterCommand { get; }
 
     public ReactiveCommand<Unit, Unit> AddTestTab { get; }
@@ -107,35 +106,20 @@ public class MainWindowViewModel : ViewModelBase
         get => _temporaryTab;
         set => this.RaiseAndSetIfChanged(ref _temporaryTab, value);
     }
-    
-private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
-    
-    public EditorPageViewModel? SelectedItem
-    {
-        get => _selectedItem.Value;
-        set
-        {
-            if (TemporaryTab == null)
-            {
-                ActivePage = value;
-            }
-        }
-    }
 
     private ObservableCollection<PageNode> _topLevelPages;
+
     public ObservableCollection<PageNode> TopLevelPages
     {
         get => _topLevelPages;
         set => this.RaiseAndSetIfChanged(ref _topLevelPages, value);
     }
-    
+
     private Dictionary<EditorPageViewModel, PageNode> _pageToNodeMap;
-    
-    
-    // Add to the end of the list
+
+
     public void AddTopLevelPage(EditorPageViewModel page)
     {
-        
         Console.WriteLine($"Adding top level page {page}");
         // Navigate to the tab if it already exists
         if (page.UniqueId != null)
@@ -156,18 +140,18 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
             TemporaryTab = page;
             return;
         }
+
         Pages.Add(page);
-        
+
         var node = new PageNode(_dialogService, page);
         TopLevelPages.Add(node);
         _pageToNodeMap[page] = node;
         ActivePage = page;
     }
-    
-    
+
+
     public void AddTopLevelPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
     {
-      
         // Prevent duplicates
         if (childPage.UniqueId != null)
         {
@@ -220,10 +204,9 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         ActivePage = childPage;
     }
 
-    
+
     public void AddChildPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
     {
-        
         if (childPage.UniqueId != null)
         {
             var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
@@ -259,19 +242,18 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     {
         if (!_pageToNodeMap.TryGetValue(page, out var node))
             return false;
-        
+
         return node.SubNodes.Count > 0;
     }
-    
+
     public void RemovePage(EditorPageViewModel page)
     {
-        
         if (!_pageToNodeMap.TryGetValue(page, out var node))
             return;
 
         bool wasActive = (page == _activePage);
         int removeIdx = Pages.IndexOf(page);
-        
+
         ClosePageAndChildren(node);
 
         if (wasActive)
@@ -298,9 +280,9 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         {
             ClosePageAndChildren(child);
         }
-        
+
         Pages.Remove(node.Page);
-        
+
         if (node.IsTopLevel)
         {
             TopLevelPages.Remove(node);
@@ -309,9 +291,9 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         {
             node.Parent.RemoveChild(node);
         }
-        
+
         _pageToNodeMap.Remove(node.Page);
-        
+
         if (node.Page is IDisposable disposable)
         {
             disposable.Dispose();
@@ -323,69 +305,41 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     public readonly TabEvents _tabEvents;
     public readonly IDialogService _dialogService;
     public ObservableCollection<NodeBase> Nodes { get; set; }
-    
-    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()), new NodeFactory(new DesignServiceProvider()), new DialogService(), new TabEvents(new PageFactory(new DesignServiceProvider()))) {}
-    public MainWindowViewModel(PageFactory pageFactory, NodeFactory nodeFactory, IDialogService dialogService, TabEvents tabEvents)
+
+    public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()),
+        new NodeFactory(new DesignServiceProvider()), new DialogService(),
+        new TabEvents(new PageFactory(new DesignServiceProvider())))
     {
+    }
 
-
+    public MainWindowViewModel(PageFactory pageFactory, NodeFactory nodeFactory, IDialogService dialogService,
+        TabEvents tabEvents)
+    {
         _pageFactory = pageFactory;
         _tabEvents = tabEvents;
         _nodeFactory = nodeFactory;
         _dialogService = dialogService;
-        
-        
-        BuildNodes();
-        
-        
-        _tabEvents.AddChildTabEvent += (parent, child) =>
-        {
-            AddChildPage(parent, child);
-            ActivePage = child;
-        };
-        
-        _tabEvents.AddTopLevelTabEvent += (tab) =>
-        {
-            AddTopLevelPage(tab);
-            ActivePage = tab;
-        };
-        
-        _tabEvents.AddTemporaryTabEvent += (tab) =>
-        {
-            ActivePage = tab;
-        };
-        
-        _tabEvents.RemoveTabEvent += (tab) =>
-        {
-            RemovePage(tab);
-        };
 
-        _pageFactory = pageFactory;
-        
-        _selectedItem = this.WhenAnyValue(
-                x => x.ActivePage,
-                x => x.TemporaryTab,
-                (activePage, temporaryTab) => temporaryTab != null ? null : activePage)
-            .ToProperty(this, x => x.SelectedItem);
-        
+        BuildNodes();
+        InitializeTabEvents();
+
         this.WhenAnyValue(x => x.ActivePage)
-            .Skip(1) // Skip the initial value
-            .Where(activePage => activePage != null) // Only when ActivePage is actually set to something
+            .Where(activePage => activePage != null)
             .Subscribe(_ => TemporaryTab = null);
-        
+
         Pages = new ObservableCollection<EditorPageViewModel>();
         TopLevelPages = new ObservableCollection<PageNode>();
         _pageToNodeMap = new Dictionary<EditorPageViewModel, PageNode>();
-        
+
         TreeSearch = new TreeSearchViewModel();
-        
+
         // TODO: move this own view
         ClearFilterCommand = ReactiveCommand.Create(() => { Filter = string.Empty; });
 
         AddTestTab = ReactiveCommand.Create(() =>
         {
             var page = _pageFactory.CreatePage("SpritePage");
-            
+
             _pageFactory.PrintRegisteredPages();
 
             if (page != null)
@@ -395,52 +349,57 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
 
             ActivePage = page;
         });
-        
-        
+
+
         OpenPreferencesWindow = ReactiveCommand.CreateFromTask(async () =>
         {
-            
-            // ADD A SHOW DIALOG THAT DOESN't RELY IN THE VIEW MODAL... show window only
-            var res = await _dialogService.ShowDialogAsync<PreferencesWindowViewModel, bool>(PreferencesWindowViewModel.Instance, "Preferences", false);
-            
+            await _dialogService.ShowDialogAsync<PreferencesWindowViewModel, bool>(
+                PreferencesWindowViewModel.Instance, "Preferences", false);
         });
 
-        OpenTabSwitcher = ReactiveCommand.Create(() =>
-        {
-            var vm = new TabSwitcherViewModel(this);
-            TabSwitcher = vm;
-            return vm;
-        });
-
-        
-        OpenModSwitcher = ReactiveCommand.Create(() =>
-        {
-            var vm = new ModSwitcherViewModel(this);
-            ModSwitcher = vm;
-            return vm;
-        });
-        
-        CloseTabSwitcher = ReactiveCommand.Create(() =>
-        {
-            _tabSwitcher?.Dispose();
-            TabSwitcher = null;
-            return Unit.Default;
-        });
-
-        // var tab = _pageFactory.CreatePage("DevControl");
-        // tab.Icon = "Icons.GameControllerFill";
-        // AddTopLevelPage(tab);
+        var tab = _pageFactory.CreatePage("DevControl");
+        tab.Icon = "Icons.GameControllerFill";
+        AddTopLevelPage(tab);
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
 
-    
+    private void InitializeTabEvents()
+    {
+        _tabEvents.AddChildTabEvent += (parent, child) =>
+        {
+            AddChildPage(parent, child);
+            ActivePage = child;
+        };
+
+        _tabEvents.AddTopLevelTabEvent += (tab) =>
+        {
+            AddTopLevelPage(tab);
+            ActivePage = tab;
+        };
+
+        _tabEvents.AddTemporaryTabEvent += (tab) =>
+        {
+            TemporaryTab = tab;
+            ActivePage = null;
+        };
+
+        _tabEvents.RemoveTabEvent += (tab) => { RemovePage(tab); };
+        
+        _tabEvents.NavigateToTabEvent += (tab) =>
+        {
+            ActivePage = tab;
+        };
+    }
+
     private void BuildNodes()
     {
         var halcyonNode = _nodeFactory.CreateOpenEditorNode("Halcyon", "Icons.FloppyDiskBackFill", "ModInfoEditor");
-        
-        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"));
+
+        halcyonNode.SubNodes.Add(
+            _nodeFactory.CreateOpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"));
-        halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"));
+        halcyonNode.SubNodes.Add(
+            _nodeFactory.CreateOpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"));
         halcyonNode.SubNodes.Add(_nodeFactory.CreateOpenEditorNode("Tab Test", "Icons.AirplaneFill", "SpritePage"));
 
@@ -448,19 +407,23 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
 
         var monstersRoot = _nodeFactory.CreateDataRootNode("Monsters", "Monsters", "Monsters", "Icons.GhostFill");
 
-        
+
         //             new OpenEditorNode("Dev Control", "Icons.GameControllerFill", "DevControl"),
         //             new OpenEditorNode("Zone Editor", "Icons.StairsFill", "ZoneEditor"),
         //             new OpenEditorNode("Ground Editor", "Icons.MapTrifoldFill", "GroundEditor"),
         //             new OpenEditorNode("Testing", "Icons.BedFill", "RandomInfo"),
-        
-        
-        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("eevee", "MonsterEditor", "eevee: Eevee", "Icons.GhostFill"));
-        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("seviper", "MonsterEditor", "seviper: Seviper", "Icons.GhostFill"));
-        
+
+
+        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("eevee", "MonsterEditor", "eevee: Eevee",
+            "Icons.GhostFill"));
+        monstersRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("seviper", "MonsterEditor", "seviper: Seviper",
+            "Icons.GhostFill"));
+
         var particlesRoot = _nodeFactory.CreateSpriteRootNode("particles", "", "Particles", "Icons.PaintBrushFill");
-        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Blue", "SpriteEditor", "Acid_Blue", "Icons.PaintBrushFill"));
-        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Red", "SpriteEditor", "Acid_Red", "Icons.PaintBrushFill"));
+        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Blue", "SpriteEditor", "Acid_Blue",
+            "Icons.PaintBrushFill"));
+        particlesRoot.SubNodes.Add(_nodeFactory.CreateDataItemNode("Acid_Red", "SpriteEditor", "Acid_Red",
+            "Icons.PaintBrushFill"));
 
         halcyonNode.SubNodes.Add(particlesRoot);
         //             new NodeBase("Sprites", "Icons.PaintBrushFill")
@@ -496,7 +459,7 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         //                 }
         //             }
         //         }
-        
+
         halcyonNode.SubNodes.Add(monstersRoot);
         Nodes = new ObservableCollection<NodeBase> { halcyonNode };
 
@@ -508,203 +471,27 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
     {
         foreach (var node in Nodes)
         {
-            ApplyFilterRecursive(node, filter);
+            NodeHelper.FilterRecursive(node, filter);
         }
     }
 
-    private bool ApplyFilterRecursive(NodeBase nodeBase, string filter)
-    {
-        bool match = string.IsNullOrWhiteSpace(filter);
-
-        // Split by any combination of spaces, underscores, and colons. Might need to adjust later. 
-        var tokens = Regex.Split(nodeBase.
-            Title, @"[\s_:]+");
-
-        match |= tokens.Any(token =>
-            token.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
-
-        bool childMatch = false;
-        foreach (var child in nodeBase.SubNodes)
-        {
-            if (ApplyFilterRecursive(child, filter))
-                childMatch = true;
-        }
-
-        nodeBase.IsVisible = match || childMatch;
-
-        if (!string.IsNullOrWhiteSpace(filter))
-        {
-            nodeBase.IsExpanded = match || childMatch;
-            
-            if (match && nodeBase.SubNodes.Any())
-            {
-                foreach (var child in nodeBase.SubNodes)
-                    child.IsVisible = true;
-            }
-        }
-
-
-        return nodeBase.IsVisible;
-    }
-    
-    
-    private bool _ignoreIndexChange = false;
-    
-    public void GotoNextTab()
-    {
-        if (Pages.Count == 1)
-            return;
-
-        var activeIdx = Pages.IndexOf(_activePage);
-        var nextIdx = (activeIdx + 1) % Pages.Count;
-        ActivePage = Pages[nextIdx];
-    }
-
-    public ReactiveCommand<Unit, TabSwitcherViewModel> OpenTabSwitcher { get; }
-    
-    public ReactiveCommand<Unit, ModSwitcherViewModel> OpenModSwitcher { get; }
-    public ReactiveCommand<Unit, Unit> CloseTabSwitcher { get; }
-
-
-    public void GotoPrevTab()
-    {
-        if (Pages.Count == 1)
-            return;
-
-        var activeIdx = Pages.IndexOf(_activePage);
-        var prevIdx = activeIdx == 0 ? Pages.Count - 1 : activeIdx - 1;
-        ActivePage = Pages[prevIdx];
-    }
-
-    public void CloseTab(EditorPageViewModel page)
-    {
-        if (Pages.Count == 1)
-        {
-            var last = Pages[0];
-            if (true)
-                // if (last.Data is Repository repo)
-            {
-                // ActiveWorkspace.Repositories.Clear();
-                // ActiveWorkspace.ActiveIdx = 0;
-                //
-                // repo.Close();
-                //
-                // Welcome.Instance.ClearSearchFilter();
-                // last.Node = new RepositoryNode() { Id = Guid.NewGuid().ToString() };
-                // last.Data = Welcome.Instance;
-                // last.Popup?.Cleanup();
-                // last.Popup = null;
-                // UpdateTitle();
-                //
-                // GC.Collect();
-            }
-            else
-            {
-                Console.WriteLine("QUIT NOW!");
-                // App.Quit(0);
-            }
-
-            return;
-        }
-
-        page ??= _activePage;
-
-        var removeIdx = Pages.IndexOf(page);
-        var activeIdx = Pages.IndexOf(_activePage);
-        if (removeIdx == activeIdx)
-            ActivePage = Pages[removeIdx > 0 ? removeIdx - 1 : removeIdx + 1];
-
-        // CloseRepositoryInTab(page);
-        Pages.RemoveAt(removeIdx);
-        // GC.Collect();
-    }
-
-    public void CloseOtherTabs()
-    {
-        if (Pages.Count == 1)
-            return;
-
-        _ignoreIndexChange = true;
-
-        // var id = ActivePage.Node.Id;
-        // foreach (var one in Pages)
-        // {
-        //     if (one.Node.Id != id)
-        //         CloseRepositoryInTab(one);
-        // }
-        //
-
-        // TODO: title is not accurate at all...
-        var id = ActivePage.Title;
-        foreach (var one in Pages)
-        {
-            //     if (one.Node.Id != id)
-            //         CloseRepositoryInTab(one);
-        }
-
-        Pages = new ObservableCollection<EditorPageViewModel>() { ActivePage };
-        // ActiveWorkspace.ActiveIdx = 0;
-        // OnPropertyChanged(nameof(Pages));
-
-        _ignoreIndexChange = false;
-        GC.Collect();
-    }
-
-    public void CloseRightTabs()
-    {
-        _ignoreIndexChange = true;
-
-        var endIdx = Pages.IndexOf(ActivePage);
-        for (var i = Pages.Count - 1; i > endIdx; i--)
-        {
-            // CloseRepositoryInTab(Pages[i]);
-            Pages.Remove(Pages[i]);
-        }
-
-        _ignoreIndexChange = false;
-        GC.Collect();
-    }
-
-    private TabSwitcherViewModel? _tabSwitcher = null;
-
-    // public event EventHandler TabSwitcherClosed = delegate { };
+    private TabSwitcherViewModel? _tabSwitcher;
 
     public TabSwitcherViewModel? TabSwitcher
     {
         get => _tabSwitcher;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _tabSwitcher, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref _tabSwitcher, value);
     }
-    
-    
-    private ModSwitcherViewModel? _modSwitcher = null;
 
-    public event EventHandler ModSwitcherClosed = delegate { };
+
+    private ModSwitcherViewModel? _modSwitcher = null;
 
     public ModSwitcherViewModel? ModSwitcher
     {
         get => _modSwitcher;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _modSwitcher, value);
-            if (value == null)
-            {
-                ModSwitcherClosed?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        set => this.RaiseAndSetIfChanged(ref _modSwitcher, value);
     }
-
-    public void CancelSwitcher()
-    {
-        OnTabSwitcherClosed();
-    }
-
-    public void CancelModSwitcher()
-    {
-        OnModSwitcherClosed();
-    }
+    
 
     // Navigate to a page from tab switcher
     public void NavigateToPage(PageNode node)
@@ -712,9 +499,7 @@ private readonly ObservableAsPropertyHelper<EditorPageViewModel?> _selectedItem;
         Console.WriteLine($"Navigating to page {node.Title}");
         Console.WriteLine("yay");
         ActivePage = node.Page;
-        
     }
-    
+
     public TreeSearchViewModel TreeSearch { get; } = new TreeSearchViewModel();
 }
-

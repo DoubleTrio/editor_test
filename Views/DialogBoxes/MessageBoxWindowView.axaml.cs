@@ -27,7 +27,7 @@ namespace AvaloniaTest.Views
 
         public MessageBoxWindowView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public static async Task<MessageBoxResult> Show(

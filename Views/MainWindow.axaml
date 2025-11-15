@@ -48,7 +48,7 @@
                 <!-- Switch Mod Button  -->
                 <Button ToolTip.Tip="{Binding CurrentMod.Key}" Margin="12, 0, 0, 0" Grid.Column="3"
                         Classes="icon_button"
-                        x:Name="ModSwitcherFlyoutButton" Command="{Binding OpenModSwitcher}" Padding="0, 4, 0, 0">
+                        x:Name="ModSwitcherFlyoutButton" Padding="0, 4, 0, 0">
 
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Padding="0, 0, 6, 0" Text="{Binding CurrentMod.Name}" />

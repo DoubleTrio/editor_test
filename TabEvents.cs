@@ -11,6 +11,8 @@ public class TabEvents
     public event Action<EditorPageViewModel>? AddTopLevelTabEvent;
     public event Action<EditorPageViewModel>? AddTemporaryTabEvent;
     public event Action<EditorPageViewModel>? RemoveTabEvent;
+    
+    public event Action<EditorPageViewModel>? NavigateToTabEvent;
 
     public TabEvents(PageFactory pageFactory)
     {
@@ -43,4 +45,8 @@ public class TabEvents
 
     public void RemoveTab(EditorPageViewModel page)
         => RemoveTabEvent?.Invoke(page);
+    
+    public void NavigateToTab(EditorPageViewModel page)
+        => NavigateToTabEvent?.Invoke(page);
+    
 }
