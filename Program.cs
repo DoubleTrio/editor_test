@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.ReactiveUI;
 
 namespace AvaloniaTest;
 
@@ -23,7 +24,7 @@ sealed class Program
         builder.UsePlatformDetect();
         builder.LogToTrace();
         builder.WithInterFont();
-
+        builder.UseReactiveUI();
         Native.OS.SetupApp(builder);
         return builder;
     }
