@@ -12,7 +12,7 @@ public class ModSwitcherViewModel : ViewModelBase
         get;
     }
     
-    private ModHeader _selectedMod = null;
+    private ModHeader _selectedMod;
 
     public ModHeader SelectedMod
     {

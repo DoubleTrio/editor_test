@@ -4,8 +4,10 @@ using AvaloniaTest.Services;
 
 public class ModInfoEditorViewModel : EditorPageViewModel
 {
-    public override string UniqueId => "ModInfoEditor";
+    public override string UniqueId => null;
     public override string? Title => "Mod Info";
+    
+    // public override bool AddNewTab => true;
 
     public TestComboBoxViewModel Fruits { get; }
     

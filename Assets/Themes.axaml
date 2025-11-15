@@ -23,13 +23,6 @@
       <Color x:Key="Color.TabHeader.BackgroundHovered">#FFDFDFDF</Color>
       <Color x:Key="Color.FG1">#FF1F1F1F</Color>
       <Color x:Key="Color.FG2">#FF6F6F6F</Color>
-      <Color x:Key="Color.Diff.EmptyBG">#10000000</Color>
-      <Color x:Key="Color.Diff.AddedBG">#80BFE6C1</Color>
-      <Color x:Key="Color.Diff.DeletedBG">#80FF9797</Color>
-      <Color x:Key="Color.Diff.AddedHighlight">#A7E1A7</Color>
-      <Color x:Key="Color.Diff.DeletedHighlight">#F19B9D</Color>
-      <Color x:Key="Color.Link">#0000EE</Color>
-      <Color x:Key="Color.InlineCode">#FFE4E4E4</Color>
     </ResourceDictionary>
 
     <ResourceDictionary x:Key="Dark">
@@ -49,18 +42,10 @@
       <Color x:Key="Color.Border2">#FF404040</Color>
       <Color x:Key="Color.Border3">#FF404040</Color>
       <Color x:Key="Color.FlatButton.Background">#FF303030</Color>
-      <Color x:Key="Color.FlatButton.Background2">#FF303030</Color>
       <Color x:Key="Color.FlatButton.BackgroundHovered">#FF333333</Color>
       <Color x:Key="Color.TabHeader.BackgroundHovered">#FF404040</Color>
       <Color x:Key="Color.FG1">#FFDDDDDD</Color>
       <Color x:Key="Color.FG2">#60F1F1F1</Color>
-      <Color x:Key="Color.Diff.EmptyBG">#3C000000</Color>
-      <Color x:Key="Color.Diff.AddedBG">#C03A5C3F</Color>
-      <Color x:Key="Color.Diff.DeletedBG">#C0633F3E</Color>
-      <Color x:Key="Color.Diff.AddedHighlight">#A0308D3C</Color>
-      <Color x:Key="Color.Diff.DeletedHighlight">#A09F4247</Color>
-      <Color x:Key="Color.Link">#4DAAFC</Color>
-      <Color x:Key="Color.InlineCode">#FF383838</Color>
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
 
@@ -87,13 +72,6 @@
   <SolidColorBrush x:Key="Brush.FG2" Color="{DynamicResource Color.FG2}"/>
   <SolidColorBrush x:Key="Brush.Accent" Color="{DynamicResource SystemAccentColor}"/>
   <SolidColorBrush x:Key="Brush.AccentHovered" Color="{DynamicResource SystemListLowColor}"/>
-  <SolidColorBrush x:Key="Brush.Diff.EmptyBG" Color="{DynamicResource Color.Diff.EmptyBG}"/>
-  <SolidColorBrush x:Key="Brush.Diff.AddedBG" Color="{DynamicResource Color.Diff.AddedBG}"/>
-  <SolidColorBrush x:Key="Brush.Diff.DeletedBG" Color="{DynamicResource Color.Diff.DeletedBG}"/>
-  <SolidColorBrush x:Key="Brush.Diff.AddedHighlight" Color="{DynamicResource Color.Diff.AddedHighlight}"/>
-  <SolidColorBrush x:Key="Brush.Diff.DeletedHighlight" Color="{DynamicResource Color.Diff.DeletedHighlight}"/>
-  <SolidColorBrush x:Key="Brush.Link" Color="{DynamicResource Color.Link}"/>
-  <SolidColorBrush x:Key="Brush.InlineCode" Color="{DynamicResource Color.InlineCode}"/>
 
   <!-- <FontFamily x:Key="Fonts.Default">fonts:Inter#Inter</FontFamily> -->
   <!-- <FontFamily x:Key="Fonts.Monospace">fonts:SourceGit#JetBrains Mono</FontFamily> -->

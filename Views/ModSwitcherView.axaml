@@ -8,6 +8,7 @@
              x:DataType="vm:ModSwitcherViewModel"
              x:Class="AvaloniaTest.Views.ModSwitcherView">
     <Grid RowDefinitions="Auto, Auto, *">
+        
         <TextBlock Classes="table_header" FontSize="16">Mods</TextBlock>
         
         <Border Grid.Row="1" Height="1"

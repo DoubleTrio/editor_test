@@ -42,7 +42,7 @@ namespace AvaloniaTest.Views
                 }
             }
 
-            vm.RemovePage(page);
+            vm._tabEvents.RemoveTab(page);
         }
         
         

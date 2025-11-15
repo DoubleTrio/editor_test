@@ -8,10 +8,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SpritePageViewModel"
              x:Class="AvaloniaTest.Views.SpritePageView">
-    <Grid ColumnDefinitions="Auto, Auto">
+    <StackPanel>
         <Button Command="{Binding CreateATab}" Content="Add a child tab to this one!"/>
-        <Button Grid.Column="1" Command="{Binding  TestDialog}" Content="Test out a dialogue!"/>
-        
-    </Grid>
+        <Button Command="{Binding CreateATopTab}" Content="Add a top level tab!"/>
+        <Button Command="{Binding  TestDialog}" Content="Test out a dialogue!"/>
+
+        <Button Command="{Binding  RemoveSelfTab}" Content="Close out this tab!"/>
+    </StackPanel>
  
 </UserControl>

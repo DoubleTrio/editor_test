@@ -5,21 +5,38 @@ using AvaloniaTest.ViewModels;
 
 namespace AvaloniaTest.Utility;
 
+
+public interface ITitleFilterStrategy
+{
+    bool Matches(string title, string filter);
+}
+
+public class BeginningTitleFilterStrategy : ITitleFilterStrategy
+{
+    public bool Matches(string title, string filter)
+    {
+        if (string.IsNullOrWhiteSpace(filter))
+            return true;
+
+        var tokens = Regex.Split(title, @"[\s_:]+");
+        return tokens.Any(t => t.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+    }
+}
+
 public static class NodeHelper
 {
-    public static bool FilterRecursive(NodeBase node, string filter)
+    public static bool FilterRecursive(NodeBase node, string filter, ITitleFilterStrategy filterStrategy)
     {
         bool match = string.IsNullOrWhiteSpace(filter);
 
-        var tokens = Regex.Split(node.Title, @"[\s_:]+");
+       
 
-        match |= tokens.Any(token =>
-            token.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+        match |= filterStrategy.Matches(node.Title, filter);
 
         bool childMatch = false;
         foreach (var child in node.SubNodes)
         {
-            if (FilterRecursive(child, filter))
+            if (FilterRecursive(child, filter, filterStrategy))
                 childMatch = true;
         }
 

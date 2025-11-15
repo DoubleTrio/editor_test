@@ -4,7 +4,6 @@
              xmlns:local="using:AvaloniaTest"
              xmlns:fluent="clr-namespace:Tabalonia.Themes.Custom;assembly=Tabalonia"
              RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -17,7 +16,6 @@
                 <ResourceInclude Source="/Assets/Icons.axaml"/>
                 <ResourceInclude Source="/Assets/Themes.axaml"/>
                 <ResourceInclude Source="/Assets/NodeTemplates.axaml"/>
-                
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -25,8 +23,6 @@
                     <SolidColorBrush x:Key="TabControlWindowInactiveBackgroundBrush" Color="#FFF6F6F6" />
                     <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#FFF6F6F6" />
                     <SolidColorBrush x:Key="TabItemBackgroundBrushWindowInactive" Color="#FFF6F6F6" />
-                    <!-- <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOver" Color="#DADADA" /> -->
-                    <!-- <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOverWindowInactive" Color="#E6E6E6" /> -->
                     <SolidColorBrush x:Key="SelectedTabItemBackgroundBrush" Color="#FFFDFDFD" />
                     <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOver" Color="#FFDFDFDF" />
                     
@@ -35,24 +31,8 @@
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="TabControlWindowActiveBackgroundBrush" Color="#202020" />
                     <SolidColorBrush x:Key="TabControlWindowInactiveBackgroundBrush" Color="#202020" />
-                    
-                    
-               
                     <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#202020" />
-                    
-                   
-                    <!-- Important -->
                     <SolidColorBrush x:Key="TabItemBackgroundBrushWindowInactive" Color="#202020" />
-
-                    <!-- <SolidColorBrush x:Key="SelectedTabItemBackgroundBrush" Color="{DynamicResource Color.Window}" /> -->
-
-                    <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOver" Color="#2A2A2A" />
-                    <SolidColorBrush x:Key="TabItemHeaderBackgroundUnselectedPointerOverWindowInactive" Color="#363636" />
-                    <SolidColorBrush x:Key="TabItemRightSeparatorBackgroundBrush" Color="#777777" />
-            
-                    <SolidColorBrush x:Key="AddItemCommandButtonForegroundPointerOverBrush" Color="#151719" />
-                    <SolidColorBrush x:Key="AddItemCommandButtonBackgroundPointerOverBrush" Color="#464546" />
-
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

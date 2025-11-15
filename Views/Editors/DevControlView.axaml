@@ -52,10 +52,10 @@
             <!-- <Setter Property="Background" Value="Red" /> -->
         </Style>
         
-        
-        <Style Selector="TabControl /template/ ContentPresenter#PART_SelectedContentHost">
-            <Setter Property="Margin" Value="2"/>
-        </Style>
+        <!-- -->
+        <!-- <Style Selector="TabControl /template/ ContentPresenter#PART_SelectedContentHost"> -->
+        <!--     <Setter Property="Margin" Value="2"/> -->
+        <!-- </Style> -->
     </UserControl.Styles>
 
  
@@ -148,15 +148,6 @@
             </TabItem>
             <TabItem Header="Player">
                 <Grid RowDefinitions="30, Auto, 30, Auto, 30, Auto, 30, Auto, 30, Auto, Auto, Auto" ColumnDefinitions="*, *" ColumnSpacing="8">
-                    <!-- <NumericUpDown -->
-                    <!--     MinWidth="100" -->
-                    <!--     MaxWidth="150" -->
-                    <!--     Minimum="0.01" -->
-                    <!--     Maximum="359.99" -->
-                    <!--     Increment="0.01" -->
-                    <!--     FormatString="{}{0:#,0.00}" -->
-                    <!--     Value="0" -->
-                    <!-- /> -->
                     <TextBlock Margin="4,0" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">Lv.</TextBlock>
                     <NumericUpDown MinHeight="40" Name="nudLevel" Value="20" Minimum="1" Increment="1" Maximum="100" Grid.Row="1" Grid.Column="0"/>
                     <Button Classes="flat"  Name="btnRollSkill" Margin="4" Grid.Row="1" Grid.Column="1">Reroll Skills</Button>

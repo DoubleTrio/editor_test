@@ -9,11 +9,11 @@ public class TabEvents
 
     public event Action<EditorPageViewModel, EditorPageViewModel>? AddChildTabEvent;
     public event Action<EditorPageViewModel>? AddTopLevelTabEvent;
-    public event Action<EditorPageViewModel>? AddTemporaryTabEvent;
     public event Action<EditorPageViewModel>? RemoveTabEvent;
-    
     public event Action<EditorPageViewModel>? NavigateToTabEvent;
 
+    // Navigate tab to ID
+    
     public TabEvents(PageFactory pageFactory)
     {
         _pageFactory = pageFactory;
@@ -37,15 +37,12 @@ public class TabEvents
     public void AddTopLevelTab(EditorPageViewModel tab)
         => AddTopLevelTabEvent?.Invoke(tab);
 
-    public void AddTemporaryTab<T>() where T : EditorPageViewModel
-    {
-        var tab = _pageFactory.CreatePage<T>();
-        AddTemporaryTabEvent?.Invoke(tab);
-    }
 
+    // TODO: maybe add async callback for closing tab to confirm?
     public void RemoveTab(EditorPageViewModel page)
         => RemoveTabEvent?.Invoke(page);
     
+    // TODO: remove this?
     public void NavigateToTab(EditorPageViewModel page)
         => NavigateToTabEvent?.Invoke(page);
     

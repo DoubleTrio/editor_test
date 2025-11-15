@@ -112,7 +112,7 @@
 
     <Style Selector="Button.flat">
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border3}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border2}" />
         <Setter Property="TextBlock.TextAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}" />
         <Setter Property="Background" Value="{DynamicResource Brush.FlatButton.Background2}" />
@@ -695,10 +695,10 @@
         <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
         <Setter Property="Opacity" Value="1" />
     </Style>
-    
-    <Style Selector="TabItem:pointerover  /template/ Border">
-        <Setter Property="Background" Value="{DynamicResource Brush.TabHeader.BackgroundHovered}"/>
-    </Style>
+    <!-- -->
+    <!-- <Style Selector="TabItem:pointerover  /template/ Border#P"> -->
+    <!--     <Setter Property="Background" Value="{DynamicResource Brush.TabHeader.BackgroundHovered}"/> -->
+    <!-- </Style> -->
 
     <Style Selector="NumericUpDown">
         <Style Selector="^ /template/ ButtonSpinner#PART_Spinner">

@@ -67,36 +67,30 @@ public class TabSwitcherViewModel: ViewModelBase
     // Do it for both the tab list and the tab tree view!
     private void UpdateVisiblePages(string filter)
     {
+        var strategy = new BeginningTitleFilterStrategy();
         foreach (var node in _mainWindow.TopLevelPages)
         {
-            NodeHelper.FilterRecursive(node, filter);
+            NodeHelper.FilterRecursive(node, filter, strategy);
         }
         
-        UpdateVisiblePagesList(filter);
+        UpdateVisiblePagesList(filter, strategy);
     }
     
-    private bool MatchesFilter(string title, string filter)
-    {
-        if (string.IsNullOrWhiteSpace(filter))
-            return true;
-        
-        var tokens = Regex.Split(title, @"[\s_:]+");
-
-        return tokens.Any(token =>
-            token.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
-    }
-
+   
     
-    private void UpdateVisiblePagesList(string filter)
+    private void UpdateVisiblePagesList(string filter, ITitleFilterStrategy titleStrategy)
     {
         VisiblePages.Clear();
 
         foreach (var page in _mainWindow.Pages)
         {
-            if (MatchesFilter(page.Title, filter))
+            if (titleStrategy.Matches(page.Title, filter))
                 VisiblePages.Add(page);
         }
         
         SelectedPage = VisiblePages.Count > 0 ? VisiblePages[0] : null;
     }
+    
+ 
+
 }

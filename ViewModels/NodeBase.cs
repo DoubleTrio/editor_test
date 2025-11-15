@@ -109,6 +109,8 @@ public class DataRootNode : ItemRootNode
     
     protected readonly NodeFactory _nodeFactory;
     
+    protected readonly IDialogService _dialogService ;
+    
 
     public override ReactiveCommand<Unit, Unit> AddCommand { get; }
     public override ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
@@ -124,9 +126,9 @@ public class DataRootNode : ItemRootNode
         : base(dialogService, title, icon ?? "", editorKey)
     {
         _nodeFactory = nodeFactory;
+        _dialogService = dialogService;
         _dataType = dataType;
-
-        // Hook up commands to methods
+        
         AddCommand = ReactiveCommand.CreateFromTask(AddItemAsync);
         DeleteCommand = ReactiveCommand.CreateFromTask<DataItemNode>(DeleteItemAsync);
 
@@ -217,7 +219,6 @@ public class DataItemNode : OpenEditorNode
         : base(dialogService,title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
-
     }
 }
 
@@ -257,9 +258,6 @@ public class SpriteRootNode : ItemRootNode
         ImportCommand = ReactiveCommand.CreateFromTask<DataItemNode>(ImportSpriteAsync);
         ReImportCommand = ReactiveCommand.CreateFromTask<DataItemNode>(ReImportSpriteAsync);
     }
-
-    // === Command Methods ===
-
     private async Task AddSpriteAsync()
     {
         var vm = new RenameWindowViewModel();
@@ -280,7 +278,7 @@ public class SpriteRootNode : ItemRootNode
             $"Delete sprite '{node.Title}'?",
             "Deleting Sprite",
             MessageBoxWindowView.MessageBoxButtons.YesNo,
-            _dialogService);
+            _dialogService, true);
 
         if (res != MessageBoxWindowView.MessageBoxResult.Yes)
             return;
@@ -329,29 +327,29 @@ public class SpriteRootNode : ItemRootNode
 // Used by TabSwitcher
 public class PageNode : NodeBase
 {
+    
+    private NodeFactory _nodeFactory;
     public EditorPageViewModel Page { get; }
-    public PageNode Parent { get; set; }
+    public PageNode? Parent { get; set; }
     public bool IsTopLevel => Parent == null;
 
-    public PageNode(IDialogService dialogService, EditorPageViewModel page, PageNode parent = null)
+    public PageNode(IDialogService dialogService, EditorPageViewModel page, PageNode? parent = null)  : base(dialogService, page.Title, page.Icon)
+    {
+        
+    }
+    public PageNode(IDialogService dialogService, NodeFactory nodeFactory, EditorPageViewModel page, PageNode? parent = null)
         : base(dialogService, page.Title, page.Icon)
     {
+        _nodeFactory = nodeFactory;
         Page = page;
         Parent = parent;
-
-        // // Listen for title changes on the page
-        // page.PropertyChanged += (s, e) => 
-        // {
-        //     if (e.PropertyName == nameof(EditorPageViewModel.Title))
-        //         OnPropertyChanged(nameof(Title));
-        // };
     }
     
     public new string Title => Page.Title;
     
-    public PageNode AddChild(IDialogService dialogService, EditorPageViewModel childPage)
+    public PageNode AddChild(EditorPageViewModel childPage)
     {
-        var childNode = new PageNode(dialogService, childPage, this);
+        var childNode = _nodeFactory.CreatePageNode(childPage, this);
         SubNodes.Add(childNode);
         return childNode;
     }

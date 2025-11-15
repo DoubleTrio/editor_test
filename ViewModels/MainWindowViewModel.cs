@@ -4,19 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text.RegularExpressions;
 using AvaloniaTest.Models;
 using AvaloniaTest.Services;
 using AvaloniaTest.Utility;
-using AvaloniaTest.Views;
 using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels;
-
-using Avalonia.Collections;
-using Avalonia.Threading;
-using Avalonia;
-using Avalonia.Media;
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -70,11 +63,8 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> OpenPreferencesWindow { get; }
 
     public ReactiveCommand<Unit, Unit> ClearFilterCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> AddTestTab { get; }
+    
     private string _filter = "";
-
-
     public string Filter
     {
         get { return _filter; }
@@ -82,6 +72,14 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
+    private void ApplyFilter(string filter)
+    {
+        foreach (var node in Nodes)
+        {
+            NodeHelper.FilterRecursive(node, filter, new BeginningTitleFilterStrategy());
+        }
+    }
+    
     private ObservableCollection<EditorPageViewModel> _pages;
 
     public ObservableCollection<EditorPageViewModel> Pages
@@ -122,17 +120,10 @@ public class MainWindowViewModel : ViewModelBase
     {
         Console.WriteLine($"Adding top level page {page}");
         // Navigate to the tab if it already exists
-        if (page.UniqueId != null)
-        {
-            var existing = Pages.FirstOrDefault(p => p.UniqueId == page.UniqueId);
-            if (existing != null)
-            {
-                ActivePage = existing;
-                TemporaryTab = null;
-                Console.WriteLine($"Already exists, navigating to {existing}");
-                return;
-            }
-        }
+        var navigated = TryNavigateToExistingPage(page);
+        if (navigated) return;
+
+        
 
         // The tab doesn't add a new page
         if (!page.AddNewTab)
@@ -140,87 +131,26 @@ public class MainWindowViewModel : ViewModelBase
             TemporaryTab = page;
             return;
         }
-
+        
+        
         Pages.Add(page);
-
-        var node = new PageNode(_dialogService, page);
+        var node = _nodeFactory.CreatePageNode(page, null);
         TopLevelPages.Add(node);
         _pageToNodeMap[page] = node;
         ActivePage = page;
     }
 
-
-    public void AddTopLevelPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
-    {
-        // Prevent duplicates
-        if (childPage.UniqueId != null)
-        {
-            var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
-            if (existing != null)
-            {
-                ActivePage = existing;
-                return;
-            }
-        }
-
-        // Find parent index
-        var parentIndex = Pages.IndexOf(parentPage);
-        if (parentIndex == -1)
-        {
-            // Fallback: if parent isn't found, just add to the end
-            Pages.Add(childPage);
-            var fallbackNode = new PageNode(_dialogService, childPage);
-            TopLevelPages.Add(fallbackNode);
-            _pageToNodeMap[childPage] = fallbackNode;
-            ActivePage = childPage;
-            return;
-        }
-
-        // Insert the child right after the parent
-        var insertIndex = parentIndex + 1;
-        Pages.Insert(insertIndex, childPage);
-
-        // Create and insert the node at the same position
-        var childNode = new PageNode(_dialogService, childPage);
-        var parentNode = _pageToNodeMap.TryGetValue(parentPage, out var pNode) ? pNode : null;
-        if (parentNode != null)
-        {
-            var parentNodeIndex = TopLevelPages.IndexOf(parentNode);
-            if (parentNodeIndex != -1)
-            {
-                TopLevelPages.Insert(parentNodeIndex + 1, childNode);
-            }
-            else
-            {
-                TopLevelPages.Add(childNode);
-            }
-        }
-        else
-        {
-            TopLevelPages.Insert(insertIndex, childNode);
-        }
-
-        _pageToNodeMap[childPage] = childNode;
-        ActivePage = childPage;
-    }
-
-
+    
     public void AddChildPage(EditorPageViewModel parentPage, EditorPageViewModel childPage)
     {
-        if (childPage.UniqueId != null)
-        {
-            var existing = Pages.FirstOrDefault(p => p.UniqueId == childPage.UniqueId);
-            if (existing != null)
-            {
-                TemporaryTab = null;
-                ActivePage = existing;
-                return;
-            }
-        }
-
+        var navigated = TryNavigateToExistingPage(childPage);
+        if (navigated) return;
+        
+        
+        // Otherwise... add to the list of tabs
         if (_pageToNodeMap.TryGetValue(parentPage, out var parentNode))
         {
-            var childNode = parentNode.AddChild(_dialogService, childPage);
+            var childNode = parentNode.AddChild(childPage);
             _pageToNodeMap[childPage] = childNode;
             var parentIndex = Pages.IndexOf(parentPage);
             if (parentIndex == -1)
@@ -238,6 +168,23 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    // Returns whether the navigation was successful
+    private bool TryNavigateToExistingPage(EditorPageViewModel page)
+    {
+        if (!string.IsNullOrEmpty(page.UniqueId))
+        {
+            var existing = Pages.FirstOrDefault(p => p.UniqueId == page.UniqueId);
+            if (existing != null)
+            {
+                TemporaryTab = null;
+                ActivePage = existing;
+                return true;
+            }
+        }
+
+        return false;
+    }
+        
     public bool PageHasChildren(EditorPageViewModel page)
     {
         if (!_pageToNodeMap.TryGetValue(page, out var node))
@@ -246,31 +193,38 @@ public class MainWindowViewModel : ViewModelBase
         return node.SubNodes.Count > 0;
     }
 
-    public void RemovePage(EditorPageViewModel page)
+    public void RemoveTab(EditorPageViewModel page)
     {
         if (!_pageToNodeMap.TryGetValue(page, out var node))
             return;
-
-        bool wasActive = (page == _activePage);
+        
         int removeIdx = Pages.IndexOf(page);
 
         ClosePageAndChildren(node);
-
-        if (wasActive)
+        
+        
+        // We want to prioritize setting the left tab to be the active tab since our editors open stuff to the right
+        // Maybe 
+        if (Pages.Count == 0)
         {
-            if (Pages.Count == 0)
+            ActivePage = null;
+        }
+        else
+        {
+            if (removeIdx > 0 && removeIdx - 1 < Pages.Count)
             {
-                ActivePage = null; // no pages left
+                ActivePage = Pages[removeIdx - 1];
             }
-            else if (removeIdx < Pages.Count)
-            {
-                ActivePage = Pages[removeIdx];
-            }
-            else
+            else if (removeIdx > 0)
             {
                 ActivePage = Pages[Pages.Count - 1];
             }
+            else
+            {
+                ActivePage = Pages[0];
+            }
         }
+        
     }
 
     private void ClosePageAndChildren(PageNode node)
@@ -293,11 +247,6 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         _pageToNodeMap.Remove(node.Page);
-
-        if (node.Page is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
     }
 
 
@@ -335,22 +284,7 @@ public class MainWindowViewModel : ViewModelBase
 
         // TODO: move this own view
         ClearFilterCommand = ReactiveCommand.Create(() => { Filter = string.Empty; });
-
-        AddTestTab = ReactiveCommand.Create(() =>
-        {
-            var page = _pageFactory.CreatePage("SpritePage");
-
-            _pageFactory.PrintRegisteredPages();
-
-            if (page != null)
-            {
-                AddTopLevelPage(page);
-            }
-
-            ActivePage = page;
-        });
-
-
+        
         OpenPreferencesWindow = ReactiveCommand.CreateFromTask(async () =>
         {
             await _dialogService.ShowDialogAsync<PreferencesWindowViewModel, bool>(
@@ -362,7 +296,7 @@ public class MainWindowViewModel : ViewModelBase
         AddTopLevelPage(tab);
         this.WhenAnyValue(x => x.Filter).Subscribe(ApplyFilter);
     }
-
+    
     private void InitializeTabEvents()
     {
         _tabEvents.AddChildTabEvent += (parent, child) =>
@@ -374,16 +308,9 @@ public class MainWindowViewModel : ViewModelBase
         _tabEvents.AddTopLevelTabEvent += (tab) =>
         {
             AddTopLevelPage(tab);
-            ActivePage = tab;
         };
-
-        _tabEvents.AddTemporaryTabEvent += (tab) =>
-        {
-            TemporaryTab = tab;
-            ActivePage = null;
-        };
-
-        _tabEvents.RemoveTabEvent += (tab) => { RemovePage(tab); };
+        
+        _tabEvents.RemoveTabEvent += (tab) => { RemoveTab(tab); };
         
         _tabEvents.NavigateToTabEvent += (tab) =>
         {
@@ -467,13 +394,7 @@ public class MainWindowViewModel : ViewModelBase
         monstersRoot.IsExpanded = true;
     }
 
-    private void ApplyFilter(string filter)
-    {
-        foreach (var node in Nodes)
-        {
-            NodeHelper.FilterRecursive(node, filter);
-        }
-    }
+ 
 
     private TabSwitcherViewModel? _tabSwitcher;
 
@@ -484,7 +405,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
-    private ModSwitcherViewModel? _modSwitcher = null;
+    private ModSwitcherViewModel? _modSwitcher;
 
     public ModSwitcherViewModel? ModSwitcher
     {

@@ -18,11 +18,7 @@ public class NodeFactory
     public T Create<T>(params object[] args)
         where T : NodeBase
     {
-        var dialogService = _serviceProvider.GetService<IDialogService>()
-                            ?? throw new InvalidOperationException("IDialogService needs to be registered.");
-
-        var allArgs = new object[] { dialogService }.Concat(args).ToArray();
-        return (T)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(T), allArgs);
+        return (T)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(T), args);
     }
     
     public OpenEditorNode CreateOpenEditorNode(string title, string? icon = null, string editorKey = "")
@@ -30,16 +26,21 @@ public class NodeFactory
 
     public DataRootNode CreateDataRootNode(string dataType, string editorKey, string title, string? icon = null)
     {
-        return Create<DataRootNode>(this, dataType, editorKey, title, icon);
+        return Create<DataRootNode>(dataType, editorKey, title, icon);
     }
 
     public DataItemNode CreateDataItemNode(string key, string editorKey, string title, string? icon = null)
         => Create<DataItemNode>(key, editorKey, title, icon);
 
-    public PageNode CreatePageNode(string title, string? icon = null, string editorKey = "")
-        => Create<PageNode>(title, icon, editorKey);
+    // I cannot for the life of figure out of why none of the create methods work... but I guess this will do
+    public PageNode CreatePageNode(EditorPageViewModel childPage, PageNode? parentNode = null)
+
+        => new PageNode(_serviceProvider.GetService<IDialogService>(), this, childPage, parentNode);
+            // => Create<PageNode>(childPage, parentNode);
+            // => Create<PageNode>(this, childPage, parentNode);
+    
     
     public SpriteRootNode CreateSpriteRootNode(string dataType, string editorKey, string title, string? icon = null)
-        => Create<SpriteRootNode>(this, dataType, editorKey, title, icon);
+        => Create<SpriteRootNode>(dataType, editorKey, title, icon);
     
 }
