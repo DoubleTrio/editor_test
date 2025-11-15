@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
-using System.Text.Json;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -37,13 +34,26 @@ namespace AvaloniaTest.Native
 
         [DllImport("dwmapi.dll")]
         private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
-        
+
+        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+        private static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+        private static extern IntPtr ILCreateFromPathW(string pszPath);
+
+        [DllImport("shell32.dll", SetLastError = false)]
+        private static extern void ILFree(IntPtr pidl);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+        private static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, int cild, IntPtr apidl, int dwFlags);
+
+        [DllImport("user32.dll")]
         private static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
         public void SetupApp(AppBuilder builder)
         {
             // Fix drop shadow issue on Windows 10
-            if (!OperatingSystem.IsWindowsVersionAtLeast(10, 22000))
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))
             {
                 Window.WindowStateProperty.Changed.AddClassHandler<Window>((w, _) => FixWindowFrameOnWin10(w));
                 Control.LoadedEvent.AddClassHandler<Window>((w, _) => FixWindowFrameOnWin10(w));
@@ -56,52 +66,51 @@ namespace AvaloniaTest.Native
             window.ExtendClientAreaToDecorationsHint = true;
             window.Classes.Add("fix_maximized_padding");
 
-            Win32Properties.AddWndProcHookCallback(window,
-                (IntPtr hWnd, uint msg, IntPtr _, IntPtr lParam, ref bool handled) =>
+            Win32Properties.AddWndProcHookCallback(window, (IntPtr hWnd, uint msg, IntPtr _, IntPtr lParam, ref bool handled) =>
+            {
+                // Custom WM_NCHITTEST
+                if (msg == 0x0084)
                 {
-                    // Custom WM_NCHITTEST
-                    if (msg == 0x0084)
+                    handled = true;
+
+                    if (window.WindowState == WindowState.FullScreen || window.WindowState == WindowState.Maximized)
+                        return 1; // HTCLIENT
+
+                    var p = IntPtrToPixelPoint(lParam);
+                    GetWindowRect(hWnd, out var rcWindow);
+
+                    var borderThickness = (int)(4 * window.RenderScaling);
+                    int y = 1;
+                    int x = 1;
+                    if (p.X >= rcWindow.left && p.X < rcWindow.left + borderThickness)
+                        x = 0;
+                    else if (p.X < rcWindow.right && p.X >= rcWindow.right - borderThickness)
+                        x = 2;
+
+                    if (p.Y >= rcWindow.top && p.Y < rcWindow.top + borderThickness)
+                        y = 0;
+                    else if (p.Y < rcWindow.bottom && p.Y >= rcWindow.bottom - borderThickness)
+                        y = 2;
+
+                    var zone = y * 3 + x;
+                    return zone switch
                     {
-                        handled = true;
+                        0 => 13, // HTTOPLEFT
+                        1 => 12, // HTTOP
+                        2 => 14, // HTTOPRIGHT
+                        3 => 10, // HTLEFT
+                        4 => 1, // HTCLIENT
+                        5 => 11, // HTRIGHT
+                        6 => 16, // HTBOTTOMLEFT
+                        7 => 15, // HTBOTTOM
+                        _ => 17,
+                    };
+                }
 
-                        if (window.WindowState == WindowState.FullScreen || window.WindowState == WindowState.Maximized)
-                            return 1; // HTCLIENT
-
-                        var p = IntPtrToPixelPoint(lParam);
-                        GetWindowRect(hWnd, out var rcWindow);
-
-                        var borderThickness = (int)(4 * window.RenderScaling);
-                        int y = 1;
-                        int x = 1;
-                        if (p.X >= rcWindow.left && p.X < rcWindow.left + borderThickness)
-                            x = 0;
-                        else if (p.X < rcWindow.right && p.X >= rcWindow.right - borderThickness)
-                            x = 2;
-
-                        if (p.Y >= rcWindow.top && p.Y < rcWindow.top + borderThickness)
-                            y = 0;
-                        else if (p.Y < rcWindow.bottom && p.Y >= rcWindow.bottom - borderThickness)
-                            y = 2;
-
-                        var zone = y * 3 + x;
-                        return zone switch
-                        {
-                            0 => 13, // HTTOPLEFT
-                            1 => 12, // HTTOP
-                            2 => 14, // HTTOPRIGHT
-                            3 => 10, // HTLEFT
-                            4 => 1, // HTCLIENT
-                            5 => 11, // HTRIGHT
-                            6 => 16, // HTBOTTOMLEFT
-                            7 => 15, // HTBOTTOM
-                            _ => 17,
-                        };
-                    }
-
-                    return IntPtr.Zero;
-                });
+                return IntPtr.Zero;
+            });
         }
-        
+
         private void FixWindowFrameOnWin10(Window w)
         {
             // Schedule the DWM frame extension to run in the next render frame
@@ -123,5 +132,4 @@ namespace AvaloniaTest.Native
             return new PixelPoint((short)(v & 0xffff), (short)(v >> 16));
         }
     }
-
 }

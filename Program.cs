@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
 using System;
 
 namespace AvaloniaTest;
@@ -13,15 +12,19 @@ sealed class Program
     public static void Main(string[] args)
     {
         Native.OS.SetupDataDir();
-        BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
+
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace()
-            .UseReactiveUI();
+    {
+        var builder = AppBuilder.Configure<App>();
+        builder.UsePlatformDetect();
+        builder.LogToTrace();
+        builder.WithInterFont();
+
+        Native.OS.SetupApp(builder);
+        return builder;
+    }
 }
