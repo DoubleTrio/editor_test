@@ -25,24 +25,10 @@ namespace AvaloniaTest.Views
         {
             if (DataContext is not MainWindowViewModel vm) return;
             if (sender is not Button { DataContext: EditorPageViewModel page }) return;
-
-            if (vm.PageHasChildren(page))
-            {
-                var res = await MessageBoxWindowView.Show(
-                    "Are you sure you want to close all subtabs?  Your changes will not be saved.",
-                    "Confirm Close",
-                    MessageBoxWindowView.MessageBoxButtons.YesNo,
-                    vm._dialogService
-                );
-
-                if (res != MessageBoxWindowView.MessageBoxResult.Yes)
-                {
-                    e.Handled = true;
-                    return;
-                }
-            }
-
-            vm._tabEvents.RemoveTab(page);
+            
+            bool closed = await vm.TryCloseTabAsync(page);
+            if (!closed)
+                e.Handled = true;
         }
         
         

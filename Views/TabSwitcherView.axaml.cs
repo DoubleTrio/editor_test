@@ -35,7 +35,7 @@ public partial class TabSwitcherView : UserControl
 
             
                 ExpandAllNodes();
-                if (DataContext is TabSwitcherViewModel { _mainWindow.TemporaryTab: not null })
+                if (DataContext is TabSwitcherViewModel vm && vm.HasTemporaryTab())
                 {
                     TabSwitcherTextBox.Focus();
                     var allItems = GetAllVisibleTreeViewItems(TreeViewTabSwitcher).ToList();
@@ -44,7 +44,6 @@ public partial class TabSwitcherView : UserControl
                     {
                         item.IsSelected = false;
                     }
-                    
                 }
                 else
                 {
@@ -60,7 +59,7 @@ public partial class TabSwitcherView : UserControl
             
             Dispatcher.UIThread.Post(() =>
             {
-                if (DataContext is TabSwitcherViewModel { _mainWindow.TemporaryTab: not null })
+                if (DataContext is TabSwitcherViewModel vm && vm.HasTemporaryTab())
                 {
                     (DataContext as TabSwitcherViewModel).SelectedPage = null;
                     TabSwitcherTextBox.Focus();
@@ -198,7 +197,7 @@ public partial class TabSwitcherView : UserControl
         if (PagesListBox.ItemCount == 0)
             return;
 
-        if (!switcher._mainWindow.IsTreeView)
+        if (!switcher.IsTreeView)
         {
             if (e.Key == Key.Down)
             {
@@ -241,7 +240,7 @@ public partial class TabSwitcherView : UserControl
         if (PagesListBox.ItemCount == 0)
             return;
 
-        if (!switcher._mainWindow.IsTreeView)
+        if (!switcher.IsTreeView)
         {
             if (e.Key == Key.Down)
             {

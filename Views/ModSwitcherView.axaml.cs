@@ -29,32 +29,30 @@ public partial class ModSwitcherView : UserControl
     {
         base.OnKeyDown(e);
 
-        if (e.Key == Key.Enter && DataContext is ViewModels.ModSwitcherViewModel switcher)
-        {
-      
-            // switcher.Switch();
+        if (e.Key != Key.Enter || DataContext is not ViewModels.ModSwitcherViewModel switcher)
+            return;
 
-            if ((ModsListBox.SelectedItem as ModHeader).Key == switcher._mainWindow.CurrentMod.Key)
-            {
-                switcher._mainWindow.OnModSwitcherClosed();
-                return;
-            }
-            
-            var result = await MessageBoxWindowView.Show(
-                "The game will be reloaded to use content from the new path. Click OK to proceed.  Your changes will not be saved.",
-                "Are you sure",
-                MessageBoxWindowView.MessageBoxButtons.OkCancel,
-                switcher._mainWindow._dialogService
-            );
-            
-            if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
-                return;
-            switcher._mainWindow.CurrentMod = ModsListBox.SelectedItem as ModHeader;
-            switcher._mainWindow.OnModSwitcherClosed();
-            // switcher._mainWindow._dialogService.ShowDialogAsync<>()
+        var selected = ModsListBox.SelectedItem as ModHeader;
+        if (selected is null)
+            return;
+        
+        if (switcher.IsCurrent(selected))
+        {
+            switcher.CloseSwitcher();
             e.Handled = true;
+            return;
         }
+        
+        var result = await switcher.ConfirmModSwitchAsync();
+        if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
+            return;
+        
+        switcher.CurrentMod = selected;
+        switcher.CloseSwitcher();
+
+        e.Handled = true;
     }
+
 
     private void ModsListBox_OnKeyDown(object? sender, KeyEventArgs e)
     {
@@ -77,30 +75,29 @@ public partial class ModSwitcherView : UserControl
     
     private async void OnItemTapped(object sender, TappedEventArgs e)
     {
+        if (DataContext is not ModSwitcherViewModel switcher)
+            return;
+
+        var selected = ModsListBox.SelectedItem as ModHeader;
+        if (selected is null)
+            return;
         
-        if (DataContext is ModSwitcherViewModel switcher)
+        if (switcher.IsCurrent(selected))
         {
-            if ((ModsListBox.SelectedItem as ModHeader).Key == switcher._mainWindow.CurrentMod.Key)
-            {
-                switcher._mainWindow.OnModSwitcherClosed();
-                return;
-            }
-            
-            var result = await MessageBoxWindowView.Show(
-                "The game will be reloaded to use content from the new path. Click OK to proceed.  Your changes will not be saved.",
-                "Are you sure",
-                MessageBoxWindowView.MessageBoxButtons.OkCancel,
-                switcher._mainWindow._dialogService
-            );
-            
-            if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
-                return;
-            switcher._mainWindow.CurrentMod = ModsListBox.SelectedItem as ModHeader;
-            switcher._mainWindow.OnModSwitcherClosed();
-            // switcher._mainWindow._dialogService.ShowDialogAsync<>()
+            switcher.CloseSwitcher();
             e.Handled = true;
- 
+            return;
         }
+        
+        var result = await switcher.ConfirmModSwitchAsync();
+        if (result == MessageBoxWindowView.MessageBoxResult.Cancel)
+            return;
+        
+        switcher.CurrentMod = selected;
+        switcher.CloseSwitcher();
+
+        e.Handled = true;
     }
+
 
 }

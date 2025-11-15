@@ -21,10 +21,8 @@ public class TabSwitcherViewModel: ViewModelBase
         get => _selectedPage;
         set => this.RaiseAndSetIfChanged(ref _selectedPage, value);
     }
-    public MainWindowViewModel _mainWindow 
-    {
-        get;
-    }
+
+    private readonly MainWindowViewModel _mainWindow;
 
     private string _searchFilter = string.Empty;
 
@@ -57,12 +55,18 @@ public class TabSwitcherViewModel: ViewModelBase
     {
         _mainWindow.IsTreeView = !_mainWindow.IsTreeView;
     }
+    
+    
+    public bool IsTreeView => _mainWindow.IsTreeView;
 
     public void Switch()
     {
         _mainWindow.ActivePage = _selectedPage;
         _mainWindow.CloseTabSwitcher();
     }
+    
+    public ObservableCollection<PageNode> TopLevelPages 
+        => _mainWindow.TopLevelPages;
     
     // Do it for both the tab list and the tab tree view!
     private void UpdateVisiblePages(string filter)
@@ -76,7 +80,10 @@ public class TabSwitcherViewModel: ViewModelBase
         UpdateVisiblePagesList(filter, strategy);
     }
     
-   
+    public bool HasTemporaryTab()
+    {
+        return _mainWindow?.TemporaryTab != null;
+    }
     
     private void UpdateVisiblePagesList(string filter, ITitleFilterStrategy titleStrategy)
     {

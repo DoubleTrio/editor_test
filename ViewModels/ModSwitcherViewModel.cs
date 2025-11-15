@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using AvaloniaTest.Models;
+using AvaloniaTest.Services;
+using AvaloniaTest.Views;
 using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels;
 
 public class ModSwitcherViewModel : ViewModelBase
 {
-    public MainWindowViewModel _mainWindow 
-    {
-        get;
-    }
-    
+
+    private readonly IDialogService _dialogService;
+    private readonly MainWindowViewModel _mainWindow;
     private ModHeader _selectedMod;
 
     public ModHeader SelectedMod
@@ -21,9 +22,11 @@ public class ModSwitcherViewModel : ViewModelBase
     }
     
     public ObservableCollection<ModHeader> Mods { get; }
-    public ModSwitcherViewModel(MainWindowViewModel mainWindowViewModel)
+    public ModSwitcherViewModel(MainWindowViewModel mainWindowViewModel, IDialogService dialogService)
     {
         _mainWindow = mainWindowViewModel;
+        _dialogService = dialogService;
+        
         Mods = new ObservableCollection<ModHeader>()
         {
             new ModHeader("[NULL]", "origin"),
@@ -57,6 +60,31 @@ public class ModSwitcherViewModel : ViewModelBase
     }
     
     
+    public void CloseSwitcher()
+    {
+        _mainWindow.OnModSwitcherClosed();
+    }
+    
+    public async Task<MessageBoxWindowView.MessageBoxResult> ConfirmModSwitchAsync()
+    {
+        return await MessageBoxWindowView.Show(
+            "The game will be reloaded to use content from the new path. Click OK to proceed. Your changes will not be saved.",
+            "Are you sure?",
+            MessageBoxWindowView.MessageBoxButtons.OkCancel,
+            _dialogService
+        );
+    }
+    
+    public ModHeader CurrentMod
+    {
+        get => _mainWindow.CurrentMod;
+        set => _mainWindow.CurrentMod = value;
+    }
+
+    public bool IsCurrent(ModHeader header)
+    { 
+        return header.Key == _mainWindow.CurrentMod.Key;
+    }
 }
 
 

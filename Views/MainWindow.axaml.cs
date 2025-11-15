@@ -69,6 +69,15 @@ public partial class MainWindow : ChromelessWindow
         InitializeComponent();
     }
     
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ModSwitcherClosed += () => ModSwitcherFlyoutButton.Flyout?.Hide();;
+        }
+    }
+    
     private void ModSwitcherFlyout_OnOpened(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
@@ -103,15 +112,7 @@ public partial class MainWindow : ChromelessWindow
         if (DataContext is MainWindowViewModel vm && sender is TreeView { SelectedItem: not null } treeView)
         {
             var selectedItem = (OpenEditorNode)treeView.SelectedItem;
-
-            var editor = vm._pageFactory.CreatePage(selectedItem.EditorKey);
-
-
-            if (editor != null)
-            {
-                editor.SetTabInfo(selectedItem);
-                vm.AddTopLevelPage(editor);
-            }
+            vm.AddPageFromPageNode(selectedItem);
         }
     }
     
@@ -125,7 +126,6 @@ public partial class MainWindow : ChromelessWindow
                 tree.SelectedItem = null;
             }
         });
-       
     }
     
     private void MasterTreeView_OnContextRequested(object? sender, ContextRequestedEventArgs e)

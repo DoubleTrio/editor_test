@@ -33,8 +33,6 @@
                           ItemsSource="{Binding Nodes}" 
                           SelectedItems="{Binding SelectedNodes}"
                           SelectionMode="Multiple">
-                
-                    
                     <TreeView.DataTemplates>
                         <!-- OpenEditorNode -->
                         

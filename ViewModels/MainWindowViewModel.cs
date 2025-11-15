@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using AvaloniaTest.Models;
 using AvaloniaTest.Services;
 using AvaloniaTest.Utility;
+using AvaloniaTest.Views;
 using ReactiveUI;
 
 namespace AvaloniaTest.ViewModels;
@@ -48,15 +50,18 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (ModSwitcher == null)
         {
-            ModSwitcher = new ModSwitcherViewModel(this);
+            ModSwitcher = new ModSwitcherViewModel(this, _dialogService);
         }
     }
 
+    
+    public event Action? ModSwitcherClosed;
     public void OnModSwitcherClosed()
     {
         if (ModSwitcher != null)
         {
             ModSwitcher = null;
+            ModSwitcherClosed?.Invoke();
         }
     }
 
@@ -118,14 +123,10 @@ public class MainWindowViewModel : ViewModelBase
 
     public void AddTopLevelPage(EditorPageViewModel page)
     {
-        Console.WriteLine($"Adding top level page {page}");
-        // Navigate to the tab if it already exists
+        // Console.WriteLine($"Adding top level page {page}");
         var navigated = TryNavigateToExistingPage(page);
         if (navigated) return;
-
         
-
-        // The tab doesn't add a new page
         if (!page.AddNewTab)
         {
             TemporaryTab = page;
@@ -203,8 +204,8 @@ public class MainWindowViewModel : ViewModelBase
         ClosePageAndChildren(node);
         
         
-        // We want to prioritize setting the left tab to be the active tab since our editors open stuff to the right
-        // Maybe 
+        // We want to prioritize setting the left tab to be the active tab since our editors open stuff to the right first
+        // Maybe we want to set the active page to be the parent if it exists?
         if (Pages.Count == 0)
         {
             ActivePage = null;
@@ -250,9 +251,9 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
-    public readonly PageFactory _pageFactory;
-    public readonly TabEvents _tabEvents;
-    public readonly IDialogService _dialogService;
+    private readonly PageFactory _pageFactory;
+    private readonly TabEvents _tabEvents;
+    private readonly IDialogService _dialogService;
     public ObservableCollection<NodeBase> Nodes { get; set; }
 
     public MainWindowViewModel() : this(new PageFactory(new DesignServiceProvider()),
@@ -421,6 +422,37 @@ public class MainWindowViewModel : ViewModelBase
         Console.WriteLine("yay");
         ActivePage = node.Page;
     }
+    
+    public void AddPageFromPageNode(OpenEditorNode node)
+    {
+        var editor = _pageFactory.CreatePage(node.EditorKey);
+
+        if (editor != null)
+        {
+            editor.SetTabInfo(node);
+            AddTopLevelPage(editor);
+        }
+    }
+    
+    public async Task<bool> TryCloseTabAsync(EditorPageViewModel page)
+    {
+        if (PageHasChildren(page))
+        {
+            var result = await MessageBoxWindowView.Show(
+                "Are you sure you want to close all subtabs?  Your changes will not be saved.",
+                "Confirm Close",
+                MessageBoxWindowView.MessageBoxButtons.YesNo,
+                _dialogService
+            );
+
+            if (result != MessageBoxWindowView.MessageBoxResult.Yes)
+                return false;
+        }
+
+        RemoveTab(page);
+        return true;
+    }
+    
 
     public TreeSearchViewModel TreeSearch { get; } = new TreeSearchViewModel();
 }

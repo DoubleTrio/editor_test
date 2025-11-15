@@ -78,7 +78,6 @@
 
             <Style Selector="^:selected:pointerover">
                 <Setter Property="Background">
-                    <!-- TabItemHeaderBackgroundUnselectedPointerOver -->
                     <MultiBinding Converter="{StaticResource ObjectToColorKeyConverter}">
                         <Binding Path="((vm:MainWindowViewModel)DataContext).TemporaryTab"
                                  RelativeSource="{RelativeSource AncestorType=controls:TabsControl}" />
@@ -108,15 +107,6 @@
         </Style>
 
         <Style Selector="controls|DragTabItem">
-
-            <!-- Highlight selected tab and bring it above the blue border -->
-            <!-- <Style Selector="^:selected"> -->
-            <!--     <Setter Property="BorderBrush" Value="Blue"/> -->
-            <!--     <Setter Property="BorderThickness" Value="0 0 0 4"/> -->
-            <!--     <Setter Property="CornerRadius" Value="00,0,6,6"/> -->
-            <!-- -->
-            <!-- </Style> -->
-            <!-- -->
             <Setter Property="Template">
                 <ControlTemplate>
                     <Grid>
