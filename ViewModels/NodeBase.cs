@@ -23,32 +23,28 @@ public class NodeBase : ViewModelBase
     
     private string _title = "";
 
-    public string Title
+    public virtual string Title
     {
         get => _title;
         set => this.RaiseAndSetIfChanged(ref _title, value);
     }
-    public string Icon { get; }
 
-    public NodeBase(IDialogService dialogService, string title = "", string? icon = null)
+    public string _icon = "";
+    public string Icon
     {
-        // _dialogService = dialogService;
+        get => _icon;
+        set => this.RaiseAndSetIfChanged(ref _icon, value);
+    }
+
+    
+    public NodeBase(string title = "", string? icon = null)
+    {
         Title = title;
-        Icon = icon ?? "";
+        _icon = icon ?? "";
         SubNodes = new ObservableCollection<NodeBase>();
         IsExpanded = false;
         // SubNodes.CollectionChanged += OnSubNodesChanged;
     }
-    
-    // public NodeBase(string title, string icon, ObservableCollection<NodeBase> subNodes)
-    // {
-    //     Title = title;
-    //     Icon = icon;
-    //     SubNodes = subNodes;
-    //     IsExpanded = false;
-    //     SubNodes.CollectionChanged += OnSubNodesChanged;
-    // }
-    
     
     private bool _isExpanded = false;
     public bool IsExpanded
@@ -76,30 +72,26 @@ public class NodeBase : ViewModelBase
 
 public class OpenEditorNode : NodeBase
 {
-    // public string EditorTabTitle { get; }
-
-    // public ReactiveCommand<Unit, Unit> OpenEditorCommand { get; }
-
     public string EditorKey { get; }
     
-    public OpenEditorNode(IDialogService dialogService, string title, string? icon = null, string editorKey = "") 
-        : base(dialogService, title, icon ?? "")
+    public OpenEditorNode(string title, string? icon = null, string editorKey = "") 
+        : base(title, icon ?? "")
     {
         EditorKey = editorKey;
     }
 }
 
-public abstract class ItemRootNode : NodeBase
+public abstract class ItemRootNode : OpenEditorNode
 {
     protected readonly IDialogService _dialogService;
     
     public abstract ReactiveCommand<Unit, Unit> AddCommand { get; }
     public abstract ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
 
-    protected ItemRootNode(IDialogService dialogService, string title, string icon, string editorKey)
-        : base(dialogService, title, icon)
+    protected ItemRootNode(string title, string icon, string editorKey)
+        : base(title, icon, editorKey)
     {
-        _dialogService = dialogService;
+
     }
 }
 
@@ -107,9 +99,9 @@ public class DataRootNode : ItemRootNode
 {
     protected readonly string _dataType;
     
-    protected readonly NodeFactory _nodeFactory;
+    private readonly NodeFactory _nodeFactory;
     
-    protected readonly IDialogService _dialogService ;
+    private readonly IDialogService _dialogService ;
     
 
     public override ReactiveCommand<Unit, Unit> AddCommand { get; }
@@ -123,7 +115,7 @@ public class DataRootNode : ItemRootNode
     public ReactiveCommand<DataItemNode, Unit> ResaveAsPatch { get; }
 
     public DataRootNode(NodeFactory nodeFactory, IDialogService dialogService, string dataType, string editorKey, string title, string? icon = null)
-        : base(dialogService, title, icon ?? "", editorKey)
+        : base(title, icon ?? "", editorKey)
     {
         _nodeFactory = nodeFactory;
         _dialogService = dialogService;
@@ -215,8 +207,15 @@ public class DataItemNode : OpenEditorNode
         set => this.RaiseAndSetIfChanged(ref _value, value);
     }
     
-    public DataItemNode(IDialogService dialogService, string itemKey, string editorKey, string? title, string? icon = null) 
-        : base(dialogService,title ?? "", icon ?? "", editorKey)
+    // private bool _editorKey = false;
+    // public bool EditorKey
+    // {
+    //     get => _editorKey;
+    //     set => this.RaiseAndSetIfChanged(ref _editorKey, value);
+    // }
+    
+    public DataItemNode(string itemKey, string editorKey, string? title, string? icon = null) 
+        : base(title ?? "", icon ?? "", editorKey)
     {
         ItemKey = itemKey;
     }
@@ -227,6 +226,7 @@ public class SpriteRootNode : ItemRootNode
     private readonly string _dataType;
     private readonly string _key;
     private readonly NodeFactory _nodeFactory;
+    private readonly IDialogService _dialogService;
 
     public override ReactiveCommand<Unit, Unit> AddCommand { get; }
     public override ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
@@ -244,10 +244,11 @@ public class SpriteRootNode : ItemRootNode
         string editorKey,
         string title,
         string? icon = null)
-        : base(dialogService, title, icon ?? "", editorKey)
+        : base(title, icon ?? "", editorKey)
     {
         _dataType = dataType;
         _key = editorKey;
+        _dialogService = dialogService;
         _nodeFactory = nodeFactory;
 
         AddCommand = ReactiveCommand.CreateFromTask(AddSpriteAsync);
@@ -328,24 +329,22 @@ public class SpriteRootNode : ItemRootNode
 public class PageNode : NodeBase
 {
     
-    private NodeFactory _nodeFactory;
+    private readonly NodeFactory _nodeFactory;
+    private readonly IDialogService _dialogService;
     public EditorPageViewModel Page { get; }
     public PageNode? Parent { get; set; }
     public bool IsTopLevel => Parent == null;
-
-    public PageNode(IDialogService dialogService, EditorPageViewModel page, PageNode? parent = null)  : base(dialogService, page.Title, page.Icon)
-    {
-        
-    }
+    
     public PageNode(IDialogService dialogService, NodeFactory nodeFactory, EditorPageViewModel page, PageNode? parent = null)
-        : base(dialogService, page.Title, page.Icon)
+        : base(page.Title, page.Icon)
     {
+        _dialogService = dialogService;
         _nodeFactory = nodeFactory;
         Page = page;
         Parent = parent;
     }
     
-    public new string Title => Page.Title;
+    public override string Title => Page.Title;
     
     public PageNode AddChild(EditorPageViewModel childPage)
     {
@@ -361,11 +360,11 @@ public class PageNode : NodeBase
     }
 }
 
-public interface IItemCommands
-{
-    ReactiveCommand<Unit, Unit> AddCommand { get; }
-    ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
-}
+// public interface IItemCommands
+// {
+//     ReactiveCommand<Unit, Unit> AddCommand { get; }
+//     ReactiveCommand<DataItemNode, Unit> DeleteCommand { get; }
+// }
 
 // public class DefaultItemCommands : IItemCommands
 // {

@@ -24,9 +24,18 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<TabEvents>();
         collection.AddSingleton<PageFactory>();
         collection.AddSingleton<NodeFactory>();
-        collection.AddTransient<MainWindowViewModel>();
+        collection.AddSingleton<MainWindowViewModel>();
 
 
+        collection.AddTransient<TabSwitcherViewModel>(sp =>
+        {
+            var mainVm = sp.GetRequiredService<MainWindowViewModel>();
+            return new TabSwitcherViewModel(mainVm);
+        });
+        
+        collection.AddTransient<ModSwitcherViewModel>();
+        
+        
         collection.AddTransient<NodeBase>();
         collection.AddTransient<DataRootNode>();
         collection.AddTransient<DataItemNode>();
@@ -34,15 +43,15 @@ public static class ServiceCollectionExtensions
         collection.AddTransient<PageNode>();
 
         // TODO: remove?
-        collection.AddSingleton<Func<Type, NodeBase>>(x => type => type switch
-        {
-            _ when type == typeof(NodeBase) => x.GetRequiredService<NodeBase>(),
-            _ when type == typeof(DataRootNode) => x.GetRequiredService<DataRootNode>(),
-            _ when type == typeof(DataItemNode) => x.GetRequiredService<DataItemNode>(),
-            _ when type == typeof(OpenEditorNode) => x.GetRequiredService<OpenEditorNode>(),
-            _ when type == typeof(PageNode) => x.GetRequiredService<PageNode>(),
-            _ => throw new InvalidOperationException($"Page of type {type?.FullName} has no view model"),
-        });
+        // collection.AddSingleton<Func<Type, NodeBase>>(x => type => type switch
+        // {
+        //     _ when type == typeof(NodeBase) => x.GetRequiredService<NodeBase>(),
+        //     _ when type == typeof(DataRootNode) => x.GetRequiredService<DataRootNode>(),
+        //     _ when type == typeof(DataItemNode) => x.GetRequiredService<DataItemNode>(),
+        //     _ when type == typeof(OpenEditorNode) => x.GetRequiredService<OpenEditorNode>(),
+        //     _ when type == typeof(PageNode) => x.GetRequiredService<PageNode>(),
+        //     _ => throw new InvalidOperationException($"Page of type {type?.FullName} has no view model"),
+        // });
 
         collection.AddSingleton<ViewLocator>();
         collection.AddSingleton<IDialogService, DialogService>();

@@ -18,7 +18,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly NodeFactory _nodeFactory;
 
 
-    private bool _isTreeView = false;
+    private bool _isTreeView;
 
     public bool IsTreeView
     {
@@ -37,7 +37,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public void OpenTabSwitcher()
     {
-        TabSwitcher = new TabSwitcherViewModel(this);
+        TabSwitcher = _pageFactory.GetRequiredService<TabSwitcherViewModel>();
     }
     public event Action? TabSwitcherClosed;
     public void CloseTabSwitcher()
@@ -50,7 +50,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (ModSwitcher == null)
         {
-            ModSwitcher = new ModSwitcherViewModel(this, _dialogService);
+            ModSwitcher = _pageFactory.GetRequiredService<ModSwitcherViewModel>();
         }
     }
 
@@ -281,8 +281,6 @@ public class MainWindowViewModel : ViewModelBase
         TopLevelPages = new ObservableCollection<PageNode>();
         _pageToNodeMap = new Dictionary<EditorPageViewModel, PageNode>();
 
-        TreeSearch = new TreeSearchViewModel();
-
         // TODO: move this own view
         ClearFilterCommand = ReactiveCommand.Create(() => { Filter = string.Empty; });
         
@@ -454,5 +452,5 @@ public class MainWindowViewModel : ViewModelBase
     }
     
 
-    public TreeSearchViewModel TreeSearch { get; } = new TreeSearchViewModel();
+    // public TreeSearchViewModel TreeSearch { get; } = new TreeSearchViewModel();
 }

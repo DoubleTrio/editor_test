@@ -32,6 +32,7 @@ public class DesignServiceProvider : IServiceProvider
     {
         return _serviceProvider.GetRequiredService<T>();
     }
+
 }
 
 
@@ -73,8 +74,13 @@ public class PageFactory
         Console.WriteLine("Registered pages:");
         foreach (var entry in _map)
         {
-            Console.WriteLine($"  Key: {entry.Key}, Type: {entry.Value.FullName}");
+            Console.WriteLine($"Key: {entry.Key}, Type: {entry.Value.FullName}");
         }
+    }
+    
+    public T GetRequiredService<T>() where T : notnull
+    {
+        return _provider.GetRequiredService<T>();
     }
 }
 

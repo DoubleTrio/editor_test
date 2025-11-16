@@ -125,7 +125,6 @@
                               x:Name="MasterTreeView"
                               SelectionMode="Toggle"
                               ItemsSource="{Binding Nodes}"
-                              SelectedItems="{Binding TreeSearch.SelectedNodes}"
                               DoubleTapped="MasterTreeView_OnDoubleTapped"
                               ContextRequested="MasterTreeView_OnContextRequested"
                               SelectionChanged="MasterTreeView_OnSelectionChanged"

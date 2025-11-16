@@ -68,7 +68,7 @@ public class EditorPageViewModel : ViewModelBase
 
     public void SetTabInfo(NodeBase node)
     {
-        _icon = node.Icon;
+        _icon = node._icon;
         _title = node.Title;
     }
     
